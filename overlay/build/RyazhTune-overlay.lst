@@ -1,0 +1,1445 @@
+0000000000000000 a __start__
+0000000000000000 T _start
+0000000000000000 b _TLS_MODULE_BASE_
+0000000000000000 0000000000000004 b g_fsPriority
+00000000000000e0 T __nx_exit
+00000000000000f0 T __nx_mod0
+0000000000000124 0000000000000034 W __gnu_cxx::__throw_concurrence_lock_error()
+0000000000000158 0000000000000034 W __gnu_cxx::__throw_concurrence_unlock_error()
+000000000000018c 0000000000000034 W __gnu_cxx::__throw_concurrence_broadcast_error()
+00000000000001c0 0000000000000034 T std::__throw_bad_alloc()
+00000000000001f4 0000000000000034 T std::__throw_bad_array_new_length()
+0000000000000228 0000000000000050 T std::__throw_logic_error(char const*)
+0000000000000278 0000000000000050 T std::__throw_length_error(char const*)
+00000000000002c8 0000000000000050 T std::__throw_out_of_range(char const*)
+0000000000000318 000000000000000c T std::__throw_out_of_range_fmt(char const*, ...)
+0000000000000324 0000000000000034 T std::__throw_bad_function_call()
+0000000000000358 00000000000000b4 T std::__throw_system_error(int)
+000000000000040c 0000000000000010 T std::terminate()
+000000000000041c 0000000000000010 T std::unexpected()
+000000000000042c 0000000000000044 T __cxa_call_terminate
+0000000000000480 000000000000001c t _GLOBAL__sub_D.00098_tzdb.cc
+00000000000004a0 0000000000000034 t _GLOBAL__sub_D_eh_globals.cc
+00000000000004e0 0000000000000034 T exit
+0000000000000520 0000000000000018 T main
+0000000000000540 00000000000001f0 t _GLOBAL__sub_I_eh_alloc.cc
+0000000000000740 0000000000000038 t _GLOBAL__sub_I_eh_globals.cc
+0000000000000780 00000000000000a4 t _GLOBAL__sub_I_cxx11_wlocale_inst.cc
+0000000000000840 00000000000000f4 t _GLOBAL__sub_I_locale_inst.cc
+0000000000000940 00000000000000f4 t _GLOBAL__sub_I_wlocale_inst.cc
+0000000000000a40 00000000000000a4 t _GLOBAL__sub_I_cxx11_locale_inst.cc
+0000000000000b00 t __do_global_dtors_aux
+0000000000000b60 t frame_dummy
+0000000000000b90 0000000000000008 W tsl::elm::Element::requestFocus(tsl::elm::Element*, tsl::FocusDirection)
+0000000000000ba0 0000000000000008 W tsl::elm::Element::handleInput(unsigned long, unsigned long, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)
+0000000000000bb0 0000000000000008 W tsl::elm::Element::onTouch(tsl::elm::TouchEvent, int, int, int, int, int, int)
+0000000000000bc0 000000000000000c W tsl::elm::Element::setFocused(bool)
+0000000000000bd0 0000000000000004 T StatusBar::requestFocus(tsl::elm::Element*, tsl::FocusDirection)
+0000000000000be0 000000000000000c T StatusBar::layout(unsigned short, unsigned short, unsigned short, unsigned short)
+0000000000000bf0 0000000000000008 W std::_Function_handler<bool (unsigned long), tsl::elm::Element::m_clickListener::{lambda(unsigned long)#1}>::_M_invoke(std::_Any_data const&, unsigned long&&)
+0000000000000c00 0000000000000034 W std::_Function_handler<bool (unsigned long), tsl::elm::Element::m_clickListener::{lambda(unsigned long)#1}>::_M_manager(std::_Any_data&, std::_Function_handler<bool (unsigned long), tsl::elm::Element::m_clickListener::{lambda(unsigned long)#1}> const&, std::_Manager_operation)
+0000000000000c00 0000000000000034 W std::_Function_handler<bool (unsigned long), tsl::elm::Element::m_clickListener::{lambda(unsigned long)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+0000000000000c40 0000000000000030 W tsl::elm::Element::onClick(unsigned long)
+0000000000000c70 0000000000000070 W tsl::elm::Element::setClickListener(std::function<bool (unsigned long)>)
+0000000000000ce0 000000000000006c t __tcf_ZZN3tsl3gfx8Renderer10drawStringEPKcbiifNS_5ColorElE12s_glyphCache
+0000000000000d50 0000000000000090 W StatusBar::~StatusBar()
+0000000000000d50 0000000000000090 W StatusBar::~StatusBar()
+0000000000000de0 0000000000000064 W StatusBar::~StatusBar()
+0000000000000e50 0000000000000178 T StatusBar::onClick(unsigned long)
+0000000000000fd0 00000000000002a4 W tsl::elm::Element::drawClickAnimation(tsl::gfx::Renderer*)
+0000000000001280 00000000000002a0 t AlphaSymbol::draw(int, int, tsl::gfx::Renderer*, tsl::Color) const [clone .isra.0]
+0000000000001520 000000000000047c T StatusBar::onTouch(tsl::elm::TouchEvent, int, int, int, int, int, int)
+00000000000019a0 00000000000001d0 W tsl::gfx::Renderer::setPixelBlendDst(int, int, tsl::Color)
+0000000000001b70 0000000000000454 W tsl::elm::Element::drawHighlight(tsl::gfx::Renderer*)
+0000000000001fd0 0000000000000338 W tsl::elm::Element::drawFocusBackground(tsl::gfx::Renderer*)
+0000000000002310 0000000000000264 W tsl::gfx::Renderer::drawRect(int, int, int, int, tsl::Color)
+0000000000002580 00000000000000ac T StatusBar::StatusBar()
+0000000000002580 00000000000000ac T StatusBar::StatusBar()
+0000000000002630 00000000000001d8 T StatusBar::update()
+0000000000002810 000000000000025c W std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_append(char const*, unsigned long)
+0000000000002a70 00000000000001b8 W std::_Hashtable<unsigned long, std::pair<unsigned long const, tsl::gfx::Renderer::drawString(char const*, bool, int, int, float, tsl::Color, long)::Glyph>, std::allocator<std::pair<unsigned long const, tsl::gfx::Renderer::drawString(char const*, bool, int, int, float, tsl::Color, long)::Glyph> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_insert_unique_node(unsigned long, unsigned long, std::__detail::_Hash_node<std::pair<unsigned long const, tsl::gfx::Renderer::drawString(char const*, bool, int, int, float, tsl::Color, long)::Glyph>, false>*, unsigned long)
+0000000000002c30 0000000000000688 W tsl::gfx::Renderer::drawString(char const*, bool, int, int, float, tsl::Color, long)
+00000000000032c0 000000000000092c T StatusBar::draw(tsl::gfx::Renderer*)
+0000000000003bf0 00000000000000d4 W tsl::elm::List::getIndexInList(tsl::elm::Element*)
+0000000000003cd0 00000000000000a4 W tsl::elm::List::updateScrollOffset()
+0000000000003d80 000000000000000c W tsl::elm::ListItem::layout(unsigned short, unsigned short, unsigned short, unsigned short)
+0000000000003d90 0000000000000018 W tsl::elm::ListItem::setFocused(bool)
+0000000000003db0 0000000000000004 W tsl::elm::ListItem::requestFocus(tsl::elm::Element*, tsl::FocusDirection)
+0000000000003dc0 0000000000000008 W tsl::elm::CategoryHeader::onClick(unsigned long)
+0000000000003dd0 0000000000000008 W tsl::elm::CategoryHeader::requestFocus(tsl::elm::Element*, tsl::FocusDirection)
+0000000000003de0 0000000000000004 W tsl::Gui::update()
+0000000000003df0 0000000000000008 W tsl::Gui::handleInput(unsigned long, unsigned long, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)
+0000000000003e00 000000000000001c W SysTuneOverlayFrame::requestFocus(tsl::elm::Element*, tsl::FocusDirection)
+0000000000003e20 0000000000000024 W tsl::elm::List::getItemAtIndex(unsigned int)
+0000000000003e50 000000000000004c W tsl::elm::ListItem::onClick(unsigned long)
+0000000000003ea0 0000000000000020 t (anonymous namespace)::StringTextCompare(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+0000000000003ec0 0000000000000020 t (anonymous namespace)::ListItemTextCompare(tsl::elm::ListItem const*, tsl::elm::ListItem const*)
+0000000000003ee0 0000000000000090 t (anonymous namespace)::SupportsType(char const*)
+0000000000003f70 00000000000000a0 W tsl::elm::ListItem::onTouch(tsl::elm::TouchEvent, int, int, int, int, int, int)
+0000000000004010 0000000000000040 t std::_Function_handler<bool (unsigned long), BrowserGui::scanCwd()::{lambda(unsigned long)#2}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+0000000000004050 0000000000000044 t std::_Function_handler<bool (unsigned long), BrowserGui::scanCwd()::{lambda(unsigned long)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+00000000000040a0 0000000000000058 T BrowserGui::~BrowserGui()
+00000000000040a0 0000000000000058 T BrowserGui::~BrowserGui()
+0000000000004100 000000000000012c W tsl::elm::List::removeIndex(unsigned long)
+0000000000004230 00000000000000fc W tsl::elm::List::removeItem(tsl::elm::Element*)
+0000000000004330 0000000000000054 W SysTuneOverlayFrame::onTouch(tsl::elm::TouchEvent, int, int, int, int, int, int)
+0000000000004390 0000000000000054 T BrowserGui::~BrowserGui()
+00000000000043f0 0000000000000198 W tsl::elm::List::onTouch(tsl::elm::TouchEvent, int, int, int, int, int, int)
+0000000000004590 0000000000000160 W tsl::elm::CategoryHeader::layout(unsigned short, unsigned short, unsigned short, unsigned short)
+00000000000046f0 00000000000000d0 W tsl::elm::List::~List()
+00000000000046f0 00000000000000d0 W tsl::elm::List::~List()
+00000000000047c0 00000000000000c8 W tsl::elm::List::~List()
+0000000000004890 0000000000000108 W tsl::elm::List::layout(unsigned short, unsigned short, unsigned short, unsigned short)
+00000000000049a0 0000000000000090 W tsl::elm::CategoryHeader::~CategoryHeader()
+00000000000049a0 0000000000000090 W tsl::elm::CategoryHeader::~CategoryHeader()
+0000000000004a30 0000000000000064 W tsl::elm::CategoryHeader::~CategoryHeader()
+0000000000004aa0 00000000000000bc W tsl::elm::ListItem::~ListItem()
+0000000000004aa0 00000000000000bc W tsl::elm::ListItem::~ListItem()
+0000000000004b60 00000000000000b8 W tsl::elm::ListItem::~ListItem()
+0000000000004c20 00000000000000b4 W SysTuneOverlayFrame::~SysTuneOverlayFrame()
+0000000000004c20 00000000000000b4 W SysTuneOverlayFrame::~SysTuneOverlayFrame()
+0000000000004ce0 00000000000000b0 W SysTuneOverlayFrame::~SysTuneOverlayFrame()
+0000000000004d90 0000000000000134 t bool __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)>::operator()<__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, __gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > >(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, __gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >) [clone .isra.0]
+0000000000004ed0 00000000000000e0 W tsl::elm::List::setFocusedIndex(unsigned int)
+0000000000004fb0 0000000000000084 W SysTuneOverlayFrame::layout(unsigned short, unsigned short, unsigned short, unsigned short)
+0000000000005040 0000000000000154 T BrowserGui::createUI()
+00000000000051a0 0000000000000558 t std::_Function_handler<bool (unsigned long), BrowserGui::scanCwd()::{lambda(unsigned long)#2}>::_M_invoke(std::_Any_data const&, unsigned long&&)
+0000000000005700 0000000000000438 W tsl::elm::List::requestFocus(tsl::elm::Element*, tsl::FocusDirection)
+0000000000005b40 0000000000000138 W tsl::elm::ListItem::ListItem(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+0000000000005b40 0000000000000138 W tsl::elm::ListItem::ListItem(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+0000000000005c80 0000000000000420 W tsl::gfx::Renderer::limitStringLength(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, float, int)
+00000000000060a0 0000000000000428 W void std::__introsort_loop<__gnu_cxx::__normal_iterator<tsl::elm::ListItem**, std::vector<tsl::elm::ListItem*, std::allocator<tsl::elm::ListItem*> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(tsl::elm::ListItem const*, tsl::elm::ListItem const*)> >(__gnu_cxx::__normal_iterator<tsl::elm::ListItem**, std::vector<tsl::elm::ListItem*, std::allocator<tsl::elm::ListItem*> > >, __gnu_cxx::__normal_iterator<tsl::elm::ListItem**, std::vector<tsl::elm::ListItem*, std::allocator<tsl::elm::ListItem*> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(tsl::elm::ListItem const*, tsl::elm::ListItem const*)>)
+00000000000064d0 00000000000014b4 T BrowserGui::scanCwd()
+0000000000007990 000000000000031c T BrowserGui::BrowserGui()
+0000000000007990 000000000000031c T BrowserGui::BrowserGui()
+0000000000007cb0 000000000000006c t std::_Function_handler<bool (unsigned long), BrowserGui::scanCwd()::{lambda(unsigned long)#1}>::_M_invoke(std::_Any_data const&, unsigned long&&)
+0000000000007d20 00000000000001a0 W std::deque<tsl::gfx::ScissoringConfig, std::allocator<tsl::gfx::ScissoringConfig> >::_M_reallocate_map(unsigned long, bool)
+0000000000007ec0 0000000000000154 t tsl::gfx::ScissoringConfig& std::deque<tsl::gfx::ScissoringConfig, std::allocator<tsl::gfx::ScissoringConfig> >::emplace_back<int&, int&, int&, int&>(int&, int&, int&, int&) [clone .isra.0]
+0000000000008020 000000000000017c W tsl::elm::Element::frame(tsl::gfx::Renderer*)
+00000000000081a0 0000000000000bcc W tsl::elm::List::draw(tsl::gfx::Renderer*)
+0000000000008d70 00000000000004d8 W SysTuneOverlayFrame::draw(tsl::gfx::Renderer*)
+0000000000009250 00000000000002e0 W tsl::elm::CategoryHeader::draw(tsl::gfx::Renderer*)
+0000000000009530 0000000000000600 W tsl::elm::ListItem::draw(tsl::gfx::Renderer*)
+0000000000009b30 000000000000065c W void std::__insertion_sort<__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)> >(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, __gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)>)
+000000000000a190 0000000000000758 W void std::__adjust_heap<__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)> >(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, long, long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)>)
+000000000000a8f0 0000000000000e74 W void std::__introsort_loop<__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)> >(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, __gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)>)
+000000000000b770 0000000000000e40 T BrowserGui::addAllToPlaylist()
+000000000000c5b0 00000000000000bc T BrowserGui::handleInput(unsigned long, unsigned long, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)
+000000000000c670 0000000000000004 W tsl::elm::CustomDrawer::layout(unsigned short, unsigned short, unsigned short, unsigned short)
+000000000000c680 000000000000003c t std::_Function_handler<void (tsl::gfx::Renderer*, int, int, int, int), ErrorGui::createUI()::{lambda(tsl::gfx::Renderer*, unsigned short, unsigned short, unsigned short, unsigned short)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000c6c0 0000000000000028 W ErrorGui::~ErrorGui()
+000000000000c6c0 0000000000000028 W ErrorGui::~ErrorGui()
+000000000000c6f0 0000000000000050 W ErrorGui::~ErrorGui()
+000000000000c740 0000000000000098 W tsl::elm::CustomDrawer::~CustomDrawer()
+000000000000c740 0000000000000098 W tsl::elm::CustomDrawer::~CustomDrawer()
+000000000000c7e0 000000000000006c W tsl::elm::CustomDrawer::~CustomDrawer()
+000000000000c850 0000000000000108 T ErrorGui::createUI()
+000000000000c960 0000000000000068 T ErrorGui::ErrorGui(char const*, unsigned int)
+000000000000c960 0000000000000068 T ErrorGui::ErrorGui(char const*, unsigned int)
+000000000000c9d0 0000000000000154 t tsl::gfx::ScissoringConfig& std::deque<tsl::gfx::ScissoringConfig, std::allocator<tsl::gfx::ScissoringConfig> >::emplace_back<int&, int&, int&, int&>(int&, int&, int&, int&) [clone .isra.0]
+000000000000cb30 00000000000000ec W tsl::elm::CustomDrawer::draw(tsl::gfx::Renderer*)
+000000000000cc20 00000000000000d0 t std::_Function_handler<void (tsl::gfx::Renderer*, int, int, int, int), ErrorGui::createUI()::{lambda(tsl::gfx::Renderer*, unsigned short, unsigned short, unsigned short, unsigned short)#1}>::_M_invoke(std::_Any_data const&, tsl::gfx::Renderer*&&, int&&, int&&, int&&, int&&)
+000000000000ccf0 0000000000000008 W tsl::elm::ToggleListItem::getState()
+000000000000cd00 0000000000000004 W tsl::elm::TrackBar::requestFocus(tsl::elm::Element*, tsl::FocusDirection)
+000000000000cd10 000000000000000c W tsl::elm::TrackBar::layout(unsigned short, unsigned short, unsigned short, unsigned short)
+000000000000cd20 0000000000000004 W tsl::elm::TrackBar::drawFocusBackground(tsl::gfx::Renderer*)
+000000000000cd30 0000000000000008 W tsl::elm::TrackBar::getProgress()
+000000000000cd40 000000000000000c W tsl::elm::TrackBar::setProgress(unsigned char)
+000000000000cd50 000000000000001c W tsl::elm::StepTrackBar::getProgress()
+000000000000cd70 000000000000002c W tsl::elm::StepTrackBar::setProgress(unsigned char)
+000000000000cda0 0000000000000004 W tsl::Overlay::onHide()
+000000000000cdb0 0000000000000004 W std::_Function_handler<void (bool), tsl::elm::ToggleListItem::m_stateChangedListener::{lambda(bool)#1}>::_M_invoke(std::_Any_data const&, bool&&)
+000000000000cdc0 0000000000000034 W std::_Function_handler<void (bool), tsl::elm::ToggleListItem::m_stateChangedListener::{lambda(bool)#1}>::_M_manager(std::_Any_data&, std::_Function_handler<void (bool), tsl::elm::ToggleListItem::m_stateChangedListener::{lambda(bool)#1}> const&, std::_Manager_operation)
+000000000000cdc0 0000000000000034 W std::_Function_handler<void (bool), tsl::elm::ToggleListItem::m_stateChangedListener::{lambda(bool)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000ce00 0000000000000034 t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000ce40 0000000000000038 t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#2}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000ce80 0000000000000038 t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000cec0 0000000000000038 t std::_Function_handler<void (unsigned char), MainGui::createUI()::{lambda(unsigned char)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000cf00 0000000000000038 t std::_Function_handler<void (unsigned char), MainGui::createUI()::{lambda(unsigned char)#3}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000cf40 0000000000000038 t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#4}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000cf80 0000000000000038 t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#4}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000cfc0 0000000000000130 W tsl::elm::TrackBar::onTouch(tsl::elm::TouchEvent, int, int, int, int, int, int)
+000000000000d0f0 0000000000000008 t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#1}>::_M_invoke(std::_Any_data const&, bool&&)
+000000000000d100 0000000000000014 t std::_Function_handler<void (unsigned char), MainGui::createUI()::{lambda(unsigned char)#1}>::_M_invoke(std::_Any_data const&, unsigned char&&)
+000000000000d120 0000000000000044 t std::_Function_handler<void (unsigned char), MainGui::createUI()::{lambda(unsigned char)#2}>::_M_invoke(std::_Any_data const&, unsigned char&&)
+000000000000d170 0000000000000014 t std::_Function_handler<void (unsigned char), MainGui::createUI()::{lambda(unsigned char)#3}>::_M_invoke(std::_Any_data const&, unsigned char&&)
+000000000000d190 0000000000000050 T MainGui::update()
+000000000000d1e0 0000000000000098 t std::_Function_handler<void (char const*), MainGui::createUI()::{lambda(unsigned long)#3}::operator()(unsigned long) const::{lambda(char const*)#2}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000d280 0000000000000040 t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#5}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000d2c0 0000000000000040 t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#3}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000d300 0000000000000040 t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#5}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000d340 0000000000000034 t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#4}>::_M_invoke(std::_Any_data const&, bool&&)
+000000000000d380 0000000000000040 t std::_Function_handler<void (unsigned char), MainGui::createUI()::{lambda(unsigned char)#2}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000d3c0 000000000000009c t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#3}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000d460 000000000000009c t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#2}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+000000000000d500 0000000000000048 t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#5}>::_M_invoke(std::_Any_data const&, bool&&)
+000000000000d550 000000000000010c t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#4}>::_M_invoke(std::_Any_data const&, unsigned long&&)
+000000000000d660 0000000000000028 W MainGui::~MainGui()
+000000000000d660 0000000000000028 W MainGui::~MainGui()
+000000000000d690 0000000000000050 W MainGui::~MainGui()
+000000000000d6e0 00000000000000a0 t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#1}>::_M_invoke(std::_Any_data const&, unsigned long&&)
+000000000000d780 00000000000000a0 t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#2}>::_M_invoke(std::_Any_data const&, unsigned long&&)
+000000000000d820 00000000000001d0 t MainGui::createUI()::{lambda(unsigned long)#3}::operator()(unsigned long) const::{lambda(char const*)#2}::operator()(char const*) const
+000000000000d9f0 000000000000000c t std::_Function_handler<void (char const*), MainGui::createUI()::{lambda(unsigned long)#3}::operator()(unsigned long) const::{lambda(char const*)#2}>::_M_invoke(std::_Any_data const&, char const*&&)
+000000000000da00 00000000000000bc W tsl::elm::TrackBar::handleInput(unsigned long, unsigned long, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)
+000000000000dac0 0000000000000184 W tsl::elm::StepTrackBar::handleInput(unsigned long, unsigned long, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)
+000000000000dc50 000000000000015c W tsl::elm::StepTrackBar::onTouch(tsl::elm::TouchEvent, int, int, int, int, int, int)
+000000000000ddb0 0000000000000098 W tsl::elm::TrackBar::~TrackBar()
+000000000000ddb0 0000000000000098 W tsl::elm::TrackBar::~TrackBar()
+000000000000de50 000000000000006c W tsl::elm::TrackBar::~TrackBar()
+000000000000dec0 000000000000008c W ElmVolume::~ElmVolume()
+000000000000dec0 000000000000008c W ElmVolume::~ElmVolume()
+000000000000df50 0000000000000088 W ElmVolume::~ElmVolume()
+000000000000dfe0 0000000000000118 W tsl::elm::ToggleListItem::~ToggleListItem()
+000000000000dfe0 0000000000000118 W tsl::elm::ToggleListItem::~ToggleListItem()
+000000000000e100 0000000000000114 W tsl::elm::ToggleListItem::~ToggleListItem()
+000000000000e220 000000000000031c t SysTuneOverlayFrame::setToast(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [clone .isra.0]
+000000000000e540 00000000000002e8 W tsl::elm::ToggleListItem::setState(bool)
+000000000000e830 00000000000001c0 t MainGui::createUI()::{lambda(unsigned long)#5}::operator()(unsigned long) const
+000000000000e9f0 0000000000000008 t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#5}>::_M_invoke(std::_Any_data const&, unsigned long&&)
+000000000000ea00 000000000000033c W tsl::elm::ToggleListItem::onClick(unsigned long)
+000000000000ed40 000000000000026c t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#3}>::_M_invoke(std::_Any_data const&, bool&&)
+000000000000efb0 000000000000026c t std::_Function_handler<void (bool), MainGui::createUI()::{lambda(bool)#2}>::_M_invoke(std::_Any_data const&, bool&&)
+000000000000f220 0000000000000304 t MainGui::createUI()::{lambda(unsigned long)#3}::operator()(unsigned long) const
+000000000000f530 0000000000000008 t std::_Function_handler<bool (unsigned long), MainGui::createUI()::{lambda(unsigned long)#3}>::_M_invoke(std::_Any_data const&, unsigned long&&)
+000000000000f540 000000000000046c W tsl::elm::TrackBar::drawHighlight(tsl::gfx::Renderer*)
+000000000000f9b0 000000000000015c W tsl::elm::List::addItem(tsl::elm::Element*, unsigned short, long)
+000000000000fb10 00000000000003e0 W tsl::elm::ToggleListItem::ToggleListItem(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000000fb10 00000000000003e0 W tsl::elm::ToggleListItem::ToggleListItem(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000000fef0 0000000000001744 T MainGui::createUI()
+0000000000011640 0000000000000044 T MainGui::MainGui()
+0000000000011640 0000000000000044 T MainGui::MainGui()
+0000000000011690 000000000000067c W tsl::elm::TrackBar::draw(tsl::gfx::Renderer*)
+0000000000011d10 0000000000000308 W ElmVolume::draw(tsl::gfx::Renderer*)
+0000000000012020 0000000000000040 t std::_Function_handler<bool (unsigned long), PlaylistGui::PlaylistGui()::{lambda(unsigned long)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+0000000000012060 0000000000000028 W PlaylistGui::~PlaylistGui()
+0000000000012060 0000000000000028 W PlaylistGui::~PlaylistGui()
+0000000000012090 0000000000000050 W PlaylistGui::~PlaylistGui()
+00000000000120e0 00000000000000bc t (anonymous namespace)::ButtonListItem::~ButtonListItem()
+00000000000120e0 00000000000000bc t (anonymous namespace)::ButtonListItem::~ButtonListItem()
+00000000000121a0 00000000000000b8 t (anonymous namespace)::ButtonListItem::~ButtonListItem()
+0000000000012260 0000000000000170 t (anonymous namespace)::ButtonListItem::onTouch(tsl::elm::TouchEvent, int, int, int, int, int, int)
+00000000000123d0 000000000000016c T PlaylistGui::createUI()
+0000000000012540 0000000000000744 t std::_Function_handler<bool (unsigned long), PlaylistGui::PlaylistGui()::{lambda(unsigned long)#1}>::_M_invoke(std::_Any_data const&, unsigned long&&)
+0000000000012c90 0000000000000924 T PlaylistGui::PlaylistGui()
+0000000000012c90 0000000000000924 T PlaylistGui::PlaylistGui()
+00000000000135c0 00000000000000e4 t stbtt__isfont(unsigned char*)
+00000000000136b0 0000000000000098 t stbtt__find_table(unsigned char*, unsigned int, char const*)
+0000000000013750 00000000000000a0 t stbtt_GetFontOffsetForIndex_internal(unsigned char*, int)
+00000000000137f0 00000000000000d8 t stbtt__close_shape(stbtt_vertex*, int, int, int, int, int, int, int, int, int)
+00000000000138d0 00000000000000a4 t stbtt__track_vertex(stbtt__csctx*, int, int)
+0000000000013980 00000000000000c8 t stbtt__csctx_rccurve_to(stbtt__csctx*, float, float, float, float, float, float)
+0000000000013a50 00000000000001b4 t stbtt__sort_edges_quicksort(stbtt__edge*, int)
+0000000000013c10 0000000000000004 W tsl::Overlay::initServices()
+0000000000013c20 0000000000000004 W tsl::Overlay::exitServices()
+0000000000013c30 0000000000000004 W tsl::Overlay::onShow()
+0000000000013c40 00000000000000d8 t stbtt__GetGlyfOffset(stbtt_fontinfo const*, int)
+0000000000013d20 0000000000000170 t stbtt__tesselate_cubic(stbtt__point*, int*, float, float, float, float, float, float, float, float, float, int)
+0000000000013e90 000000000000007c t __tcf_ZZN3tsl3gfx8Renderer3getEvE8renderer
+0000000000013f10 0000000000000018 W SysTuneOverlay::exitServices()
+0000000000013f30 0000000000000028 t stbtt__buf_seek(stbtt__buf*, int) [clone .part.0]
+0000000000013f60 0000000000000140 W SysTuneOverlay::initServices()
+00000000000140a0 0000000000000234 t stbtt__handle_clipped_edge(float*, int, stbtt__active_edge*, float, float, float, float) [clone .part.0] [clone .isra.0]
+00000000000142e0 0000000000000074 W SysTuneOverlay::loadInitialGui()
+0000000000014360 0000000000000110 t tsl::hlp::viAddToLayerStack(ViLayer*, ViLayerStack) [clone .isra.0]
+0000000000014470 0000000000000080 t tsl::hlp::hidsysEnableAppletToGetInput(bool, unsigned long) [clone .isra.0]
+00000000000144f0 000000000000008c t tsl::hlp::requestForeground(bool)
+0000000000014580 0000000000000170 t stbtt__tesselate_curve(stbtt__point*, int*, float, float, float, float, float, float, float, int) [clone .isra.0]
+00000000000146f0 0000000000000078 W SysTuneOverlay::~SysTuneOverlay()
+0000000000014770 0000000000000070 W SysTuneOverlay::~SysTuneOverlay()
+0000000000014770 0000000000000070 W SysTuneOverlay::~SysTuneOverlay()
+00000000000147e0 0000000000000084 t stbtt__csctx_rline_to(stbtt__csctx*, float, float)
+0000000000014870 000000000000007c t std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_erase(std::_Rb_tree_node<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*) [clone .isra.0]
+00000000000148f0 0000000000000068 t std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > >, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > > >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > > > >::_M_erase(std::_Rb_tree_node<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > > >*) [clone .isra.0]
+0000000000014960 000000000000008c t stbtt__csctx_close_shape(stbtt__csctx*)
+00000000000149f0 0000000000000090 t stbtt__csctx_rmove_to(stbtt__csctx*, float, float)
+0000000000014a80 0000000000000630 t tsl::hlp::split(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char)
+00000000000150b0 0000000000000164 t stbtt__cff_index_get(stbtt__buf, int)
+0000000000015220 0000000000000198 t stbtt__cff_get_index(stbtt__buf*)
+00000000000153c0 0000000000000144 t stbtt__cff_int(stbtt__buf*)
+0000000000015510 0000000000000ad0 t stbtt__rasterize_sorted_edges(stbtt__bitmap*, stbtt__edge*, int, int, int, int, void*) [clone .constprop.0] [clone .isra.0]
+0000000000015fe0 00000000000001a0 t stbtt__dict_get_ints(stbtt__buf*, int, int, unsigned int*)
+0000000000016180 00000000000000d4 t stbtt__get_subrs(stbtt__buf, stbtt__buf)
+0000000000016260 00000000000003fc t stbtt_InitFont_internal(stbtt_fontinfo*, unsigned char*, int)
+0000000000016660 0000000000000a80 t stbtt__run_charstring(stbtt_fontinfo const*, int, stbtt__csctx*)
+00000000000170e0 00000000000003b8 T stbtt_FindGlyphIndex
+00000000000174a0 00000000000001d0 T stbtt_GetGlyphBox
+0000000000017670 0000000000000924 T stbtt_GetGlyphShape
+0000000000017fa0 00000000000000f4 T stbtt_GetGlyphHMetrics
+00000000000180a0 0000000000000030 T stbtt_GetCodepointHMetrics
+00000000000180d0 000000000000004c T stbtt_ScaleForPixelHeight
+0000000000018120 000000000000010c T stbtt_GetGlyphBitmapBoxSubpixel
+0000000000018230 0000000000000068 T stbtt_GetCodepointBitmapBoxSubpixel
+00000000000182a0 00000000000004b4 T stbtt_Rasterize
+0000000000018760 0000000000000184 T stbtt_GetGlyphBitmapSubpixel
+00000000000188f0 0000000000000058 T stbtt_GetCodepointBitmap
+0000000000018950 00000000000000d4 W tsl::gfx::Renderer::get()
+0000000000018a30 000000000000018c W tsl::gfx::Renderer::initFonts()
+0000000000018bc0 000000000000020c W tsl::gfx::Renderer::init()::{lambda()#1}::operator()() const
+0000000000018dd0 0000000000000a04 W tsl::Overlay::handleInput(unsigned long, unsigned long, bool, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)
+00000000000197e0 000000000000075c t int tsl::loop<SysTuneOverlay, (tsl::impl::LaunchFlags)1>(int, char**) [clone .isra.0]
+0000000000019f40 0000000000000068 T __appInit
+0000000000019fb0 0000000000000024 T __appExit
+0000000000019fe0 0000000000000168 W std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > >, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > > >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > > > >::_M_get_insert_unique_pos(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000001a150 00000000000002c0 W std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > >, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > > >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > > > >::_M_get_insert_hint_unique_pos(std::_Rb_tree_const_iterator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000001a410 0000000000000168 W std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_get_insert_unique_pos(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000001a580 00000000000002c0 W std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_get_insert_hint_unique_pos(std::_Rb_tree_const_iterator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000001a840 0000000000000230 W std::_Rb_tree_iterator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_emplace_hint_unique<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&>(std::_Rb_tree_const_iterator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&)
+000000000001aa70 00000000000012fc t tsl::impl::backgroundEventPoller(void*)
+000000000001bd70 000000000000000c T sdmc::Open()
+000000000001bd80 000000000000000c T sdmc::Close()
+000000000001bd90 0000000000000034 T sdmc::CreateFolder(char const*)
+000000000001bdd0 0000000000000038 T config::get_autoplay_enabled()
+000000000001be10 0000000000000050 T config::set_autoplay_enabled(bool)
+000000000001be60 0000000000000058 T config::get_title_blacklist(unsigned long)
+000000000001bec0 0000000000000070 T config::set_title_blacklist(unsigned long, bool)
+000000000001bf30 0000000000000050 T config::set_repeat(int)
+000000000001bf80 0000000000000050 T config::set_shuffle(bool)
+000000000001bfd0 0000000000000078 T config::set_title_volume(unsigned long, float)
+000000000001c050 0000000000000074 T config::get_title_enabled(unsigned long)
+000000000001c0d0 000000000000006c T config::set_title_enabled(unsigned long, bool)
+000000000001c140 0000000000000038 T config::get_title_enabled_default()
+000000000001c180 0000000000000050 T config::set_title_enabled_default(bool)
+000000000001c1d0 0000000000000038 T config::get_whitelist_mode()
+000000000001c210 0000000000000050 T config::set_whitelist_mode(bool)
+000000000001c260 0000000000000064 T config::get_title_whitelist(unsigned long)
+000000000001c2d0 000000000000007c T config::set_title_whitelist(unsigned long, bool)
+000000000001c350 0000000000000020 T pm::Initialize()
+000000000001c370 0000000000000014 T pm::Exit()
+000000000001c390 0000000000000068 T pm::getCurrentPidTid(unsigned long*, unsigned long*)
+000000000001c400 000000000000010c T tuneInitialize
+000000000001c510 00000000000000a8 T tuneExit
+000000000001c5c0 0000000000000110 T tuneGetStatus
+000000000001c6d0 00000000000000fc T tunePlay
+000000000001c7d0 00000000000000fc T tunePause
+000000000001c8d0 00000000000000fc T tuneNext
+000000000001c9d0 00000000000000fc T tunePrev
+000000000001cad0 0000000000000110 T tuneGetVolume
+000000000001cbe0 0000000000000100 T tuneSetVolume
+000000000001cce0 0000000000000110 T tuneGetTitleVolume
+000000000001cdf0 0000000000000100 T tuneSetTitleVolume
+000000000001cef0 0000000000000110 T tuneGetDefaultTitleVolume
+000000000001d000 0000000000000100 T tuneSetDefaultTitleVolume
+000000000001d100 0000000000000110 T tuneGetRepeatMode
+000000000001d210 0000000000000104 T tuneSetRepeatMode
+000000000001d320 0000000000000110 T tuneGetShuffleMode
+000000000001d430 0000000000000104 T tuneSetShuffleMode
+000000000001d540 0000000000000110 T tuneGetPlaylistSize
+000000000001d650 0000000000000130 T tuneGetPlaylistItem
+000000000001d780 0000000000000148 T tuneGetCurrentQueueItem
+000000000001d8d0 0000000000000104 T tuneSelect
+000000000001d9e0 0000000000000104 T tuneSeek
+000000000001daf0 0000000000000144 T tuneEnqueue
+000000000001dc40 0000000000000104 T tuneRemove
+000000000001dd50 00000000000000fc T tuneQuit
+000000000001de50 0000000000000110 T tuneGetApiVersion
+000000000001df60 00000000000000e0 t ini_open
+000000000001e040 0000000000000008 T ini_openread
+000000000001e050 0000000000000008 T ini_openwrite
+000000000001e060 0000000000000008 T ini_openrewrite
+000000000001e070 0000000000000028 T ini_close
+000000000001e0a0 00000000000000a0 T ini_read
+000000000001e140 0000000000000064 T ini_write
+000000000001e1b0 0000000000000010 T ini_tell
+000000000001e1c0 0000000000000010 T ini_seek
+000000000001e1d0 00000000000000bc T ini_rename
+000000000001e290 000000000000008c T ini_remove
+000000000001e320 00000000000001cc t cache_flush
+000000000001e4f0 0000000000000294 t ini_strncpy.isra.0
+000000000001e790 000000000000013c t writekey
+000000000001e8d0 0000000000000084 t writesection
+000000000001e960 0000000000000130 t cleanstring.part.0
+000000000001ea90 00000000000004a4 t getkeystring
+000000000001ef40 00000000000000c4 t ini_gets.part.0
+000000000001f010 00000000000000bc T ini_getbool
+000000000001f0d0 0000000000000870 T ini_puts
+000000000001f940 00000000000000f4 T ini_putl
+000000000001fa40 0000000000000038 T eventCreate
+000000000001fa80 000000000000000c T eventLoadRemote
+000000000001fa90 0000000000000034 T eventWait
+000000000001fad0 0000000000000014 T eventFire
+000000000001faf0 0000000000000024 T eventClear
+000000000001fb20 0000000000000054 T eventClose
+000000000001fb80 00000000000000b0 T __libnx_init_thread
+000000000001fc30 000000000000034c T threadCreate
+000000000001ff80 00000000000000a4 T threadExit
+0000000000020030 00000000000000ac t _EntryWrap
+00000000000200e0 0000000000000008 T threadStart
+00000000000200f0 000000000000002c T threadWaitForExit
+0000000000020120 00000000000000a4 T threadClose
+00000000000201d0 0000000000000010 T threadTlsGet
+00000000000201e0 0000000000000010 T threadTlsSet
+00000000000201f0 00000000000000d8 T threadTlsAlloc
+00000000000202d0 0000000000000044 T threadTlsFree
+0000000000020320 0000000000000064 t _memregionInitWithInfo
+0000000000020390 0000000000000004 W __libnx_virtmem_rng
+00000000000203a0 0000000000000164 t _memregionFindRandom
+0000000000020510 0000000000000140 T virtmemSetup
+0000000000020650 000000000000000c T virtmemLock
+0000000000020660 000000000000000c T virtmemUnlock
+0000000000020670 0000000000000050 T virtmemFindAslr
+00000000000206c0 0000000000000050 T virtmemFindStack
+0000000000020710 000000000000057c T waitObjects
+0000000000020c90 0000000000000118 T waitHandles
+0000000000020db0 00000000000001c4 t _fatalCmd
+0000000000020f80 000000000000000c T fatalThrowWithPolicy
+0000000000020f90 0000000000000014 T fatalThrow
+0000000000020fb0 00000000000000b4 t _fsCleanup
+0000000000021070 00000000000001e0 t _fsFsCmdWithInPath
+0000000000021250 00000000000001f8 t _fsFsCmdWithTwoInPaths
+0000000000021450 000000000000028c t _fsFsOpenCommon
+00000000000216e0 00000000000000f8 t _fsObjectClose
+00000000000217e0 000000000000017c t _fsCmdGetSession.constprop.0
+0000000000021960 00000000000002f8 T fsInitialize
+0000000000021c60 0000000000000048 T fsExit
+0000000000021cb0 0000000000000008 T fsOpenSdCardFileSystem
+0000000000021cc0 00000000000001ec T fsFsCreateFile
+0000000000021eb0 0000000000000008 T fsFsDeleteFile
+0000000000021ec0 0000000000000008 T fsFsCreateDirectory
+0000000000021ed0 0000000000000008 T fsFsRenameFile
+0000000000021ee0 0000000000000008 T fsFsOpenFile
+0000000000021ef0 0000000000000008 T fsFsOpenDirectory
+0000000000021f00 0000000000000004 T fsFsClose
+0000000000021f10 0000000000000214 T fsFileRead
+0000000000022130 00000000000001f8 T fsFileWrite
+0000000000022330 00000000000001d4 T fsFileGetSize
+0000000000022330 00000000000001d4 t fsFileGetSize.localalias
+0000000000022510 0000000000000004 T fsFileClose
+0000000000022520 0000000000000004 T fsDirClose
+0000000000022530 0000000000000204 T fsDirRead
+0000000000022740 000000000000012c t _hidCleanup
+0000000000022870 00000000000000d4 t _hidCmdInAruidNoOut
+0000000000022950 00000000000000e0 t _hidCmdInU32AruidNoOut
+0000000000022a30 0000000000000194 t _hidGetStates
+0000000000022bd0 000000000000026c T hidInitialize
+0000000000022e40 0000000000000048 T hidExit
+0000000000022e90 000000000000000c T hidGetSharedmemAddr
+0000000000022ea0 0000000000000090 T hidGetNpadStyleSet
+0000000000022f30 0000000000000020 T hidInitializeTouchScreen
+0000000000022f50 0000000000000088 T hidGetTouchScreenStates
+0000000000022fe0 0000000000000084 T hidInitializeNpad
+0000000000023070 00000000000000a4 T hidGetNpadStatesFullKey
+0000000000023120 00000000000000a4 T hidGetNpadStatesHandheld
+00000000000231d0 00000000000000a4 T hidGetNpadStatesJoyDual
+0000000000023280 00000000000000a4 T hidGetNpadStatesJoyLeft
+0000000000023330 00000000000000a4 T hidGetNpadStatesJoyRight
+00000000000233e0 0000000000000144 T hidGetNpadStatesGc
+0000000000023530 00000000000000a8 T hidGetNpadStatesSystemExt
+00000000000235e0 0000000000000008 T hidSetSupportedNpadStyleSet
+00000000000235f0 0000000000000100 T hidSetSupportedNpadIdType
+00000000000236f0 0000000000000078 t _hidsysCleanup
+0000000000023770 0000000000000100 t _hidsysCmdInPidAruidOutEvent
+0000000000023870 00000000000000b0 T hidsysInitialize
+0000000000023920 0000000000000048 T hidsysExit
+0000000000023970 000000000000000c T hidsysGetServiceSession
+0000000000023980 0000000000000008 T hidsysAcquireHomeButtonEventHandle
+0000000000023990 0000000000000008 T hidsysAcquireSleepButtonEventHandle
+00000000000239a0 0000000000000090 t _plCleanup
+0000000000023a30 00000000000000d0 t _plCmdInU32OutU32.constprop.0
+0000000000023b00 0000000000000180 t _plRequestLoadWait
+0000000000023c80 00000000000001f0 T plInitialize
+0000000000023e70 0000000000000048 T plExit
+0000000000023ec0 000000000000000c T plGetSharedmemAddr
+0000000000023ed0 00000000000000fc T plGetSharedFontByType
+0000000000023fd0 00000000000000d0 t _pmCmdInU64OutU64
+00000000000240a0 0000000000000078 t _pmdmntCleanup
+0000000000024120 0000000000000078 t _pmshellCleanup
+00000000000241a0 0000000000000078 t _pminfoCleanup
+0000000000024220 00000000000000a0 T pmdmntInitialize
+00000000000242c0 0000000000000048 T pmdmntExit
+0000000000024310 00000000000000a0 T pmshellInitialize
+00000000000243b0 0000000000000048 T pmshellExit
+0000000000024400 00000000000000a0 T pminfoInitialize
+00000000000244a0 0000000000000048 T pminfoExit
+00000000000244f0 0000000000000044 T pmdmntGetProcessId
+0000000000024540 00000000000000e4 T pmdmntGetApplicationProcessId
+0000000000024630 0000000000000010 T pminfoGetProgramId
+0000000000024640 00000000000000e8 T pmshellLaunchProgram
+0000000000024730 0000000000000078 t _setCleanup
+00000000000247b0 0000000000000078 t _setsysCleanup
+0000000000024830 00000000000000c8 t _setCmdNoInOutU32.isra.0
+0000000000024900 00000000000000c8 t _setCmdNoInOut64.isra.0
+00000000000249d0 00000000000000a0 T setInitialize
+0000000000024a70 0000000000000048 T setExit
+0000000000024ac0 00000000000000a0 T setsysInitialize
+0000000000024b60 0000000000000048 T setsysExit
+0000000000024bb0 000000000000001c T setGetLanguageCode
+0000000000024bd0 0000000000000004 T setGetSystemLanguage
+0000000000024be0 0000000000000070 T setGetAvailableLanguageCodeCount
+0000000000024c50 0000000000000174 T setGetAvailableLanguageCodes
+0000000000024dd0 0000000000000108 T setMakeLanguage
+0000000000024ee0 00000000000000cc t _smCmifCmdInPid
+0000000000024fb0 0000000000000078 t _smCleanup
+0000000000025030 0000000000000048 T smAddOverrideHandle
+0000000000025080 0000000000000054 T smGetServiceOverride
+00000000000250e0 00000000000001ac T smInitialize
+0000000000025290 0000000000000048 T smExit
+00000000000252e0 00000000000000d0 T smGetServiceOriginal
+00000000000253b0 0000000000000120 T smGetServiceWrapper
+00000000000254d0 0000000000000230 t _viCleanup
+0000000000025700 0000000000000100 t _viCmdGetSessionNoParams.constprop.0
+0000000000025800 0000000000000368 T viInitialize
+0000000000025b70 0000000000000048 T viExit
+0000000000025bc0 000000000000000c T viGetSession_IHOSBinderDriverRelay
+0000000000025bd0 000000000000000c T viGetSession_IManagerDisplayService
+0000000000025be0 000000000000010c T viOpenDisplay
+0000000000025cf0 00000000000000ec T viCloseDisplay
+0000000000025de0 0000000000000108 T viGetDisplayVsyncEvent
+0000000000025ef0 00000000000000f8 T viGetZOrderCountMax
+0000000000025ff0 0000000000000108 T viCreateManagedLayer
+0000000000026100 00000000000000d0 T viDestroyManagedLayer
+00000000000261d0 00000000000000ec T viSetLayerSize
+00000000000262c0 00000000000000d8 T viSetLayerZ
+00000000000263a0 00000000000000e8 T viSetLayerPosition
+0000000000026490 00000000000000f4 T viCloseLayer
+0000000000026590 0000000000000394 T viCreateLayer
+0000000000026930 00000000000000d8 T viSetLayerScalingMode
+0000000000026a10 0000000000000084 T framebufferClose
+0000000000026aa0 0000000000000290 T framebufferCreate
+0000000000026d30 000000000000007c T framebufferBegin
+0000000000026db0 0000000000000190 T framebufferEnd
+0000000000026f40 0000000000000024 T nwindowIsValid
+0000000000026f70 000000000000007c T nwindowClose
+0000000000026ff0 00000000000000f8 T nwindowCreate
+00000000000270f0 0000000000000038 T nwindowCreateFromLayer
+0000000000027130 0000000000000084 T nwindowSetDimensions
+00000000000271c0 0000000000000180 T nwindowConfigureBuffer
+0000000000027340 00000000000001cc T nwindowDequeueBuffer
+0000000000027510 000000000000012c T nwindowQueueBuffer
+0000000000027640 00000000000000bc T nwindowReleaseBuffers
+0000000000027700 0000000000000014 W __libnx_aligned_alloc
+0000000000027720 0000000000000004 W __libnx_free
+0000000000027730 000000000000001c W diagAbortWithResult
+0000000000027750 0000000000000208 T envSetup
+0000000000027960 0000000000000020 T envGetMainThreadHandle
+0000000000027980 000000000000000c T envIsNso
+0000000000027990 0000000000000014 T envHasHeapOverride
+00000000000279b0 000000000000000c T envGetHeapOverrideAddr
+00000000000279c0 000000000000000c T envGetHeapOverrideSize
+00000000000279d0 0000000000000014 T envHasArgv
+00000000000279f0 000000000000000c T envGetArgv
+0000000000027a00 000000000000000c T envGetExitFuncPtr
+0000000000027a10 000000000000000c T envHasRandomSeed
+0000000000027a20 0000000000000010 T envGetRandomSeed
+0000000000027a30 0000000000000014 T hosversionGet
+0000000000027a50 0000000000000010 T hosversionSet
+0000000000027a60 000000000000009c T padConfigureInput
+0000000000027b00 0000000000000024 T padInitializeWithMask
+0000000000027b30 0000000000000294 T padUpdate
+0000000000027dd0 0000000000000128 T decode_utf8
+0000000000027ef8 T armDCacheFlush
+0000000000027f28 t armDCacheFlush_L0
+0000000000027f44 T svcSetHeapSize
+0000000000027f58 T svcSetMemoryPermission
+0000000000027f60 T svcSetMemoryAttribute
+0000000000027f68 T svcMapMemory
+0000000000027f70 T svcUnmapMemory
+0000000000027f78 T svcQueryMemory
+0000000000027f8c T svcExitProcess
+0000000000027f94 T svcCreateThread
+0000000000027fa8 T svcStartThread
+0000000000027fb0 T svcExitThread
+0000000000027fb8 T svcSleepThread
+0000000000027fc0 T svcSignalEvent
+0000000000027fc8 T svcClearEvent
+0000000000027fd0 T svcMapSharedMemory
+0000000000027fd8 T svcUnmapSharedMemory
+0000000000027fe0 T svcCreateTransferMemory
+0000000000027ff4 T svcCloseHandle
+0000000000027ffc T svcResetSignal
+0000000000028004 T svcWaitSynchronization
+0000000000028018 T svcArbitrateLock
+0000000000028020 T svcArbitrateUnlock
+0000000000028028 T svcWaitProcessWideKeyAtomic
+0000000000028030 T svcSignalProcessWideKey
+0000000000028038 T svcConnectToNamedPort
+000000000002804c T svcSendSyncRequest
+0000000000028054 T svcBreak
+000000000002805c T svcReturnFromException
+0000000000028064 T svcGetInfo
+0000000000028078 T svcCreateEvent
+0000000000028090 T svcUnmapTransferMemory
+0000000000028098 T __aarch64_read_tp
+00000000000280b0 00000000000000c8 T mutexLock
+0000000000028180 0000000000000068 T mutexUnlock
+00000000000281f0 000000000000001c T mutexIsLockedByCurrentThread
+0000000000028210 0000000000000058 T rmutexLock
+0000000000028270 000000000000001c T rmutexUnlock
+0000000000028290 0000000000000410 T randomGet
+00000000000286a0 0000000000000020 T randomGet64
+00000000000286c0 0000000000000014 T shmemLoadRemote
+00000000000286e0 0000000000000070 T shmemMap
+0000000000028750 0000000000000034 T shmemUnmap
+0000000000028790 000000000000004c T shmemClose
+00000000000287e0 00000000000000a8 T tmemCreate
+0000000000028890 0000000000000034 T tmemUnmap
+00000000000288d0 0000000000000030 T tmemCloseHandle
+0000000000028900 000000000000009c T tmemWaitForPermission
+00000000000289a0 0000000000000050 T tmemClose
+00000000000289f0 0000000000000184 T sessionmgrCreate
+0000000000028b80 0000000000000084 T sessionmgrClose
+0000000000028c10 00000000000000a8 T sessionmgrAttachClient
+0000000000028cc0 0000000000000060 T sessionmgrDetachClient
+0000000000028d20 00000000000000d4 t _appletCmdNoInOutU64.isra.0
+0000000000028e00 0000000000000010 T appletGetAppletType
+0000000000028e10 000000000000002c T appletCreateManagedDisplayLayer
+0000000000028e40 000000000000000c T appletGetAppletResourceUserId
+0000000000028e50 00000000000000d0 t _nvCleanup
+0000000000028f20 00000000000000d4 t _nvCmdInitialize.constprop.0
+0000000000029000 0000000000000018 W __nx_nv_create_tmem
+0000000000029020 00000000000003a8 T nvInitialize
+00000000000293d0 0000000000000048 T nvExit
+0000000000029420 00000000000000f4 T nvConvertError
+0000000000029520 0000000000000114 T nvOpen
+0000000000029640 0000000000000310 T nvIoctl
+0000000000029950 00000000000000d4 T nvClose
+0000000000029a30 000000000000010c T nvQueryEvent
+0000000000029b40 0000000000000074 t _nvFenceCleanup
+0000000000029bc0 0000000000000098 T nvFenceInit
+0000000000029c60 0000000000000048 T nvFenceExit
+0000000000029cb0 0000000000000290 T nvFenceWait
+0000000000029f40 000000000000007c T nvMultiFenceWait
+0000000000029fc0 00000000000000ac T nvMapInit
+000000000002a070 0000000000000074 T nvMapExit
+000000000002a0f0 000000000000008c T nvMapClose
+000000000002a180 0000000000000160 T nvMapCreate
+000000000002a2e0 0000000000000024 T nvioctlNvhostCtrl_EventSignal
+000000000002a310 000000000000003c T nvioctlNvhostCtrl_EventWait
+000000000002a350 0000000000000028 T nvioctlNvhostCtrl_EventWaitAsync
+000000000002a380 0000000000000024 T nvioctlNvhostCtrl_EventRegister
+000000000002a3b0 0000000000000024 T nvioctlNvhostCtrl_EventUnregister
+000000000002a3e0 000000000000003c T nvioctlNvmap_Create
+000000000002a420 0000000000000030 T nvioctlNvmap_Alloc
+000000000002a450 0000000000000030 T nvioctlNvmap_Free
+000000000002a480 000000000000003c T nvioctlNvmap_GetId
+000000000002a4c0 000000000000001c T binderCreate
+000000000002a4e0 000000000000035c T binderTransactParcel
+000000000002a840 00000000000000e8 T binderConvertErrorCode
+000000000002a930 0000000000000124 T binderAdjustRefcount
+000000000002aa60 000000000000009c T binderInitSession
+000000000002ab00 000000000000005c T binderClose
+000000000002ab60 0000000000000154 T binderGetNativeHandle
+000000000002acc0 00000000000000c8 T bqRequestBuffer
+000000000002ad90 0000000000000128 T bqDequeueBuffer
+000000000002aec0 00000000000000c8 T bqQueueBuffer
+000000000002af90 0000000000000084 T bqCancelBuffer
+000000000002b020 00000000000000d0 T bqConnect
+000000000002b0f0 0000000000000088 T bqDisconnect
+000000000002b180 0000000000000194 T bqSetPreallocatedBuffer
+000000000002b320 0000000000000030 T parcelCreate
+000000000002b350 0000000000000174 T parcelTransact
+000000000002b4d0 0000000000000080 T parcelWriteData
+000000000002b550 0000000000000088 T parcelReadData
+000000000002b5e0 0000000000000020 T parcelWriteInt32
+000000000002b600 0000000000000020 T parcelWriteUInt32
+000000000002b620 000000000000007c T parcelWriteString16
+000000000002b6a0 0000000000000030 T parcelWriteInterfaceToken
+000000000002b6d0 0000000000000024 T parcelReadInt32
+000000000002b700 0000000000000068 T parcelReadFlattenedObject
+000000000002b770 0000000000000044 T parcelWriteFlattenedObject
+000000000002b7c0 0000000000000314 W argvSetup
+000000000002bae0 00000000000001fc T __nx_dynamic
+000000000002bce0 00000000000000d0 W __libnx_initheap
+000000000002bdb0 000000000000002c W __libnx_init
+000000000002bde0 000000000000001c W __libnx_exit
+000000000002be00 000000000000001c T __syscall_exit
+000000000002be20 0000000000000034 T __syscall_getreent
+000000000002be60 0000000000000004 T __syscall_lock_acquire
+000000000002be70 0000000000000004 T __syscall_lock_release
+000000000002be80 0000000000000004 T __syscall_lock_acquire_recursive
+000000000002be90 0000000000000004 T __syscall_lock_release_recursive
+000000000002bea0 000000000000001c T __syscall_cond_broadcast
+000000000002bec0 000000000000003c T __syscall_cond_wait
+000000000002bf00 0000000000000068 T __syscall_cond_wait_recursive
+000000000002bf70 0000000000000040 T __syscall_tls_create
+000000000002bfb0 0000000000000018 T __syscall_tls_set
+000000000002bfd0 0000000000000004 T __syscall_tls_get
+000000000002bfe0 0000000000000018 T __syscall_tls_delete
+000000000002c000 00000000000000e8 T __syscall_clock_gettime
+000000000002c0f0 0000000000000098 T newlibSetup
+000000000002c190 00000000000000e8 T nxlinkSetup
+000000000002c278 W __libnx_exception_entry
+000000000002c304 t __libnx_exception_entry_start
+000000000002c42c t __libnx_exception_entry_abort
+000000000002c430 t __libnx_exception_entry_end
+000000000002c438 T __libnx_exception_returnentry
+000000000002c450 0000000000000070 T condvarWaitTimeout
+000000000002c4c0 0000000000000068 T __cxxabiv1::__class_type_info::__do_upcast(__cxxabiv1::__class_type_info const*, void**) const
+000000000002c540 0000000000000010 T __cxxabiv1::__class_type_info::__do_find_public_src(long, void const*, __cxxabiv1::__class_type_info const*, void const*) const
+000000000002c560 0000000000000014 T __cxxabiv1::__class_type_info::~__class_type_info()
+000000000002c560 0000000000000014 T __cxxabiv1::__class_type_info::~__class_type_info()
+000000000002c580 0000000000000020 T __cxxabiv1::__class_type_info::~__class_type_info()
+000000000002c5a0 0000000000000090 T __cxxabiv1::__class_type_info::__do_upcast(__cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info::__upcast_result&) const
+000000000002c640 00000000000000a8 T __cxxabiv1::__class_type_info::__do_catch(std::type_info const*, void**, unsigned int) const
+000000000002c700 00000000000000ec T __cxxabiv1::__class_type_info::__do_dyncast(long, __cxxabiv1::__class_type_info::__sub_kind, __cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info::__dyncast_result&) const
+000000000002c800 0000000000000004 T operator delete(void*, unsigned long)
+000000000002c820 00000000000001a0 T __dynamic_cast
+000000000002c9c0 000000000000000c W __gnu_cxx::__concurrence_lock_error::what() const
+000000000002c9e0 000000000000000c W __gnu_cxx::__concurrence_unlock_error::what() const
+000000000002ca00 000000000000000c W __gnu_cxx::__concurrence_broadcast_error::what() const
+000000000002ca20 000000000000000c W __gnu_cxx::__concurrence_wait_error::what() const
+000000000002ca40 000000000000001c t (anonymous namespace)::init()
+000000000002ca60 000000000000001c t (anonymous namespace)::init_static_cond()
+000000000002ca80 0000000000000014 W __gnu_cxx::__concurrence_lock_error::~__concurrence_lock_error()
+000000000002ca80 0000000000000014 W __gnu_cxx::__concurrence_lock_error::~__concurrence_lock_error()
+000000000002caa0 0000000000000038 W __gnu_cxx::__concurrence_lock_error::~__concurrence_lock_error()
+000000000002cae0 0000000000000014 W __gnu_cxx::__concurrence_wait_error::~__concurrence_wait_error()
+000000000002cae0 0000000000000014 W __gnu_cxx::__concurrence_wait_error::~__concurrence_wait_error()
+000000000002cb00 0000000000000038 W __gnu_cxx::__concurrence_wait_error::~__concurrence_wait_error()
+000000000002cb40 0000000000000014 W __gnu_cxx::__concurrence_unlock_error::~__concurrence_unlock_error()
+000000000002cb40 0000000000000014 W __gnu_cxx::__concurrence_unlock_error::~__concurrence_unlock_error()
+000000000002cb60 0000000000000038 W __gnu_cxx::__concurrence_unlock_error::~__concurrence_unlock_error()
+000000000002cba0 0000000000000014 W __gnu_cxx::__concurrence_broadcast_error::~__concurrence_broadcast_error()
+000000000002cba0 0000000000000014 W __gnu_cxx::__concurrence_broadcast_error::~__concurrence_broadcast_error()
+000000000002cbc0 0000000000000038 W __gnu_cxx::__concurrence_broadcast_error::~__concurrence_broadcast_error()
+000000000002cc00 000000000000014c T __cxa_guard_acquire
+000000000002cd60 0000000000000088 T __cxa_guard_release
+000000000002ce00 0000000000000068 T operator new(unsigned long)
+000000000002ce80 0000000000000014 T __cxxabiv1::__si_class_type_info::~__si_class_type_info()
+000000000002ce80 0000000000000014 T __cxxabiv1::__si_class_type_info::~__si_class_type_info()
+000000000002cea0 0000000000000020 T __cxxabiv1::__si_class_type_info::~__si_class_type_info()
+000000000002cec0 0000000000000194 T __cxxabiv1::__si_class_type_info::__do_dyncast(long, __cxxabiv1::__class_type_info::__sub_kind, __cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info::__dyncast_result&) const
+000000000002d060 00000000000000a8 T __cxxabiv1::__si_class_type_info::__do_find_public_src(long, void const*, __cxxabiv1::__class_type_info const*, void const*) const
+000000000002d120 0000000000000064 T __cxxabiv1::__si_class_type_info::__do_upcast(__cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info::__upcast_result&) const
+000000000002d1a0 0000000000000004 T std::type_info::~type_info()
+000000000002d1a0 0000000000000004 T std::type_info::~type_info()
+000000000002d1c0 0000000000000008 T std::type_info::__is_pointer_p() const
+000000000002d1c0 0000000000000008 T std::type_info::__is_function_p() const
+000000000002d1e0 0000000000000014 T std::__detail::_List_node_base::_M_hook(std::__detail::_List_node_base*)
+000000000002d200 0000000000000010 T std::__detail::_List_node_base::_M_unhook()
+000000000002d220 0000000000000050 T std::_Rb_tree_increment(std::_Rb_tree_node_base*)
+000000000002d280 0000000000000064 T std::_Rb_tree_decrement(std::_Rb_tree_node_base*)
+000000000002d300 000000000000029c T std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)
+000000000002d5a0 000000000000002c T std::chrono::_V2::system_clock::now()
+000000000002d5e0 000000000000000c T std::bad_function_call::what() const
+000000000002d600 0000000000000014 T std::bad_function_call::~bad_function_call()
+000000000002d600 0000000000000014 T std::bad_function_call::~bad_function_call()
+000000000002d620 000000000000001c T std::bad_function_call::~bad_function_call()
+000000000002d640 00000000000000bc T std::__detail::_Prime_rehash_policy::_M_next_bkt(unsigned long) const
+000000000002d700 00000000000000a0 T std::__detail::_Prime_rehash_policy::_M_need_rehash(unsigned long, unsigned long, unsigned long) const
+000000000002d7a0 000000000000000c t (anonymous namespace)::generic_error_category::name() const
+000000000002d7c0 0000000000000024 t (anonymous namespace)::generic_error_category::equivalent(int, std::error_condition const&) const
+000000000002d800 0000000000000010 T std::_V2::error_category::default_error_condition(int) const
+000000000002d820 0000000000000024 T std::_V2::error_category::equivalent(std::error_code const&, int) const
+000000000002d860 0000000000000108 t (anonymous namespace)::system_error_category::message[abi:cxx11](int) const
+000000000002d860 0000000000000108 t (anonymous namespace)::generic_error_category::message[abi:cxx11](int) const
+000000000002d980 0000000000000014 T std::system_error::~system_error()
+000000000002d980 0000000000000014 T std::system_error::~system_error()
+000000000002d9a0 000000000000001c T std::system_error::~system_error()
+000000000002d9c0 0000000000000064 T std::_V2::error_category::_M_message[abi:cxx11](int) const
+000000000002da40 0000000000000004 T std::_V2::error_category::~error_category()
+000000000002da40 0000000000000004 T std::_V2::error_category::~error_category()
+000000000002da60 0000000000000010 t (anonymous namespace)::generic_error_category::~generic_error_category()
+000000000002da60 0000000000000010 t (anonymous namespace)::generic_error_category::~generic_error_category()
+000000000002da80 0000000000000030 t (anonymous namespace)::generic_error_category::~generic_error_category()
+000000000002dac0 0000000000000024 W std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose()
+000000000002db00 000000000000005c W std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release_last_use_cold()
+000000000002db60 0000000000000068 W std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release()
+000000000002dbe0 000000000000010c W std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::reserve(unsigned long)
+000000000002dd00 000000000000000c T std::bad_alloc::what() const
+000000000002dd20 0000000000000014 T std::bad_alloc::~bad_alloc()
+000000000002dd20 0000000000000014 T std::bad_alloc::~bad_alloc()
+000000000002dd40 0000000000000020 T std::bad_alloc::~bad_alloc()
+000000000002dd60 000000000000000c T std::bad_array_new_length::what() const
+000000000002dd80 0000000000000014 T std::bad_array_new_length::~bad_array_new_length()
+000000000002dd80 0000000000000014 T std::bad_array_new_length::~bad_array_new_length()
+000000000002dda0 0000000000000020 T std::bad_array_new_length::~bad_array_new_length()
+000000000002ddc0 0000000000000004 T operator delete(void*)
+000000000002dde0 0000000000000110 t (anonymous namespace)::pool::free(void*) [clone .constprop.0]
+000000000002df00 00000000000000cc t (anonymous namespace)::pool::allocate(unsigned long) [clone .constprop.0]
+000000000002dfe0 0000000000000058 T __cxa_allocate_exception
+000000000002e040 0000000000000028 T __cxa_free_exception
+000000000002e080 000000000000009c T __cxa_begin_catch
+000000000002e120 0000000000000004 T std::exception::~exception()
+000000000002e120 0000000000000004 T std::exception::~exception()
+000000000002e140 0000000000000044 t eh_globals_dtor(void*)
+000000000002e1a0 0000000000000080 T __cxa_get_globals
+000000000002e220 000000000000007c t get_adjusted_ptr(std::type_info const*, std::type_info const*, void**)
+000000000002e2a0 0000000000000138 t read_encoded_value_with_base(unsigned char, unsigned long, unsigned char const*, unsigned long*)
+000000000002e3e0 0000000000000064 t base_of_encoded_value(unsigned char, _Unwind_Context*)
+000000000002e460 0000000000000108 t check_exception_spec(lsda_header_info*, std::type_info const*, void*, long)
+000000000002e580 00000000000000f8 t parse_lsda_header(_Unwind_Context*, unsigned char const*, lsda_header_info*)
+000000000002e680 0000000000000630 T __gxx_personality_v0
+000000000002ecc0 0000000000000018 T __cxxabiv1::__terminate(void (*)())
+000000000002ece0 0000000000000010 T std::get_terminate()
+000000000002ed00 0000000000000010 T __cxxabiv1::__unexpected(void (*)())
+000000000002ed20 0000000000000010 T std::get_unexpected()
+000000000002ed40 0000000000000058 t __gxx_exception_cleanup(_Unwind_Reason_Code, _Unwind_Exception*)
+000000000002eda0 0000000000000054 T __cxa_init_primary_exception
+000000000002ee00 000000000000005c T __cxa_throw
+000000000002ee60 0000000000000010 T std::get_new_handler()
+000000000002ee80 0000000000000008 T std::logic_error::what() const
+000000000002ee80 0000000000000008 T std::runtime_error::what() const
+000000000002eea0 0000000000000074 T std::logic_error::~logic_error()
+000000000002eea0 0000000000000074 T std::logic_error::~logic_error()
+000000000002ef20 000000000000001c T std::logic_error::~logic_error()
+000000000002ef40 0000000000000014 T std::length_error::~length_error()
+000000000002ef40 0000000000000014 T std::length_error::~length_error()
+000000000002ef60 000000000000001c T std::length_error::~length_error()
+000000000002ef80 0000000000000014 T std::out_of_range::~out_of_range()
+000000000002ef80 0000000000000014 T std::out_of_range::~out_of_range()
+000000000002efa0 000000000000001c T std::out_of_range::~out_of_range()
+000000000002efc0 0000000000000074 T std::runtime_error::~runtime_error()
+000000000002efc0 0000000000000074 T std::runtime_error::~runtime_error()
+000000000002f040 000000000000001c T std::runtime_error::~runtime_error()
+000000000002f060 00000000000000f8 T std::logic_error::logic_error(char const*)
+000000000002f060 00000000000000f8 T std::logic_error::logic_error(char const*)
+000000000002f160 0000000000000030 T std::length_error::length_error(char const*)
+000000000002f160 0000000000000030 T std::length_error::length_error(char const*)
+000000000002f1a0 0000000000000030 T std::out_of_range::out_of_range(char const*)
+000000000002f1a0 0000000000000030 T std::out_of_range::out_of_range(char const*)
+000000000002f1e0 00000000000000cc T std::__cow_string::__cow_string(char const*, unsigned long)
+000000000002f1e0 00000000000000cc T std::__cow_string::__cow_string(char const*, unsigned long)
+000000000002f2c0 0000000000000080 W std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&)
+000000000002f340 0000000000000004 W std::string::_Rep::_M_destroy(std::allocator<char> const&)
+000000000002f360 0000000000000008 T std::__cow_string::__cow_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000002f360 0000000000000008 T std::__cow_string::__cow_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000002f380 0000000000000044 T std::runtime_error::runtime_error(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000002f380 0000000000000044 T std::runtime_error::runtime_error(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+000000000002f3e0 000000000000018c T sinf
+000000000002f580 00000000000000dc T expf
+000000000002f660 0000000000000034 t with_errnof
+000000000002f6a0 0000000000000018 t xflowf
+000000000002f6c0 0000000000000008 t __math_uflowf
+000000000002f6e0 000000000000000c t __math_may_uflowf
+000000000002f700 0000000000000008 t __math_oflowf
+000000000002f720 0000000000000020 t __math_invalidf
+000000000002f740 0000000000000298 t init_dwarf_reg_size_table
+000000000002f9e0 000000000000018c t uw_install_context_1
+000000000002fb80 000000000000018c t read_encoded_value
+000000000002fd20 00000000000007f8 t execute_stack_op
+0000000000030520 0000000000000334 t uw_update_context_1
+0000000000030860 00000000000000f8 t uw_update_context
+0000000000030960 0000000000000868 t execute_cfa_program_specialized
+00000000000311e0 0000000000000898 t execute_cfa_program_generic
+0000000000031a80 000000000000043c t uw_frame_state_for
+0000000000031ec0 000000000000036c t uw_init_context_1
+0000000000032240 0000000000000140 t _Unwind_RaiseException_Phase2
+0000000000032380 0000000000000154 t _Unwind_ForcedUnwind_Phase2
+00000000000324e0 0000000000000050 t _Unwind_SetGR
+0000000000032540 0000000000000014 t _Unwind_GetIPInfo
+0000000000032560 0000000000000008 t _Unwind_SetIP
+0000000000032580 0000000000000008 t _Unwind_GetLanguageSpecificData
+00000000000325a0 0000000000000008 t _Unwind_GetRegionStart
+00000000000325c0 0000000000000008 t _Unwind_GetDataRelBase
+00000000000325e0 0000000000000008 t _Unwind_GetTextRelBase
+0000000000032600 0000000000000004 t _Unwind_DebugHook
+0000000000032620 00000000000001a4 t _Unwind_RaiseException
+00000000000327e0 000000000000012c t _Unwind_Resume
+0000000000032920 000000000000001c t _Unwind_DeleteException
+0000000000032940 0000000000000018 t fde_unencoded_compare
+0000000000032960 000000000000002c t fde_unencoded_extract
+00000000000329a0 00000000000000ec t frame_downheap
+0000000000032aa0 0000000000000138 t read_encoded_value_with_base
+0000000000032be0 0000000000000220 t fde_radixsort
+0000000000032e00 0000000000000110 t __deregister_frame_info_bases.part.0
+0000000000032f20 0000000000000124 t get_cie_encoding
+0000000000033060 00000000000000d8 t fde_mixed_encoding_extract
+0000000000033140 00000000000001e0 t classify_object_over_fdes.constprop.0
+0000000000033320 00000000000000bc t fde_single_encoding_extract
+00000000000333e0 00000000000000a8 t fde_single_encoding_compare
+00000000000334a0 000000000000010c t fde_mixed_encoding_compare
+00000000000335c0 0000000000000234 t add_fdes.isra.0
+0000000000033800 00000000000002e8 t linear_search_fdes
+0000000000033b00 0000000000000558 t search_object
+0000000000034060 0000000000000060 t __register_frame_info
+00000000000340c0 0000000000000018 t __deregister_frame_info
+00000000000340e0 00000000000001d0 t _Unwind_Find_FDE
+00000000000342b0 0000000000000030 T __arm_za_disable
+00000000000342b0 0000000000000030 t __libgcc_arm_za_disable
+00000000000342e0 0000000000000070 t __sfp_handle_exceptions
+0000000000034350 00000000000000a0 T __arm_tpidr2_save
+0000000000034350 00000000000000a0 t __libgcc_arm_tpidr2_save
+0000000000034400 0000000000000104 T strrchr
+0000000000034520 0000000000000038 T rand
+0000000000034560 0000000000000024 T getenv
+00000000000345a0 0000000000000064 T __assert_func
+0000000000034620 0000000000000130 T _fclose_r
+0000000000034780 0000000000000104 T memset
+00000000000348a0 000000000000002c T __locale_mb_cur_max
+0000000000034900 0000000000000134 T strcmp
+0000000000034a40 0000000000000080 T fiprintf
+0000000000034ac0 00000000000001b4 T strncmp
+0000000000034c80 00000000000000dc T memchr
+0000000000034d60 000000000000009c T sprintf
+0000000000034e00 000000000000001c t stdio_exit_handler
+0000000000034e20 000000000000006c t cleanup_stdio
+0000000000034ea0 0000000000000134 t global_stdio_init.part.0
+0000000000034fe0 000000000000000c T __sfp_lock_acquire
+0000000000035000 000000000000000c T __sfp_lock_release
+0000000000035020 0000000000000054 T __sinit
+0000000000035080 00000000000001a4 t _strtoul_l.isra.0
+0000000000035240 0000000000000040 T strtoul
+0000000000035280 00000000000002dc T __utf8_mbtowc
+0000000000035560 00000000000000a4 T __libc_init_array
+0000000000035620 0000000000000088 T strncat
+00000000000356c0 0000000000000098 T _fwalk_sglue
+0000000000035760 0000000000000014 T __errno
+0000000000035780 00000000000000cc T strchr
+0000000000035860 000000000000002c T aligned_alloc
+00000000000358a0 0000000000000008 T iswspace
+00000000000358c0 0000000000000018 T abort
+0000000000035900 000000000000022c T memcpy
+0000000000035900 T memmove
+0000000000035b40 0000000000000840 T _malloc_r
+0000000000036380 0000000000000074 T strcasecmp
+0000000000036400 00000000000000d0 T _wcrtomb_r
+00000000000364e0 000000000000011c T _malloc_trim_r
+0000000000036600 00000000000002d8 T _free_r
+00000000000368e0 00000000000000f8 T snprintf
+00000000000369d8 0000000000000790 t get_arg
+0000000000037168 0000000000003a84 T _svfprintf_r
+000000000003ac00 000000000000012c T strcpy
+000000000003ad40 0000000000000018 T isspace
+000000000003ad60 0000000000000038 T malloc
+000000000003ada0 000000000000001c T free
+000000000003adc0 00000000000000b0 T __xpg_strerror_r
+000000000003ae80 00000000000001ec T __sflush_r
+000000000003b080 00000000000000bc T _fflush_r
+000000000003b140 0000000000000130 T strlen
+000000000003b280 00000000000000f4 T _findenv_r
+000000000003b380 0000000000000084 T strncasecmp
+000000000003b420 000000000000000c T __malloc_lock
+000000000003b440 000000000000000c T __malloc_unlock
+000000000003b480 00000000000001c8 T memcmp
+000000000003b660 0000000000000014 T atexit
+000000000003b680 00000000000000e0 T __utf8_wctomb
+000000000003b760 00000000000000ac T strncpy
+000000000003b820 0000000000000010 T _wcsrtombs_r
+000000000003b840 000000000000007c T frexp
+000000000003b8c0 000000000000004c T __sread
+000000000003b920 0000000000000070 T __swrite
+000000000003b9a0 0000000000000050 T __sseek
+000000000003ba00 0000000000000008 T __sclose
+000000000003ba20 000000000000009c T _raise_r
+000000000003bac0 000000000000001c T raise
+000000000003bae0 000000000000000c T __env_lock
+000000000003bb00 000000000000000c T __env_unlock
+000000000003bb20 0000000000000418 T _strerror_r
+000000000003bf40 0000000000000048 T iswspace_l
+000000000003bfa0 00000000000000a4 T _Balloc
+000000000003c060 0000000000000020 T _Bfree
+000000000003c080 0000000000000118 T __multadd
+000000000003c1a0 0000000000000094 T __hi0bits
+000000000003c240 0000000000000100 T __lo0bits
+000000000003c340 000000000000004c T __i2b
+000000000003c3a0 0000000000000210 T __multiply
+000000000003c5c0 0000000000000104 T __pow5mult
+000000000003c6e0 0000000000000174 T __lshift
+000000000003c860 0000000000000050 T __mcmp
+000000000003c8c0 00000000000001c4 T __mdiff
+000000000003caa0 000000000000014c T __d2b
+000000000003cc00 0000000000000008 T _user_strerror
+000000000003cc20 00000000000000c8 T __ssprint_r
+000000000003cce8 0000000000000790 t get_arg
+000000000003d478 0000000000002964 T _vfiprintf_r
+000000000003fddc 00000000000000d0 t __sbprintf
+000000000003fec0 000000000000018c T _memalign_r
+0000000000040060 0000000000000188 T _wcsnrtombs_l
+0000000000040200 0000000000000054 T _wcsnrtombs_r
+0000000000040260 0000000000000038 T __sprint_r
+00000000000402a0 0000000000000008 T __localeconv_l
+00000000000402c0 0000000000000028 T _localeconv_r
+0000000000040300 00000000000000bc T _calloc_r
+00000000000403c0 00000000000001a4 t quorem
+0000000000040580 0000000000001320 T _dtoa_r
+00000000000418a0 0000000000000084 T category
+0000000000041940 00000000000000dc T __register_exitproc
+0000000000041a20 00000000000000b0 T __swhatbuf_r
+0000000000041ae0 00000000000000e8 T __smakebuf_r
+0000000000041be0 0000000000000568 T _realloc_r
+0000000000042160 0000000000000188 T __ssputs_r
+0000000000042300 000000000000012c T __swsetup_r
+0000000000042440 00000000000004a4 T __sfvwrite_r
+0000000000042900 0000000000000148 T __call_exitprocs
+0000000000042a60 0000000000000020 T _exit
+0000000000042a80 0000000000000030 T clock_gettime
+0000000000042ac0 000000000000009c T _fstat_r
+0000000000042b60 0000000000000010 T _getpid_r
+0000000000042b80 0000000000000020 T __getreent
+0000000000042ba0 0000000000000060 T __get_handle
+0000000000042c00 00000000000000f4 T _close_r
+0000000000042d00 0000000000000008 t null_write
+0000000000042d20 0000000000000008 T _isatty_r
+0000000000042d40 0000000000000010 T _kill_r
+0000000000042d60 00000000000000a0 T _lseek_r
+0000000000042e00 000000000000006c T pthread_mutex_lock
+0000000000042e80 000000000000006c T pthread_mutex_unlock
+0000000000042f00 0000000000000014 T pthread_cond_broadcast
+0000000000042f20 0000000000000054 T pthread_cond_wait
+0000000000042f80 00000000000000d4 T pthread_once
+0000000000043060 0000000000000024 T pthread_key_create
+00000000000430a0 0000000000000018 T pthread_setspecific
+00000000000430c0 0000000000000018 T pthread_getspecific
+00000000000430e0 0000000000000018 T pthread_key_delete
+0000000000043100 00000000000000b0 T _read_r
+00000000000431c0 0000000000000078 W _sbrk_r
+0000000000043240 0000000000000014 T __libc_lock_acquire
+0000000000043260 0000000000000014 T __libc_lock_release
+0000000000043280 0000000000000014 T __libc_lock_acquire_recursive
+00000000000432a0 0000000000000014 T __libc_lock_release_recursive
+00000000000432c0 0000000000000018 T __libc_cond_broadcast
+00000000000432e0 0000000000000018 T __libc_cond_wait
+0000000000043300 0000000000000018 T __libc_cond_wait_recursive
+0000000000043320 00000000000000b0 T _write_r
+00000000000433e0 0000000000000380 t __trunctfdf2
+0000000000043760 T _init
+0000000000043798 T _fini
+0000000000046600 0000000000000013 V typeinfo name for tsl::elm::Element
+0000000000046618 000000000000000b V typeinfo name for StatusBar
+0000000000046628 000000000000002a V typeinfo name for tsl::elm::Element::m_clickListener::{lambda(unsigned long)#1}
+0000000000046670 000000000000023c r symbol::pause::data
+00000000000468b0 000000000000023c r symbol::play::data
+0000000000046af8 0000000000000002 r tsl::style::color::ColorHighlight
+0000000000046b00 0000000000000002 r tsl::style::color::ColorHeaderBar
+0000000000046b10 0000000000000366 r symbol::repeat::one::data
+0000000000046e80 0000000000000366 r symbol::repeat::all::data
+00000000000471f0 0000000000000366 r symbol::shuffle::data
+0000000000047560 000000000000028a r symbol::backward::data
+00000000000477f0 00000000000001a0 r symbol::prev::data
+0000000000047990 00000000000001a0 r symbol::next::data
+0000000000047b30 000000000000028a r symbol::forward::data
+0000000000047dc0 0000000000000010 V typeinfo name for tsl::elm::List
+0000000000047dd0 0000000000000014 V typeinfo name for tsl::elm::ListItem
+0000000000047de8 000000000000001b V typeinfo name for tsl::elm::CategoryHeader
+0000000000047e08 000000000000000b V typeinfo name for tsl::Gui
+0000000000047e18 0000000000000016 V typeinfo name for SysTuneOverlayFrame
+0000000000047e30 000000000000000d V typeinfo name for BrowserGui
+0000000000047e70 0000000000000020 r typeinfo name for BrowserGui::scanCwd()::{lambda(unsigned long)#1}
+0000000000047e90 0000000000000021 r typeinfo name for BrowserGui::scanCwd()::{lambda(unsigned long)#2}
+0000000000047eb8 0000000000000019 V typeinfo name for tsl::elm::CustomDrawer
+0000000000047ed8 000000000000000a V typeinfo name for ErrorGui
+0000000000047ef0 0000000000000035 r typeinfo name for ErrorGui::createUI()::{lambda(tsl::gfx::Renderer*, unsigned short, unsigned short, unsigned short, unsigned short)#1}
+0000000000047f28 000000000000001b V typeinfo name for tsl::elm::ToggleListItem
+0000000000047f48 0000000000000014 V typeinfo name for tsl::elm::TrackBar
+0000000000047f60 0000000000000019 V typeinfo name for tsl::elm::StepTrackBar
+0000000000047f80 0000000000000009 V typeinfo name for MainGui
+0000000000047f90 000000000000000b V typeinfo name for ElmVolume
+0000000000047fa0 0000000000000039 V typeinfo name for tsl::elm::ToggleListItem::m_stateChangedListener::{lambda(bool)#1}
+0000000000047ff0 000000000000001d r typeinfo name for MainGui::createUI()::{lambda(unsigned long)#1}
+0000000000048010 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(unsigned long)#2}
+0000000000048030 000000000000001d r typeinfo name for MainGui::createUI()::{lambda(bool)#1}
+0000000000048050 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(bool)#2}
+0000000000048070 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(bool)#3}
+0000000000048090 000000000000001d r typeinfo name for MainGui::createUI()::{lambda(unsigned char)#1}
+00000000000480b0 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(unsigned char)#2}
+00000000000480d0 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(unsigned char)#3}
+00000000000480f0 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(bool)#4}
+0000000000048110 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(bool)#5}
+0000000000048130 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(unsigned long)#3}
+0000000000048150 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(unsigned long)#4}
+0000000000048170 000000000000001e r typeinfo name for MainGui::createUI()::{lambda(unsigned long)#5}
+0000000000048190 000000000000002e r typeinfo name for MainGui::createUI()::{lambda(unsigned long)#3}::operator()(unsigned long) const::{lambda(char const*)#2}
+00000000000481c0 000000000000000e V typeinfo name for PlaylistGui
+00000000000481e0 0000000000000022 r typeinfo name for (anonymous namespace)::ButtonListItem
+0000000000048208 000000000000001b r typeinfo name for PlaylistGui::PlaylistGui()::{lambda(unsigned long)#1}
+0000000000048268 000000000000000f V typeinfo name for tsl::Overlay
+0000000000048278 0000000000000011 V typeinfo name for SysTuneOverlay
+00000000000482c0 000000000000001d r (anonymous namespace)::CONFIG_PATH
+00000000000482e0 0000000000000020 r (anonymous namespace)::BLACKLIST_PATH
+0000000000048300 0000000000000020 r (anonymous namespace)::WHITELIST_PATH
+0000000000048320 000000000000000c r __func__.0
+0000000000048330 000000000000000c r __func__.6
+0000000000048340 000000000000000e r __func__.1
+0000000000048350 000000000000000d r __func__.11
+0000000000048360 0000000000000009 r __func__.5
+0000000000048370 0000000000000038 r g_nvColorFmtTable
+00000000000483a8 0000000000000024 r s_emptyFence.0
+0000000000048440 0000000000000023 r g_bq_InterfaceDescriptor
+0000000000048468 0000000000000022 V typeinfo name for __cxxabiv1::__class_type_info
+0000000000048490 0000000000000027 V typeinfo name for __gnu_cxx::__concurrence_lock_error
+00000000000484b8 0000000000000029 V typeinfo name for __gnu_cxx::__concurrence_unlock_error
+00000000000484e8 000000000000002c V typeinfo name for __gnu_cxx::__concurrence_broadcast_error
+0000000000048518 0000000000000027 V typeinfo name for __gnu_cxx::__concurrence_wait_error
+0000000000048540 0000000000000025 V typeinfo name for __cxxabiv1::__si_class_type_info
+0000000000048568 000000000000000d V typeinfo name for std::type_info
+0000000000048578 0000000000000016 V typeinfo name for std::bad_function_call
+0000000000048590 000000000000000e r std::__detail::_Prime_rehash_policy::_M_next_bkt(unsigned long) const::__fast_bkt
+00000000000485a0 0000000000000988 R std::__detail::__prime_list
+0000000000048f28 0000000000000019 V typeinfo name for std::_V2::error_category
+0000000000048f48 0000000000000011 V typeinfo name for std::system_error
+0000000000048f60 000000000000002a r typeinfo name for (anonymous namespace)::generic_error_category
+0000000000048f90 000000000000000d V typeinfo name for std::bad_alloc
+0000000000048fa0 0000000000000019 V typeinfo name for std::bad_array_new_length
+0000000000048fc0 000000000000000d V typeinfo name for std::exception
+0000000000048fd0 0000000000000020 V typeinfo name for __cxxabiv1::__forced_unwind
+0000000000048ff0 0000000000000024 V typeinfo name for __cxxabiv1::__foreign_exception
+0000000000049018 0000000000000010 V typeinfo name for std::logic_error
+0000000000049028 0000000000000011 V typeinfo name for std::length_error
+0000000000049040 0000000000000011 V typeinfo name for std::out_of_range
+0000000000049058 0000000000000012 V typeinfo name for std::runtime_error
+0000000000049070 0000000000000060 R __inv_pio4
+00000000000490d0 00000000000000e0 R __sincosf_table
+00000000000491b0 0000000000000148 R __exp2f_data
+0000000000049410 0000000000000008 r terminator.0
+0000000000049418 0000000000000001 R __aarch64_have_sme
+0000000000049550 0000000000000010 r zeroes.0
+0000000000049560 0000000000000010 r blanks.1
+0000000000049570 0000000000000101 R _ctype_
+0000000000049678 000000000000006c R __action_table
+00000000000496e8 000000000000006c R __state_table
+0000000000049758 0000000000000100 R __chclass
+0000000000049978 000000000000000c r p05.0
+0000000000049988 0000000000000028 R __mprec_bigtens
+00000000000499b0 00000000000000c8 R __mprec_tens
+0000000000049b70 0000000000000010 r zeroes.0
+0000000000049b80 0000000000000010 r blanks.1
+0000000000049b90 00000000000035dc r categories
+000000000004d170 r __tls_align
+000000000004d250 r __EH_FRAME_BEGIN__
+000000000004d250 r __eh_frame_hdr_end
+000000000004d250 r __eh_frame_hdr_start
+0000000000056a6c r __FRAME_END__
+0000000000057000 d __frame_dummy_init_array_entry
+0000000000057000 d __init_array_start
+0000000000057000 d __preinit_array_end
+0000000000057000 d __preinit_array_start
+0000000000057000 d __relro_start
+0000000000057038 d __fini_array_start
+0000000000057038 d __init_array_end
+0000000000057040 d __do_global_dtors_aux_fini_array_entry
+0000000000057050 d __fini_array_end
+0000000000057050 0000000000000078 V vtable for StatusBar
+00000000000570c8 00000000000000a8 V vtable for tsl::elm::List
+0000000000057170 0000000000000078 V vtable for tsl::elm::ListItem
+00000000000571e8 0000000000000078 V vtable for tsl::elm::CategoryHeader
+0000000000057260 0000000000000078 V vtable for SysTuneOverlayFrame
+00000000000572d8 0000000000000038 V vtable for BrowserGui
+0000000000057310 0000000000000020 d (anonymous namespace)::SupportedTypes
+0000000000057330 0000000000000078 V vtable for tsl::elm::CustomDrawer
+00000000000573a8 0000000000000038 V vtable for ErrorGui
+00000000000573e0 0000000000000088 V vtable for tsl::elm::ToggleListItem
+0000000000057468 0000000000000088 V vtable for tsl::elm::TrackBar
+00000000000574f0 0000000000000088 V vtable for ElmVolume
+0000000000057578 0000000000000038 V vtable for MainGui
+00000000000575b0 0000000000000038 V vtable for PlaylistGui
+00000000000575e8 0000000000000078 d vtable for (anonymous namespace)::ButtonListItem
+0000000000057660 0000000000000048 V vtable for SysTuneOverlay
+00000000000576a8 00000000000001b0 d tsl::impl::KEYS_INFO
+0000000000057858 0000000000000100 D dotab_stdnull
+0000000000057958 0000000000000010 V typeinfo for tsl::elm::Element
+0000000000057968 0000000000000018 V typeinfo for StatusBar
+0000000000057980 0000000000000010 V typeinfo for tsl::elm::Element::m_clickListener::{lambda(unsigned long)#1}
+0000000000057990 0000000000000078 V vtable for tsl::elm::Element
+0000000000057a08 0000000000000018 V typeinfo for tsl::elm::List
+0000000000057a20 0000000000000018 V typeinfo for tsl::elm::ListItem
+0000000000057a38 0000000000000018 V typeinfo for tsl::elm::CategoryHeader
+0000000000057a50 0000000000000010 V typeinfo for tsl::Gui
+0000000000057a60 0000000000000018 V typeinfo for SysTuneOverlayFrame
+0000000000057a78 0000000000000018 V typeinfo for BrowserGui
+0000000000057a90 0000000000000038 V vtable for tsl::Gui
+0000000000057ac8 0000000000000010 d typeinfo for BrowserGui::scanCwd()::{lambda(unsigned long)#2}
+0000000000057ad8 0000000000000010 d typeinfo for BrowserGui::scanCwd()::{lambda(unsigned long)#1}
+0000000000057ae8 0000000000000018 V typeinfo for tsl::elm::CustomDrawer
+0000000000057b00 0000000000000018 V typeinfo for ErrorGui
+0000000000057b18 0000000000000010 d typeinfo for ErrorGui::createUI()::{lambda(tsl::gfx::Renderer*, unsigned short, unsigned short, unsigned short, unsigned short)#1}
+0000000000057b28 0000000000000018 V typeinfo for tsl::elm::ToggleListItem
+0000000000057b40 0000000000000018 V typeinfo for tsl::elm::TrackBar
+0000000000057b58 0000000000000018 V typeinfo for tsl::elm::StepTrackBar
+0000000000057b70 0000000000000018 V typeinfo for MainGui
+0000000000057b88 0000000000000018 V typeinfo for ElmVolume
+0000000000057ba0 0000000000000010 V typeinfo for tsl::elm::ToggleListItem::m_stateChangedListener::{lambda(bool)#1}
+0000000000057bb0 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(unsigned long)#1}
+0000000000057bc0 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(unsigned long)#2}
+0000000000057bd0 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(bool)#1}
+0000000000057be0 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(unsigned char)#1}
+0000000000057bf0 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(unsigned char)#3}
+0000000000057c00 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(bool)#4}
+0000000000057c10 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(unsigned long)#4}
+0000000000057c20 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(unsigned long)#3}::operator()(unsigned long) const::{lambda(char const*)#2}
+0000000000057c30 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(unsigned long)#5}
+0000000000057c40 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(unsigned long)#3}
+0000000000057c50 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(bool)#5}
+0000000000057c60 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(unsigned char)#2}
+0000000000057c70 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(bool)#3}
+0000000000057c80 0000000000000010 d typeinfo for MainGui::createUI()::{lambda(bool)#2}
+0000000000057c90 0000000000000018 V typeinfo for PlaylistGui
+0000000000057ca8 0000000000000010 d typeinfo for PlaylistGui::PlaylistGui()::{lambda(unsigned long)#1}
+0000000000057cb8 0000000000000018 d typeinfo for (anonymous namespace)::ButtonListItem
+0000000000057cd0 0000000000000010 V typeinfo for tsl::Overlay
+0000000000057ce0 0000000000000018 V typeinfo for SysTuneOverlay
+0000000000057cf8 0000000000000048 V vtable for tsl::Overlay
+0000000000057d40 0000000000000018 V typeinfo for __cxxabiv1::__class_type_info
+0000000000057d58 0000000000000058 V vtable for __cxxabiv1::__class_type_info
+0000000000057db0 0000000000000018 V typeinfo for __gnu_cxx::__concurrence_lock_error
+0000000000057dc8 0000000000000018 V typeinfo for __gnu_cxx::__concurrence_unlock_error
+0000000000057de0 0000000000000018 V typeinfo for __gnu_cxx::__concurrence_broadcast_error
+0000000000057df8 0000000000000018 V typeinfo for __gnu_cxx::__concurrence_wait_error
+0000000000057e10 0000000000000028 V vtable for __gnu_cxx::__concurrence_lock_error
+0000000000057e38 0000000000000028 V vtable for __gnu_cxx::__concurrence_unlock_error
+0000000000057e60 0000000000000028 V vtable for __gnu_cxx::__concurrence_broadcast_error
+0000000000057e88 0000000000000028 V vtable for __gnu_cxx::__concurrence_wait_error
+0000000000057eb0 0000000000000018 V typeinfo for __cxxabiv1::__si_class_type_info
+0000000000057ec8 0000000000000058 V vtable for __cxxabiv1::__si_class_type_info
+0000000000057f20 0000000000000010 V typeinfo for std::type_info
+0000000000057f30 0000000000000018 V typeinfo for std::bad_function_call
+0000000000057f48 0000000000000028 V vtable for std::bad_function_call
+0000000000057f70 0000000000000010 V typeinfo for std::_V2::error_category
+0000000000057f80 0000000000000018 V typeinfo for std::system_error
+0000000000057f98 0000000000000018 d typeinfo for (anonymous namespace)::generic_error_category
+0000000000057fb0 0000000000000050 d vtable for (anonymous namespace)::generic_error_category
+0000000000058000 0000000000000028 V vtable for std::system_error
+0000000000058028 0000000000000018 V typeinfo for std::bad_alloc
+0000000000058040 0000000000000028 V vtable for std::bad_alloc
+0000000000058068 0000000000000018 V typeinfo for std::bad_array_new_length
+0000000000058080 0000000000000028 V vtable for std::bad_array_new_length
+00000000000580a8 0000000000000010 V typeinfo for std::exception
+00000000000580b8 0000000000000010 V typeinfo for __cxxabiv1::__forced_unwind
+00000000000580c8 0000000000000010 V typeinfo for __cxxabiv1::__foreign_exception
+00000000000580d8 0000000000000018 V typeinfo for std::logic_error
+00000000000580f0 0000000000000018 V typeinfo for std::length_error
+0000000000058108 0000000000000018 V typeinfo for std::out_of_range
+0000000000058120 0000000000000018 V typeinfo for std::runtime_error
+0000000000058138 0000000000000028 V vtable for std::logic_error
+0000000000058160 0000000000000028 V vtable for std::length_error
+0000000000058188 0000000000000028 V vtable for std::out_of_range
+00000000000581b0 0000000000000028 V vtable for std::runtime_error
+00000000000581d8 a _DYNAMIC
+0000000000058328 d __got_start__
+0000000000058328 a _GLOBAL_OFFSET_TABLE_
+0000000000058838 d __got_end__
+0000000000059000 d __data_start
+0000000000059000 0000000000000004 V tsl::gfx::Renderer::s_opacity
+0000000000059008 0000000000000008 D tsl::cfg::launchCombo
+0000000000059010 0000000000000004 D __nx_nv_transfermem_size
+0000000000059014 0000000000000004 D __nx_fs_num_sessions
+0000000000059018 0000000000000004 D __nx_applet_type
+000000000005901c 0000000000000001 V tsl::Overlay::handleInput(unsigned long, unsigned long, bool, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)::shouldShake
+0000000000059020 0000000000000004 d g_viServiceType
+0000000000059024 0000000000000004 V __nx_nv_service_type
+0000000000059028 0000000000000004 d g_ctrl_fd
+000000000005902c 0000000000000004 d g_nvmap_fd
+0000000000059030 0000000000000008 V __nx_exception_stack_size
+0000000000059038 0000000000000008 V DW.ref.__gxx_personality_v0
+0000000000059040 0000000000000008 d (anonymous namespace)::generic_category_instance
+0000000000059048 0000000000000008 D __cxxabiv1::__unexpected_handler
+0000000000059050 0000000000000008 D __cxxabiv1::__terminate_handler
+0000000000059058 00000000000001a8 D __global_locale
+0000000000059200 0000000000000018 D __sglue
+0000000000059218 0000000000000008 D __malloc_sbrk_base
+0000000000059220 0000000000000008 D __malloc_trim_threshold
+0000000000059228 0000000000000810 D __malloc_av_
+0000000000059a38 0000000000000008 D _impure_ptr
+0000000000059a40 0000000000000180 D _impure_data
+0000000000059bc0 0000000000000008 D environ
+0000000000059be0 0000000000002000 d handles
+000000000005bbe0 0000000000000010 d __stderr_handle
+000000000005bbf0 0000000000000010 d __stdout_handle
+000000000005bc00 0000000000000010 d __stdin_handle
+000000000005bc10 0000000000000118 D devoptab_list
+000000000005bd28 d __tdata_lma
+000000000005bd28 d __tdata_lma_end
+000000000005bd40 b __bss_start__
+000000000005bd40 b completed.1
+000000000005bd48 b object.0
+000000000005bd80 0000000000000301 b (anonymous namespace)::path_buffer
+000000000005c090 0000000000000020 b (anonymous namespace)::current_buffer
+000000000005c0b0 0000000000000020 b (anonymous namespace)::total_buffer
+000000000005c0d0 0000000000000004 V tsl::elm::Element::drawHighlight(tsl::gfx::Renderer*)::counter
+000000000005c0d4 0000000000000004 V tsl::elm::Element::s_inputMode
+000000000005c0d8 0000000000000008 V guard variable for tsl::gfx::Renderer::drawString(char const*, bool, int, int, float, tsl::Color, long)::s_glyphCache
+000000000005c0e0 0000000000000038 V tsl::gfx::Renderer::drawString(char const*, bool, int, int, float, tsl::Color, long)::s_glyphCache
+000000000005c120 0000000000000301 b (anonymous namespace)::path_buffer
+000000000005c428 000000000000000a b (anonymous namespace)::result_buffer
+000000000005c432 0000000000000001 b MainGui::update()::tick
+000000000005c438 0000000000000008 V tsl::Overlay::s_overlayInstance
+000000000005c440 0000000000000004 V tsl::elm::StepTrackBar::handleInput(unsigned long, unsigned long, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)::tick
+000000000005c444 0000000000000004 V tsl::elm::TrackBar::drawHighlight(tsl::gfx::Renderer*)::counter
+000000000005c448 0000000000000002 B tsl::cfg::LayerHeight
+000000000005c44a 0000000000000002 B tsl::cfg::LayerWidth
+000000000005c44c 0000000000000002 B tsl::cfg::LayerPosY
+000000000005c44e 0000000000000002 B tsl::cfg::LayerPosX
+000000000005c450 0000000000000002 B tsl::cfg::FramebufferHeight
+000000000005c452 0000000000000002 B tsl::cfg::FramebufferWidth
+000000000005c454 0000000000000004 B __nx_vi_stray_layer_flags
+000000000005c458 0000000000000004 V tsl::Overlay::handleInput(unsigned long, unsigned long, bool, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)::repeatTick
+000000000005c45c 0000000000000004 V tsl::Overlay::handleInput(unsigned long, unsigned long, bool, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)::touchEvent
+000000000005c460 0000000000000001 V tsl::Overlay::handleInput(unsigned long, unsigned long, bool, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)::oldTouchDetected
+000000000005c468 0000000000000028 V tsl::Overlay::handleInput(unsigned long, unsigned long, bool, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)::oldTouchPos
+000000000005c490 0000000000000028 V tsl::Overlay::handleInput(unsigned long, unsigned long, bool, HidTouchState const&, HidAnalogStickState, HidAnalogStickState)::initialTouchPos
+000000000005c4b8 0000000000000018 V tsl::gfx::Renderer::initFonts()::extFontData
+000000000005c4d0 0000000000000018 V tsl::gfx::Renderer::initFonts()::localFontData
+000000000005c4e8 0000000000000018 V tsl::gfx::Renderer::initFonts()::stdFontData
+000000000005c500 0000000000000008 V guard variable for tsl::gfx::Renderer::get()::renderer
+000000000005c508 0000000000000388 V tsl::gfx::Renderer::get()::renderer
+000000000005c890 0000000000000010 b sdmc::(anonymous namespace)::sdmc
+000000000005c8a0 0000000000000301 b sdmc::(anonymous namespace)::path_buffer
+000000000005cbb0 0000000000000015 b (anonymous namespace)::get_tid_str(unsigned long)::buf
+000000000005cbc8 0000000000000008 b (anonymous namespace)::CURRENT_TITLE_ID
+000000000005cbd0 0000000000000010 B g_tune
+000000000005cbe0 00000000000000d8 b g_tlsDestructors
+000000000005ccb8 0000000000000008 b g_tlsUsageMask
+000000000005ccc0 0000000000000038 b g_mainThread
+000000000005ccf8 0000000000000008 b g_threadList
+000000000005cd00 0000000000000004 b g_threadMutex
+000000000005cd04 0000000000000001 b g_IsLegacyKernel
+000000000005cd08 0000000000000008 b g_Reservations
+000000000005cd10 0000000000000010 b g_StackRegion
+000000000005cd20 0000000000000010 b g_AslrRegion
+000000000005cd30 0000000000000010 b g_HeapRegion
+000000000005cd40 0000000000000010 b g_AliasRegion
+000000000005cd50 0000000000000004 b g_VirtmemMutex
+000000000005cd58 0000000000000008 b g_fsGuard
+000000000005cd60 0000000000000054 b g_fsSessionMgr
+000000000005cdb8 0000000000000010 b g_fsSrv
+000000000005cdc8 0000000000000008 b g_hidGuard
+000000000005cdd0 0000000000000008 b g_sevenSixAxisSensorBuffer
+000000000005cdd8 0000000000000020 b g_hidSharedmem
+000000000005cdf8 0000000000000010 b g_hidIActiveVibrationDeviceList
+000000000005ce08 0000000000000010 b g_hidIAppletResource
+000000000005ce18 0000000000000010 b g_hidSrv
+000000000005ce28 0000000000000008 b g_hidsysGuard
+000000000005ce30 0000000000000008 b g_hidsysAppletResourceUserId
+000000000005ce38 0000000000000010 b g_hidsysSrv
+000000000005ce48 0000000000000008 b g_plGuard
+000000000005ce50 0000000000000020 b g_plSharedmem
+000000000005ce70 0000000000000010 b g_plSrv
+000000000005ce80 0000000000000004 b g_plServiceType
+000000000005ce88 0000000000000008 b g_pminfoGuard
+000000000005ce90 0000000000000010 b g_pminfoSrv
+000000000005cea0 0000000000000008 b g_pmshellGuard
+000000000005cea8 0000000000000010 b g_pmshellSrv
+000000000005ceb8 0000000000000008 b g_pmdmntGuard
+000000000005cec0 0000000000000010 b g_pmdmntSrv
+000000000005ced0 0000000000000008 b g_setsysGuard
+000000000005ced8 0000000000000008 b g_setGuard
+000000000005cee0 0000000000000004 b g_setLanguageCodesTotal
+000000000005cf00 0000000000000200 b g_setLanguageCodes
+000000000005d100 0000000000000001 b g_setLanguageCodesInitialized
+000000000005d108 0000000000000010 b g_setsysSrv
+000000000005d118 0000000000000010 b g_setSrv
+000000000005d128 0000000000000008 b g_smGuard
+000000000005d130 0000000000000008 b g_smOverridesNum
+000000000005d138 0000000000000180 b g_smOverrides
+000000000005d2b8 0000000000000010 b g_smSrv
+000000000005d2c8 0000000000000008 b g_viGuard
+000000000005d2d0 0000000000000010 b g_viIHOSBinderDriverIndirect
+000000000005d2e0 0000000000000010 b g_viIManagerDisplayService
+000000000005d2f0 0000000000000010 b g_viISystemDisplayService
+000000000005d300 0000000000000010 b g_viIHOSBinderDriverRelay
+000000000005d310 0000000000000010 b g_viIApplicationDisplayService
+000000000005d320 0000000000000010 b g_viRootService
+000000000005d330 0000000000000008 V __nx_vi_layer_id
+000000000005d338 0000000000000008 b g_userIdStorage
+000000000005d340 0000000000000010 b g_randomSeed
+000000000005d350 0000000000000001 b g_hasRandomSeed
+000000000005d354 0000000000000004 b g_lastLoadResult
+000000000005d358 0000000000000008 b g_nextLoadArgv
+000000000005d360 0000000000000008 b g_nextLoadPath
+000000000005d368 0000000000000004 b g_processHandle
+000000000005d370 0000000000000018 b g_syscallHints
+000000000005d388 0000000000000008 b g_overrideArgv
+000000000005d390 0000000000000008 b g_overrideHeapSize
+000000000005d398 0000000000000008 b g_overrideHeapAddr
+000000000005d3a0 0000000000000008 b g_loaderRetAddr
+000000000005d3a8 0000000000000004 b g_mainThreadHandle
+000000000005d3b0 0000000000000008 b g_loaderInfoSize
+000000000005d3b8 0000000000000008 b g_loaderInfo
+000000000005d3c0 0000000000000001 b g_isNso
+000000000005d3c4 0000000000000004 b g_hosVersion
+000000000005d3c8 B __stack_top
+000000000005d3d0 0000000000000004 b g_randMutex
+000000000005d3d4 0000000000000001 b g_randInit
+000000000005d3e0 0000000000000040 b g_chacha
+000000000005d420 0000000000000008 b g_appletResourceUserId
+000000000005d428 0000000000000010 b g_appletISelfController
+000000000005d438 0000000000000008 b g_nvGuard
+000000000005d440 0000000000000028 b g_nvTransfermem
+000000000005d468 0000000000000010 b g_nvSrvClone
+000000000005d478 0000000000000010 b g_nvSrv
+000000000005d488 0000000000000008 b g_nvFenceGuard
+000000000005d490 0000000000000300 b g_NvEvents
+000000000005d790 0000000000000008 b g_NvEventUsedMask
+000000000005d798 0000000000000008 b g_nvMapGuard
+000000000005d7a0 0000000000000008 b g_argv_empty
+000000000005d7a8 0000000000000008 B __system_argv
+000000000005d7b0 0000000000000004 B __system_argc
+000000000005d7c0 0000000000000340 B __nx_exceptiondump
+000000000005db00 0000000000000004 V __nx_exception_ignoredebug
+000000000005db10 0000000000000400 V __nx_exception_stack
+000000000005df10 0000000000000008 V __nx_heap_size
+000000000005df18 0000000000000008 b __bootticks
+000000000005df20 0000000000000008 b __boottime
+000000000005df28 0000000000000004 B __nxlink_host
+000000000005df30 0000000000000004 b (anonymous namespace)::get_static_cond()::once
+000000000005df40 0000000000000010 b (anonymous namespace)::fake_cond
+000000000005df50 0000000000000008 b (anonymous namespace)::static_cond
+000000000005df58 0000000000000004 b (anonymous namespace)::get_static_mutex()::once
+000000000005df60 0000000000000010 b (anonymous namespace)::fake_mutex
+000000000005df70 0000000000000008 b (anonymous namespace)::static_mutex
+000000000005df78 0000000000000010 B std::chrono::tzdb_list::_Node::_S_head_owner
+000000000005df90 0000000000000028 b (anonymous namespace)::emergency_pool
+000000000005dfb8 0000000000000004 b init
+000000000005dfbc 0000000000000001 B __eh_globals_init::_S_init
+000000000005dfc0 0000000000000010 b (anonymous namespace)::eh_globals
+000000000005dfd0 0000000000000008 b (anonymous namespace)::__new_handler
+000000000005dfd8 0000000000000020 V std::string::_Rep::_S_empty_rep_storage
+000000000005dff8 0000000000000008 V guard variable for std::__cxx11::collate<wchar_t>::id
+000000000005e000 0000000000000008 V guard variable for std::__cxx11::messages<wchar_t>::id
+000000000005e008 0000000000000008 V guard variable for std::__cxx11::time_get<wchar_t, std::istreambuf_iterator<wchar_t, std::char_traits<wchar_t> > >::id
+000000000005e010 0000000000000008 V guard variable for std::__cxx11::numpunct<wchar_t>::id
+000000000005e018 0000000000000008 V guard variable for std::__cxx11::moneypunct<wchar_t, true>::id
+000000000005e020 0000000000000008 V guard variable for std::__cxx11::moneypunct<wchar_t, false>::id
+000000000005e028 0000000000000008 V guard variable for std::__cxx11::money_put<wchar_t, std::ostreambuf_iterator<wchar_t, std::char_traits<wchar_t> > >::id
+000000000005e030 0000000000000008 V guard variable for std::__cxx11::money_get<wchar_t, std::istreambuf_iterator<wchar_t, std::char_traits<wchar_t> > >::id
+000000000005e038 0000000000000008 V guard variable for std::collate<char>::id
+000000000005e040 0000000000000008 V guard variable for std::messages<char>::id
+000000000005e048 0000000000000008 V guard variable for std::time_get<char, std::istreambuf_iterator<char, std::char_traits<char> > >::id
+000000000005e050 0000000000000008 V guard variable for std::time_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::id
+000000000005e058 0000000000000008 V guard variable for std::__timepunct<char>::id
+000000000005e060 0000000000000008 V guard variable for std::numpunct<char>::id
+000000000005e068 0000000000000008 V guard variable for std::moneypunct<char, true>::id
+000000000005e070 0000000000000008 V guard variable for std::moneypunct<char, false>::id
+000000000005e078 0000000000000008 V guard variable for std::money_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::id
+000000000005e080 0000000000000008 V guard variable for std::money_get<char, std::istreambuf_iterator<char, std::char_traits<char> > >::id
+000000000005e088 0000000000000008 V guard variable for std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::id
+000000000005e090 0000000000000008 V guard variable for std::num_get<char, std::istreambuf_iterator<char, std::char_traits<char> > >::id
+000000000005e098 0000000000000008 V guard variable for std::collate<wchar_t>::id
+000000000005e0a0 0000000000000008 V guard variable for std::messages<wchar_t>::id
+000000000005e0a8 0000000000000008 V guard variable for std::time_get<wchar_t, std::istreambuf_iterator<wchar_t, std::char_traits<wchar_t> > >::id
+000000000005e0b0 0000000000000008 V guard variable for std::time_put<wchar_t, std::ostreambuf_iterator<wchar_t, std::char_traits<wchar_t> > >::id
+000000000005e0b8 0000000000000008 V guard variable for std::__timepunct<wchar_t>::id
+000000000005e0c0 0000000000000008 V guard variable for std::numpunct<wchar_t>::id
+000000000005e0c8 0000000000000008 V guard variable for std::moneypunct<wchar_t, true>::id
+000000000005e0d0 0000000000000008 V guard variable for std::moneypunct<wchar_t, false>::id
+000000000005e0d8 0000000000000008 V guard variable for std::money_put<wchar_t, std::ostreambuf_iterator<wchar_t, std::char_traits<wchar_t> > >::id
+000000000005e0e0 0000000000000008 V guard variable for std::money_get<wchar_t, std::istreambuf_iterator<wchar_t, std::char_traits<wchar_t> > >::id
+000000000005e0e8 0000000000000008 V guard variable for std::num_put<wchar_t, std::ostreambuf_iterator<wchar_t, std::char_traits<wchar_t> > >::id
+000000000005e0f0 0000000000000008 V guard variable for std::num_get<wchar_t, std::istreambuf_iterator<wchar_t, std::char_traits<wchar_t> > >::id
+000000000005e0f8 0000000000000008 V guard variable for std::__cxx11::collate<char>::id
+000000000005e100 0000000000000008 V guard variable for std::__cxx11::messages<char>::id
+000000000005e108 0000000000000008 V guard variable for std::__cxx11::time_get<char, std::istreambuf_iterator<char, std::char_traits<char> > >::id
+000000000005e110 0000000000000008 V guard variable for std::__cxx11::numpunct<char>::id
+000000000005e118 0000000000000008 V guard variable for std::__cxx11::moneypunct<char, true>::id
+000000000005e120 0000000000000008 V guard variable for std::__cxx11::moneypunct<char, false>::id
+000000000005e128 0000000000000008 V guard variable for std::__cxx11::money_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::id
+000000000005e130 0000000000000008 V guard variable for std::__cxx11::money_get<char, std::istreambuf_iterator<char, std::char_traits<char> > >::id
+000000000005e138 0000000000000004 b once_regsizes.0
+000000000005e140 0000000000000062 b dwarf_reg_size_table
+000000000005e1a8 0000000000000010 b object_mutex
+000000000005e1b8 0000000000000008 b seen_objects
+000000000005e1c0 0000000000000008 b unseen_objects
+000000000005e1c8 000000000000000c b __sfp_recursive_mutex
+000000000005e1d8 0000000000000228 B __sf
+000000000005e400 0000000000000008 B __stdio_exit_handler
+000000000005e408 0000000000000050 B __malloc_current_mallinfo
+000000000005e458 0000000000000008 B __malloc_max_total_mem
+000000000005e460 0000000000000008 B __malloc_max_sbrked_mem
+000000000005e468 0000000000000008 B __malloc_top_pad
+000000000005e470 000000000000000c b __malloc_recursive_mutex
+000000000005e480 000000000000000c b __env_recursive_mutex
+000000000005e490 0000000000000008 b initial_env
+000000000005e498 0000000000000318 B __atexit0
+000000000005e7b0 0000000000000008 B __atexit
+000000000005e7b8 000000000000000c B __atexit_recursive_mutex
+000000000005e7c4 0000000000000004 b __hndl_lock
+000000000005e7c8 0000000000000008 B fake_heap_start
+000000000005e7d0 0000000000000008 B fake_heap_end
+000000000005e7d8 0000000000000004 b __pthread_once_cv
+000000000005e7dc 0000000000000004 b __pthread_once_lock
+000000000005e7e0 0000000000000008 b heap_start.0
+000000000005e7e8 b __tls_start
+000000000005e7f0 b __bss_end__
+000000000005e7f0 b __end__
+000000000005e7f0 b __tls_end
+000000000005f000 b __argdata__
