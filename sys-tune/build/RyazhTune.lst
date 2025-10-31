@@ -1,0 +1,941 @@
+0000000000000000 a __start__
+0000000000000000 T _start
+0000000000000000 b _TLS_MODULE_BASE_
+0000000000000000 0000000000000004 b g_fsPriority
+00000000000000e0 T __nx_exit
+00000000000000f0 T __nx_mod0
+0000000000000124 0000000000000050 T std::__throw_logic_error(char const*)
+0000000000000174 0000000000000050 T std::__throw_length_error(char const*)
+00000000000001c4 0000000000000034 T std::__throw_bad_function_call()
+00000000000001f8 0000000000000180 W std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace_cold(char*, unsigned long, char const*, unsigned long, unsigned long)
+0000000000000378 0000000000000034 W __gnu_cxx::__throw_concurrence_lock_error()
+00000000000003ac 0000000000000034 W __gnu_cxx::__throw_concurrence_unlock_error()
+00000000000003e0 0000000000000010 T std::terminate()
+00000000000003f0 0000000000000010 T std::unexpected()
+0000000000000400 0000000000000044 T __cxa_call_terminate
+0000000000000460 0000000000000034 t _GLOBAL__sub_D_eh_globals.cc
+00000000000004a0 0000000000000034 T exit
+00000000000004e0 000000000000029c T main
+0000000000000780 000000000000001c t _GLOBAL__sub_I__ZN4tune4impl10InitializeEPSt6vectorINS0_13PlaylistEntryESaIS2_EEPS1_IjSaIjEEPS2_
+00000000000007a0 00000000000001f0 t _GLOBAL__sub_I_eh_alloc.cc
+00000000000009a0 0000000000000038 t _GLOBAL__sub_I_eh_globals.cc
+00000000000009e0 t __do_global_dtors_aux
+0000000000000a40 t frame_dummy
+0000000000000a70 000000000000002c T __libnx_initheap
+0000000000000aa0 0000000000000080 T __appInit
+0000000000000b20 0000000000000024 T __appExit
+0000000000000b50 00000000000003c0 t tune::(anonymous namespace)::ServiceHandlerFunc(void*, IpcServerRequest const*, unsigned char*, unsigned long*)
+0000000000000f10 0000000000000018 T tune::InitializeServer()
+0000000000000f30 000000000000000c T tune::ExitServer()
+0000000000000f40 000000000000005c T tune::LoopProcess()
+0000000000000fa0 0000000000000004 W LockableMutex::~LockableMutex()
+0000000000000fa0 0000000000000004 W LockableMutex::~LockableMutex()
+0000000000000fb0 0000000000000008 W LockableMutex::~LockableMutex()
+0000000000000fc0 00000000000000a4 t tune::impl::(anonymous namespace)::endsWithInsensitive(char const*, char const*)
+0000000000001070 00000000000000f8 t tune::impl::(anonymous namespace)::audioInit()
+0000000000001170 0000000000000088 t std::_Function_handler<void (char const*, unsigned long&), tune::impl::(anonymous namespace)::scanAndPopulateDefaultPlaylist(unsigned long)::{lambda(char const*, unsigned long&)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+0000000000001200 00000000000002f0 T tune::impl::Exit()
+00000000000014f0 00000000000000c8 T tune::impl::PscmThreadFunc(void*)
+00000000000015c0 00000000000000a8 T tune::impl::GpioThreadFunc(void*)
+0000000000001670 000000000000016c T tune::impl::PmdmntThreadFunc(void*)
+00000000000017e0 0000000000000010 T tune::impl::GetStatus()
+00000000000017f0 0000000000000010 T tune::impl::Play()
+0000000000001800 0000000000000014 T tune::impl::Pause()
+0000000000001820 00000000000000a4 T tune::impl::Next()
+00000000000018d0 0000000000000074 T tune::impl::Prev()
+0000000000001950 0000000000000010 T tune::impl::GetVolume()
+0000000000001960 0000000000000030 T tune::impl::SetVolume(float)
+0000000000001990 000000000000000c T tune::impl::GetTitleVolume()
+00000000000019a0 0000000000000024 T tune::impl::SetTitleVolume(float)
+00000000000019d0 000000000000000c T tune::impl::GetDefaultTitleVolume()
+00000000000019e0 0000000000000024 T tune::impl::SetDefaultTitleVolume(float)
+0000000000001a10 000000000000000c T tune::impl::GetRepeatMode()
+0000000000001a20 000000000000000c T tune::impl::SetRepeatMode(tune::RepeatMode)
+0000000000001a30 000000000000000c T tune::impl::GetShuffleMode()
+0000000000001a40 0000000000000038 T tune::impl::SetShuffleMode(tune::ShuffleMode)
+0000000000001a80 0000000000000054 T tune::impl::GetPlaylistSize()
+0000000000001ae0 00000000000000b0 T tune::impl::GetPlaylistItem(unsigned int, char*, unsigned long)
+0000000000001b90 0000000000000114 T tune::impl::GetCurrentQueueItem(tune::CurrentStats*, char*, unsigned long)
+0000000000001cb0 00000000000000a8 T tune::impl::ClearQueue()
+0000000000001d60 0000000000000104 T tune::impl::Select(unsigned int)
+0000000000001e70 000000000000006c T tune::impl::Seek(unsigned int)
+0000000000001ee0 0000000000000298 T tune::impl::Remove(unsigned int)
+0000000000002180 0000000000000878 T tune::impl::TuneThreadFunc(void*)
+0000000000002a00 000000000000018c W void std::vector<tune::impl::PlaylistEntry, std::allocator<tune::impl::PlaylistEntry> >::_M_realloc_append<tune::impl::PlaylistEntry const&>(tune::impl::PlaylistEntry const&)
+0000000000002b90 0000000000000504 t tune::impl::(anonymous namespace)::scanAndPopulateDefaultPlaylist(unsigned long)::{lambda(char const*, unsigned long&)#1}::operator()(char const*, unsigned long&) const
+00000000000030a0 000000000000000c t std::_Function_handler<void (char const*, unsigned long&), tune::impl::(anonymous namespace)::scanAndPopulateDefaultPlaylist(unsigned long)::{lambda(char const*, unsigned long&)#1}>::_M_invoke(std::_Any_data const&, char const*&&, unsigned long&)
+00000000000030b0 0000000000000750 T tune::impl::Initialize(std::vector<tune::impl::PlaylistEntry, std::allocator<tune::impl::PlaylistEntry> >*, std::vector<unsigned int, std::allocator<unsigned int> >*, tune::impl::PlaylistEntry*)
+0000000000003800 00000000000002b0 W void std::vector<tune::impl::PlaylistEntry, std::allocator<tune::impl::PlaylistEntry> >::_M_insert_aux<tune::impl::PlaylistEntry>(__gnu_cxx::__normal_iterator<tune::impl::PlaylistEntry*, std::vector<tune::impl::PlaylistEntry, std::allocator<tune::impl::PlaylistEntry> > >, tune::impl::PlaylistEntry&&)
+0000000000003ab0 0000000000000228 W void std::vector<tune::impl::PlaylistEntry, std::allocator<tune::impl::PlaylistEntry> >::_M_realloc_insert<tune::impl::PlaylistEntry const&>(__gnu_cxx::__normal_iterator<tune::impl::PlaylistEntry*, std::vector<tune::impl::PlaylistEntry, std::allocator<tune::impl::PlaylistEntry> > >, tune::impl::PlaylistEntry const&)
+0000000000003ce0 0000000000000730 T tune::impl::Enqueue(char const*, unsigned long, tune::EnqueueType)
+0000000000004410 0000000000000574 T tune::impl::MoveQueueItem(unsigned int, unsigned int)
+0000000000004990 00000000000000a4 t drmp3_bs_get_bits(drmp3_bs*, int)
+0000000000004a40 0000000000000114 t drmp3_L3_dct3_9(float*)
+0000000000004b60 0000000000000100 t drmp3_L3_imdct12(float*, float*, float*)
+0000000000004c60 00000000000001f4 t drmp3d_synth_pair(short*, int, float const*)
+0000000000004e60 0000000000000108 t drwav__read_chunk_header(unsigned long (*)(void*, void*, unsigned long), void*, drwav_container, unsigned long*, drwav_chunk_header*)
+0000000000004f70 0000000000000074 t drwav__seek_forward(unsigned int (*)(void*, int, drwav_seek_origin), unsigned long, void*)
+0000000000004ff0 0000000000000030 t (anonymous namespace)::FlacSeekCallback(void*, int, drflac_seek_origin)
+0000000000005020 0000000000000010 W FlacFile::IsOpen()
+0000000000005030 000000000000000c W FlacFile::GetSampleRate()
+0000000000005040 000000000000000c W FlacFile::GetChannelCount()
+0000000000005050 000000000000000c W Mp3File::IsOpen()
+0000000000005060 0000000000000008 W Mp3File::GetSampleRate()
+0000000000005070 0000000000000008 W Mp3File::GetChannelCount()
+0000000000005080 0000000000000008 W WavFile::IsOpen()
+0000000000005090 0000000000000008 W WavFile::GetSampleRate()
+00000000000050a0 0000000000000008 W WavFile::GetChannelCount()
+00000000000050b0 00000000000000f8 t drflac__seek_to_byte(drflac_bs*, unsigned long)
+00000000000051b0 00000000000003a4 t drwav_read_pcm_frames_s16__msadpcm(drwav*, unsigned long, short*)
+0000000000005560 00000000000003e4 t drwav_read_pcm_frames_s16__ima(drwav*, unsigned long, short*)
+0000000000005950 00000000000000a0 t drmp3__realloc_from_callbacks(void*, unsigned long, unsigned long, drmp3_allocation_callbacks const*)
+00000000000059f0 0000000000000004 t drflac__free_default(void*, void*)
+0000000000005a00 0000000000000004 t drflac__realloc_default(void*, unsigned long, void*)
+0000000000005a10 0000000000000004 t drflac__malloc_default(unsigned long, void*)
+0000000000005a20 0000000000000368 t drflac__reload_cache(drflac_bs*)
+0000000000005d90 000000000000018c t drflac__read_int32(drflac_bs*, unsigned int, int*)
+0000000000005f20 000000000000012c t drflac__read_uint8(drflac_bs*, unsigned int, unsigned char*)
+0000000000006050 0000000000000184 t drflac__read_utf8_coded_number(drflac_bs*, unsigned long*, unsigned char*)
+00000000000061e0 000000000000012c t drflac__read_uint16(drflac_bs*, unsigned int, unsigned short*)
+0000000000006310 000000000000019c t drflac__read_subframe_header(drflac_bs*, drflac_subframe*)
+00000000000064b0 00000000000001bc t drmp3_L3_imdct36(float*, float*, float const*, int)
+0000000000006670 00000000000002fc t drmp3d_DCT_II(float*, int)
+0000000000006970 0000000000000048 W Mp3File::Tell()
+00000000000069c0 000000000000004c W FlacFile::Tell()
+0000000000006a10 0000000000000058 W WavFile::Tell()
+0000000000006a70 00000000000000c4 t drwav__seek_from_start(unsigned int (*)(void*, int, drwav_seek_origin), unsigned long, void*)
+0000000000006b40 0000000000000060 t drwav__on_read(unsigned long (*)(void*, void*, unsigned long), void*, void*, unsigned long, unsigned long*)
+0000000000006ba0 0000000000000440 t drmp3d_synth_granule(float*, float*, int, int, short*, float*) [clone .constprop.0]
+0000000000006fe0 00000000000006d4 t drflac__decode_samples_with_residual__rice__scalar_zeroorder(drflac_bs*, unsigned int, unsigned int, unsigned char, unsigned int, int, int const*, int*) [clone .constprop.0]
+00000000000076c0 0000000000005410 t drflac__decode_samples_with_residual__rice__scalar(drflac_bs*, unsigned int, unsigned int, unsigned char, unsigned int, int, int const*, int*)
+000000000000cad0 00000000000009e4 t drflac__decode_samples_with_residual(drflac_bs*, unsigned int, unsigned int, unsigned int, int, int const*, int*)
+000000000000d4c0 00000000000001f0 t drflac__seek_bits(drflac_bs*, unsigned long)
+000000000000d6b0 00000000000007c8 t drflac__read_next_flac_frame_header(drflac_bs*, unsigned char, drflac_frame_header*)
+000000000000de80 0000000000000244 t drflac__init_private__native(drflac_init_info*, unsigned long (*)(void*, void*, unsigned long), unsigned int (*)(void*, int, drflac_seek_origin), void (*)(void*, drflac_metadata*), void*, void*, unsigned int) [clone .constprop.0]
+000000000000e0d0 0000000000000798 t drflac__read_and_seek_residual(drflac_bs*, unsigned int, unsigned int)
+000000000000e870 0000000000000590 t drflac__seek_flac_frame(drflac*)
+000000000000ee00 0000000000000024 t drflac__free_from_callbacks(void*, drflac_allocation_callbacks const*)
+000000000000ee30 0000000000000038 t drflac__malloc_from_callbacks(unsigned long, drflac_allocation_callbacks const*)
+000000000000ee70 000000000000076c t drflac__decode_flac_frame(drflac*)
+000000000000f5e0 0000000000000078 t drflac__read_and_decode_next_flac_frame(drflac*)
+000000000000f660 00000000000000c4 t drflac__seek_forward_by_pcm_frames(drflac*, unsigned long)
+000000000000f730 0000000000000d64 t drflac_read_pcm_frames_s16.part.0
+00000000000104a0 0000000000000004 t drmp3__malloc_default(unsigned long, void*)
+00000000000104b0 0000000000000004 t drwav__malloc_default(unsigned long, void*)
+00000000000104c0 0000000000000004 t drmp3__realloc_default(void*, unsigned long, void*)
+00000000000104d0 0000000000000004 t drwav__realloc_default(void*, unsigned long, void*)
+00000000000104e0 0000000000000004 t drmp3__free_default(void*, void*)
+00000000000104f0 0000000000000004 t drwav__free_default(void*, void*)
+0000000000010500 0000000000000030 t (anonymous namespace)::Mp3SeekCallback(void*, int, drmp3_seek_origin)
+0000000000010530 0000000000000030 t (anonymous namespace)::WavSeekCallback(void*, int, drwav_seek_origin)
+0000000000010560 0000000000000060 t (anonymous namespace)::ReadCallback(void*, void*, unsigned long)
+00000000000105c0 00000000000000a8 t drmp3_seek_to_start_of_stream(drmp3*)
+0000000000010670 00000000000000b8 t drmp3_hdr_frame_bytes(unsigned char const*, int)
+0000000000010730 00000000000000a0 t drmp3_hdr_compare(unsigned char const*, unsigned char const*)
+00000000000107d0 0000000000000070 W Mp3File::~Mp3File()
+00000000000107d0 0000000000000070 W Mp3File::~Mp3File()
+0000000000010840 000000000000006c W Mp3File::~Mp3File()
+00000000000108b0 0000000000000080 W FlacFile::Decode(unsigned long, short*)
+0000000000010930 00000000000001c8 t drflac__seek_to_approximate_flac_frame_to_byte(drflac*, unsigned long, unsigned long, unsigned long, unsigned long*)
+0000000000010b00 0000000000000260 t drflac__seek_to_pcm_frame__binary_search_internal(drflac*, unsigned long, unsigned long, unsigned long)
+0000000000010d60 0000000000000064 W FlacFile::~FlacFile()
+0000000000010d60 0000000000000064 W FlacFile::~FlacFile()
+0000000000010dd0 000000000000005c W FlacFile::~FlacFile()
+0000000000010e30 0000000000000a60 t drwav_init__internal(drwav*, unsigned long (*)(void*, unsigned long (*)(void*, void*, unsigned long), unsigned int (*)(void*, int, drwav_seek_origin), void*, drwav_chunk_header const*, drwav_container, drwav_fmt const*), void*, unsigned int)
+0000000000011890 0000000000000c1c t drflac_open_with_metadata_private(unsigned long (*)(void*, void*, unsigned long), unsigned int (*)(void*, int, drflac_seek_origin), void (*)(void*, drflac_metadata*), drflac_container, void*, void*, drflac_allocation_callbacks const*)
+00000000000124b0 0000000000000758 T drflac_seek_to_pcm_frame
+0000000000012c10 0000000000000048 W FlacFile::Seek(unsigned long)
+0000000000012c60 0000000000002648 T drmp3dec_decode_frame
+00000000000152b0 00000000000002d8 t drmp3_decode_next_frame_ex(drmp3*, short*)
+0000000000015590 0000000000000110 t drmp3_init_internal(drmp3*, unsigned long (*)(void*, void*, unsigned long), unsigned int (*)(void*, int, drmp3_seek_origin), void*, drmp3_allocation_callbacks const*)
+00000000000156a0 0000000000000134 t drmp3_read_pcm_frames_raw(drmp3*, unsigned long, void*)
+00000000000157e0 0000000000000054 W Mp3File::Decode(unsigned long, short*)
+0000000000015840 0000000000000300 T drmp3_seek_to_pcm_frame
+0000000000015b40 0000000000000048 W Mp3File::Seek(unsigned long)
+0000000000015b90 00000000000000bc T drmp3_get_mp3_and_pcm_frame_count
+0000000000015c50 00000000000000fc T drwav_init_ex
+0000000000015d50 00000000000001a8 T drwav_uninit
+0000000000015f00 000000000000005c W WavFile::~WavFile()
+0000000000015f00 000000000000005c W WavFile::~WavFile()
+0000000000015f60 0000000000000058 W WavFile::~WavFile()
+0000000000015fc0 00000000000000a8 T drwav_read_pcm_frames_le
+0000000000016070 00000000000001dc t drwav_read_pcm_frames_s16__ieee(drwav*, unsigned long, short*)
+0000000000016250 00000000000000f8 t drwav_read_pcm_frames_s16__alaw(drwav*, unsigned long, short*)
+0000000000016350 00000000000000f8 t drwav_read_pcm_frames_s16__mulaw(drwav*, unsigned long, short*)
+0000000000016450 0000000000000070 T drwav_seek_to_first_pcm_frame(drwav*)
+00000000000164c0 0000000000000214 T drwav_seek_to_pcm_frame
+00000000000166e0 0000000000000048 W WavFile::Seek(unsigned long)
+0000000000016730 0000000000000038 T drwav_s24_to_s16
+0000000000016770 00000000000002f8 t drwav_read_pcm_frames_s16__pcm(drwav*, unsigned long, short*)
+0000000000016a70 0000000000000064 T drwav_read_pcm_frames_s16
+0000000000016ae0 0000000000000048 W WavFile::Decode(unsigned long, short*)
+0000000000016b30 0000000000000028 T Source::Done()
+0000000000016b60 00000000000002f0 T OpenFile(char const*)
+0000000000016e50 000000000000000c T sdmc::Open()
+0000000000016e60 000000000000000c T sdmc::Close()
+0000000000016e70 0000000000000044 T sdmc::OpenFile(FsFile*, char const*, int)
+0000000000016ec0 0000000000000044 T sdmc::FileExists(char const*)
+0000000000016f10 0000000000000034 T sdmc::CreateFolder(char const*)
+0000000000016f50 0000000000000038 T config::get_autoplay_enabled()
+0000000000016f90 0000000000000058 T config::get_title_blacklist(unsigned long)
+0000000000016ff0 0000000000000070 T config::set_title_blacklist(unsigned long, bool)
+0000000000017060 0000000000000030 T config::get_repeat()
+0000000000017090 0000000000000038 T config::get_shuffle()
+00000000000170d0 0000000000000040 T config::get_volume()
+0000000000017110 0000000000000058 T config::set_volume(float)
+0000000000017170 0000000000000040 T config::get_default_title_volume()
+00000000000171b0 0000000000000058 T config::set_default_title_volume(float)
+0000000000017210 0000000000000050 T config::has_title_volume(unsigned long)
+0000000000017260 000000000000005c T config::get_title_volume(unsigned long)
+00000000000172c0 0000000000000050 T config::has_title_enabled(unsigned long)
+0000000000017310 0000000000000074 T config::get_title_enabled(unsigned long)
+0000000000017390 0000000000000038 T config::get_title_enabled_default()
+00000000000173d0 0000000000000384 T config::get_playlist[abi:cxx11]()
+0000000000017760 00000000000000d4 T config::save_playlist(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&)
+0000000000017840 0000000000000038 T config::get_whitelist_mode()
+0000000000017880 0000000000000064 T config::get_title_whitelist(unsigned long)
+00000000000178f0 0000000000000050 T config::set_last_playing_state(bool)
+0000000000017940 0000000000000020 T pm::Initialize()
+0000000000017960 0000000000000014 T pm::Exit()
+0000000000017980 000000000000008c T pm::PollCurrentPidTid(unsigned long*, unsigned long*)
+0000000000017a10 0000000000000040 T audaInitialize
+0000000000017a50 0000000000000028 T audWrapperInitialize
+0000000000017a80 0000000000000028 T audWrapperExit
+0000000000017ab0 0000000000000044 T audoutaInitialize
+0000000000017b00 00000000000000e0 t ini_open
+0000000000017be0 0000000000000008 T ini_openread
+0000000000017bf0 0000000000000008 T ini_openwrite
+0000000000017c00 0000000000000008 T ini_openrewrite
+0000000000017c10 0000000000000028 T ini_close
+0000000000017c40 00000000000000a0 T ini_read
+0000000000017ce0 0000000000000064 T ini_write
+0000000000017d50 0000000000000010 T ini_tell
+0000000000017d60 0000000000000010 T ini_seek
+0000000000017d70 00000000000000bc T ini_rename
+0000000000017e30 000000000000008c T ini_remove
+0000000000017ec0 00000000000001cc t cache_flush
+0000000000018090 0000000000000294 t ini_strncpy.isra.0
+0000000000018330 000000000000013c t writekey
+0000000000018470 0000000000000084 t writesection
+0000000000018500 0000000000000130 t cleanstring.part.0
+0000000000018630 00000000000004a4 t getkeystring
+0000000000018ae0 00000000000000c4 t ini_gets.part.0
+0000000000018bb0 000000000000001c T ini_gets
+0000000000018bd0 00000000000000b0 T ini_getl
+0000000000018c80 00000000000000bc T ini_getbool
+0000000000018d40 0000000000000084 T ini_haskey
+0000000000018dd0 0000000000000870 T ini_puts
+0000000000019640 00000000000000f4 T ini_putl
+0000000000019740 000000000000000c T eventLoadRemote
+0000000000019750 0000000000000034 T eventWait
+0000000000019790 0000000000000054 T eventClose
+00000000000197f0 00000000000000c8 T mutexLock
+00000000000198c0 0000000000000068 T mutexUnlock
+0000000000019930 000000000000001c T mutexIsLockedByCurrentThread
+0000000000019950 0000000000000058 T rmutexLock
+00000000000199b0 000000000000001c T rmutexUnlock
+00000000000199d0 0000000000000410 T randomGet
+0000000000019de0 0000000000000020 T randomGet64
+0000000000019e00 00000000000000b0 T __libnx_init_thread
+0000000000019eb0 000000000000034c T threadCreate
+000000000001a200 00000000000000a4 T threadExit
+000000000001a2b0 00000000000000ac t _EntryWrap
+000000000001a360 0000000000000008 T threadStart
+000000000001a370 000000000000002c T threadWaitForExit
+000000000001a3a0 00000000000000a4 T threadClose
+000000000001a450 0000000000000010 T threadTlsGet
+000000000001a460 0000000000000010 T threadTlsSet
+000000000001a470 00000000000000d8 T threadTlsAlloc
+000000000001a550 0000000000000044 T threadTlsFree
+000000000001a5a0 0000000000000064 t _memregionInitWithInfo
+000000000001a610 0000000000000004 W __libnx_virtmem_rng
+000000000001a620 0000000000000164 t _memregionFindRandom
+000000000001a790 0000000000000140 T virtmemSetup
+000000000001a8d0 000000000000000c T virtmemLock
+000000000001a8e0 000000000000000c T virtmemUnlock
+000000000001a8f0 0000000000000050 T virtmemFindStack
+000000000001a940 000000000000057c T waitObjects
+000000000001aec0 0000000000000118 T waitHandles
+000000000001afe0 0000000000000088 t _audrenCleanup
+000000000001b070 00000000000000bc t _audrenCmdNoIO.constprop.0
+000000000001b130 0000000000000510 T audrenInitialize
+000000000001b640 0000000000000048 T audrenExit
+000000000001b690 0000000000000010 T audrenWaitFrame
+000000000001b6a0 0000000000000350 T audrenRequestUpdateAudioRenderer
+000000000001b9f0 0000000000000008 T audrenStartAudioRenderer
+000000000001ba00 00000000000000b4 t _fsCleanup
+000000000001bac0 00000000000001e0 t _fsFsCmdWithInPath
+000000000001bca0 00000000000001f8 t _fsFsCmdWithTwoInPaths
+000000000001bea0 000000000000028c t _fsFsOpenCommon
+000000000001c130 00000000000000f8 t _fsObjectClose
+000000000001c230 000000000000017c t _fsCmdGetSession.constprop.0
+000000000001c3b0 00000000000002f8 T fsInitialize
+000000000001c6b0 0000000000000048 T fsExit
+000000000001c700 0000000000000008 T fsOpenSdCardFileSystem
+000000000001c710 00000000000001ec T fsFsCreateFile
+000000000001c900 0000000000000008 T fsFsDeleteFile
+000000000001c910 0000000000000008 T fsFsCreateDirectory
+000000000001c920 0000000000000008 T fsFsRenameFile
+000000000001c930 0000000000000008 T fsFsOpenFile
+000000000001c940 0000000000000008 T fsFsOpenDirectory
+000000000001c950 0000000000000230 T fsFsGetFileTimeStampRaw
+000000000001cb80 0000000000000004 T fsFsClose
+000000000001cb90 0000000000000214 T fsFileRead
+000000000001cdb0 00000000000001f8 T fsFileWrite
+000000000001cfb0 00000000000001d4 T fsFileGetSize
+000000000001cfb0 00000000000001d4 t fsFileGetSize.localalias
+000000000001d190 0000000000000004 T fsFileClose
+000000000001d1a0 0000000000000004 T fsDirClose
+000000000001d1b0 0000000000000204 T fsDirRead
+000000000001d3c0 0000000000000078 t _gpioCleanup
+000000000001d440 00000000000000c8 t _gpioCmdNoInOutU32.isra.0
+000000000001d510 0000000000000098 T gpioInitialize
+000000000001d5b0 0000000000000048 T gpioExit
+000000000001d600 0000000000000104 T gpioOpenSession
+000000000001d710 0000000000000014 T gpioPadGetValue
+000000000001d730 0000000000000064 T gpioPadClose
+000000000001d7a0 00000000000000d0 t _pmCmdInU64OutU64
+000000000001d870 0000000000000078 t _pmdmntCleanup
+000000000001d8f0 0000000000000078 t _pminfoCleanup
+000000000001d970 00000000000000a0 T pmdmntInitialize
+000000000001da10 0000000000000048 T pmdmntExit
+000000000001da60 00000000000000a0 T pminfoInitialize
+000000000001db00 0000000000000048 T pminfoExit
+000000000001db50 00000000000000e4 T pmdmntGetApplicationProcessId
+000000000001dc40 0000000000000010 T pminfoGetProgramId
+000000000001dc50 00000000000000a8 t _pscmCleanup
+000000000001dd00 0000000000000228 T pscmInitialize
+000000000001df30 0000000000000048 T pscmExit
+000000000001df80 00000000000000f8 T pscPmModuleGetRequest
+000000000001e080 0000000000000188 T pscPmModuleAcknowledge
+000000000001e210 00000000000000cc T pscPmModuleFinalize
+000000000001e2e0 0000000000000094 T pscPmModuleClose
+000000000001e380 0000000000000258 T pscmGetPmModule
+000000000001e5e0 00000000000000d0 t _setsysGetFirmwareVersionImpl
+000000000001e6b0 0000000000000078 t _setsysCleanup
+000000000001e730 00000000000000a0 T setsysInitialize
+000000000001e7d0 0000000000000048 T setsysExit
+000000000001e820 0000000000000048 T setsysGetFirmwareVersion
+000000000001e870 00000000000000cc t _smCmifCmdInPid
+000000000001e940 0000000000000078 t _smCleanup
+000000000001e9c0 0000000000000048 T smAddOverrideHandle
+000000000001ea10 0000000000000054 T smGetServiceOverride
+000000000001ea70 00000000000001ac T smInitialize
+000000000001ec20 0000000000000048 T smExit
+000000000001ec70 00000000000000d0 T smGetServiceOriginal
+000000000001ed40 0000000000000120 T smGetServiceWrapper
+000000000001ee60 0000000000000388 T audrvCreate
+000000000001f1f0 0000000000000144 T audrvUpdate
+000000000001f340 000000000000004c T audrvClose
+000000000001f390 0000000000000058 T audrvMemPoolAdd
+000000000001f3f0 000000000000007c T audrvMemPoolAttach
+000000000001f470 00000000000000cc T audrvDeviceSinkAdd
+000000000001f540 00000000000000c0 t _audrvVoiceQueueWaveBufs
+000000000001f600 00000000000000e8 T audrvVoiceDrop
+000000000001f6f0 00000000000001ac T audrvVoiceInit
+000000000001f8a0 00000000000000a8 T audrvVoiceAddWaveBuf
+000000000001f950 00000000000000c0 T _audrvVoiceUpdate
+000000000001fa10 0000000000000004 W __libnx_alloc
+000000000001fa20 0000000000000014 W __libnx_aligned_alloc
+000000000001fa40 0000000000000004 W __libnx_free
+000000000001fa50 000000000000001c W diagAbortWithResult
+000000000001fa70 0000000000000208 T envSetup
+000000000001fc80 0000000000000020 T envGetMainThreadHandle
+000000000001fca0 000000000000000c T envIsNso
+000000000001fcb0 0000000000000014 T envHasArgv
+000000000001fcd0 000000000000000c T envGetArgv
+000000000001fce0 000000000000000c T envGetExitFuncPtr
+000000000001fcf0 000000000000000c T envHasRandomSeed
+000000000001fd00 0000000000000010 T envGetRandomSeed
+000000000001fd10 0000000000000014 T hosversionGet
+000000000001fd30 0000000000000010 T hosversionSet
+000000000001fd40 T armDCacheFlush
+000000000001fd70 t armDCacheFlush_L0
+000000000001fd8c T svcSetMemoryPermission
+000000000001fd94 T svcSetMemoryAttribute
+000000000001fd9c T svcMapMemory
+000000000001fda4 T svcUnmapMemory
+000000000001fdac T svcQueryMemory
+000000000001fdc0 T svcExitProcess
+000000000001fdc8 T svcCreateThread
+000000000001fddc T svcStartThread
+000000000001fde4 T svcExitThread
+000000000001fdec T svcSleepThread
+000000000001fdf4 T svcCreateTransferMemory
+000000000001fe08 T svcCloseHandle
+000000000001fe10 T svcResetSignal
+000000000001fe18 T svcWaitSynchronization
+000000000001fe2c T svcCancelSynchronization
+000000000001fe34 T svcArbitrateLock
+000000000001fe3c T svcArbitrateUnlock
+000000000001fe44 T svcWaitProcessWideKeyAtomic
+000000000001fe4c T svcSignalProcessWideKey
+000000000001fe54 T svcConnectToNamedPort
+000000000001fe68 T svcSendSyncRequest
+000000000001fe70 T svcBreak
+000000000001fe78 T svcReturnFromException
+000000000001fe80 T svcGetInfo
+000000000001fe94 T svcAcceptSession
+000000000001fea8 T svcReplyAndReceive
+000000000001febc T svcUnmapTransferMemory
+000000000001fec4 T svcManageNamedPort
+000000000001fed8 T __aarch64_read_tp
+000000000001fef0 00000000000000a8 T tmemCreate
+000000000001ffa0 0000000000000034 T tmemUnmap
+000000000001ffe0 0000000000000030 T tmemCloseHandle
+0000000000020010 0000000000000050 T tmemClose
+0000000000020060 0000000000000184 T sessionmgrCreate
+00000000000201f0 0000000000000084 T sessionmgrClose
+0000000000020280 00000000000000a8 T sessionmgrAttachClient
+0000000000020330 0000000000000060 T sessionmgrDetachClient
+0000000000020390 000000000000000c T appletGetAppletResourceUserId
+00000000000203a0 0000000000000314 W argvSetup
+00000000000206c0 00000000000001fc T __nx_dynamic
+00000000000208c0 000000000000002c W __libnx_init
+00000000000208f0 000000000000001c W __libnx_exit
+0000000000020910 000000000000001c T __syscall_exit
+0000000000020930 0000000000000034 T __syscall_getreent
+0000000000020970 0000000000000004 T __syscall_lock_acquire
+0000000000020980 0000000000000004 T __syscall_lock_release
+0000000000020990 0000000000000004 T __syscall_lock_acquire_recursive
+00000000000209a0 0000000000000004 T __syscall_lock_release_recursive
+00000000000209b0 000000000000001c T __syscall_cond_broadcast
+00000000000209d0 000000000000003c T __syscall_cond_wait
+0000000000020a10 0000000000000040 T __syscall_tls_create
+0000000000020a50 0000000000000018 T __syscall_tls_set
+0000000000020a70 0000000000000004 T __syscall_tls_get
+0000000000020a80 0000000000000018 T __syscall_tls_delete
+0000000000020aa0 0000000000000098 T newlibSetup
+0000000000020b40 00000000000000e8 T nxlinkSetup
+0000000000020c28 W __libnx_exception_entry
+0000000000020cb4 t __libnx_exception_entry_start
+0000000000020ddc t __libnx_exception_entry_abort
+0000000000020de0 t __libnx_exception_entry_end
+0000000000020de8 T __libnx_exception_returnentry
+0000000000020e00 0000000000000070 T condvarWaitTimeout
+0000000000020e70 0000000000000058 t _ipcServerPrepareResponse
+0000000000020ed0 0000000000000368 t _ipcServerProcessSession
+0000000000021240 00000000000001f4 T ipcServerInit
+0000000000021440 0000000000000060 T ipcServerExit
+00000000000214a0 00000000000000cc T ipcServerProcess
+0000000000021580 0000000000000004 T operator delete(void*, unsigned long)
+00000000000215a0 0000000000000068 T operator new(unsigned long)
+0000000000021620 000000000000000c T std::bad_function_call::what() const
+0000000000021640 0000000000000014 T std::bad_function_call::~bad_function_call()
+0000000000021640 0000000000000014 T std::bad_function_call::~bad_function_call()
+0000000000021660 000000000000001c T std::bad_function_call::~bad_function_call()
+0000000000021680 000000000000000c T std::bad_alloc::what() const
+00000000000216a0 0000000000000014 T std::bad_alloc::~bad_alloc()
+00000000000216a0 0000000000000014 T std::bad_alloc::~bad_alloc()
+00000000000216c0 0000000000000020 T std::bad_alloc::~bad_alloc()
+00000000000216e0 0000000000000004 T operator delete(void*)
+0000000000021700 000000000000000c W __gnu_cxx::__concurrence_lock_error::what() const
+0000000000021720 000000000000000c W __gnu_cxx::__concurrence_unlock_error::what() const
+0000000000021740 0000000000000014 W __gnu_cxx::__concurrence_lock_error::~__concurrence_lock_error()
+0000000000021740 0000000000000014 W __gnu_cxx::__concurrence_lock_error::~__concurrence_lock_error()
+0000000000021760 0000000000000038 W __gnu_cxx::__concurrence_lock_error::~__concurrence_lock_error()
+00000000000217a0 0000000000000014 W __gnu_cxx::__concurrence_unlock_error::~__concurrence_unlock_error()
+00000000000217a0 0000000000000014 W __gnu_cxx::__concurrence_unlock_error::~__concurrence_unlock_error()
+00000000000217c0 0000000000000038 W __gnu_cxx::__concurrence_unlock_error::~__concurrence_unlock_error()
+0000000000021800 0000000000000110 t (anonymous namespace)::pool::free(void*) [clone .constprop.0]
+0000000000021920 00000000000000cc t (anonymous namespace)::pool::allocate(unsigned long) [clone .constprop.0]
+0000000000021a00 0000000000000058 T __cxa_allocate_exception
+0000000000021a60 0000000000000028 T __cxa_free_exception
+0000000000021aa0 000000000000009c T __cxa_begin_catch
+0000000000021b40 0000000000000004 T std::exception::~exception()
+0000000000021b40 0000000000000004 T std::exception::~exception()
+0000000000021b60 0000000000000044 t eh_globals_dtor(void*)
+0000000000021bc0 0000000000000080 T __cxa_get_globals
+0000000000021c40 000000000000007c t get_adjusted_ptr(std::type_info const*, std::type_info const*, void**)
+0000000000021cc0 0000000000000138 t read_encoded_value_with_base(unsigned char, unsigned long, unsigned char const*, unsigned long*)
+0000000000021e00 0000000000000064 t base_of_encoded_value(unsigned char, _Unwind_Context*)
+0000000000021e80 0000000000000108 t check_exception_spec(lsda_header_info*, std::type_info const*, void*, long)
+0000000000021fa0 00000000000000f8 t parse_lsda_header(_Unwind_Context*, unsigned char const*, lsda_header_info*)
+00000000000220a0 0000000000000630 T __gxx_personality_v0
+00000000000226e0 0000000000000018 T __cxxabiv1::__terminate(void (*)())
+0000000000022700 0000000000000010 T std::get_terminate()
+0000000000022720 0000000000000010 T __cxxabiv1::__unexpected(void (*)())
+0000000000022740 0000000000000010 T std::get_unexpected()
+0000000000022760 0000000000000058 t __gxx_exception_cleanup(_Unwind_Reason_Code, _Unwind_Exception*)
+00000000000227c0 0000000000000054 T __cxa_init_primary_exception
+0000000000022820 000000000000005c T __cxa_throw
+0000000000022880 0000000000000010 T std::get_new_handler()
+00000000000228a0 0000000000000014 T __cxxabiv1::__si_class_type_info::~__si_class_type_info()
+00000000000228a0 0000000000000014 T __cxxabiv1::__si_class_type_info::~__si_class_type_info()
+00000000000228c0 0000000000000020 T __cxxabiv1::__si_class_type_info::~__si_class_type_info()
+00000000000228e0 0000000000000194 T __cxxabiv1::__si_class_type_info::__do_dyncast(long, __cxxabiv1::__class_type_info::__sub_kind, __cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info::__dyncast_result&) const
+0000000000022a80 00000000000000a8 T __cxxabiv1::__si_class_type_info::__do_find_public_src(long, void const*, __cxxabiv1::__class_type_info const*, void const*) const
+0000000000022b40 0000000000000064 T __cxxabiv1::__si_class_type_info::__do_upcast(__cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info::__upcast_result&) const
+0000000000022bc0 0000000000000004 T std::type_info::~type_info()
+0000000000022bc0 0000000000000004 T std::type_info::~type_info()
+0000000000022be0 0000000000000008 T std::type_info::__is_pointer_p() const
+0000000000022be0 0000000000000008 T std::type_info::__is_function_p() const
+0000000000022c00 0000000000000008 T std::logic_error::what() const
+0000000000022c00 0000000000000008 T std::runtime_error::what() const
+0000000000022c20 0000000000000074 T std::logic_error::~logic_error()
+0000000000022c20 0000000000000074 T std::logic_error::~logic_error()
+0000000000022ca0 000000000000001c T std::logic_error::~logic_error()
+0000000000022cc0 0000000000000014 T std::length_error::~length_error()
+0000000000022cc0 0000000000000014 T std::length_error::~length_error()
+0000000000022ce0 000000000000001c T std::length_error::~length_error()
+0000000000022d00 00000000000000f8 T std::logic_error::logic_error(char const*)
+0000000000022d00 00000000000000f8 T std::logic_error::logic_error(char const*)
+0000000000022e00 0000000000000030 T std::length_error::length_error(char const*)
+0000000000022e00 0000000000000030 T std::length_error::length_error(char const*)
+0000000000022e40 0000000000000080 W std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&)
+0000000000022ec0 0000000000000004 W std::string::_Rep::_M_destroy(std::allocator<char> const&)
+0000000000022ee0 0000000000000068 T __cxxabiv1::__class_type_info::__do_upcast(__cxxabiv1::__class_type_info const*, void**) const
+0000000000022f60 0000000000000010 T __cxxabiv1::__class_type_info::__do_find_public_src(long, void const*, __cxxabiv1::__class_type_info const*, void const*) const
+0000000000022f80 0000000000000014 T __cxxabiv1::__class_type_info::~__class_type_info()
+0000000000022f80 0000000000000014 T __cxxabiv1::__class_type_info::~__class_type_info()
+0000000000022fa0 0000000000000020 T __cxxabiv1::__class_type_info::~__class_type_info()
+0000000000022fc0 0000000000000090 T __cxxabiv1::__class_type_info::__do_upcast(__cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info::__upcast_result&) const
+0000000000023060 00000000000000a8 T __cxxabiv1::__class_type_info::__do_catch(std::type_info const*, void**, unsigned int) const
+0000000000023120 00000000000000ec T __cxxabiv1::__class_type_info::__do_dyncast(long, __cxxabiv1::__class_type_info::__sub_kind, __cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info const*, void const*, __cxxabiv1::__class_type_info::__dyncast_result&) const
+0000000000023220 0000000000000298 t init_dwarf_reg_size_table
+00000000000234c0 000000000000018c t uw_install_context_1
+0000000000023660 000000000000018c t read_encoded_value
+0000000000023800 00000000000007f8 t execute_stack_op
+0000000000024000 0000000000000334 t uw_update_context_1
+0000000000024340 00000000000000f8 t uw_update_context
+0000000000024440 0000000000000868 t execute_cfa_program_specialized
+0000000000024cc0 0000000000000898 t execute_cfa_program_generic
+0000000000025560 000000000000043c t uw_frame_state_for
+00000000000259a0 000000000000036c t uw_init_context_1
+0000000000025d20 0000000000000140 t _Unwind_RaiseException_Phase2
+0000000000025e60 0000000000000154 t _Unwind_ForcedUnwind_Phase2
+0000000000025fc0 0000000000000050 t _Unwind_SetGR
+0000000000026020 0000000000000014 t _Unwind_GetIPInfo
+0000000000026040 0000000000000008 t _Unwind_SetIP
+0000000000026060 0000000000000008 t _Unwind_GetLanguageSpecificData
+0000000000026080 0000000000000008 t _Unwind_GetRegionStart
+00000000000260a0 0000000000000008 t _Unwind_GetDataRelBase
+00000000000260c0 0000000000000008 t _Unwind_GetTextRelBase
+00000000000260e0 0000000000000004 t _Unwind_DebugHook
+0000000000026100 00000000000001a4 t _Unwind_RaiseException
+00000000000262c0 000000000000012c t _Unwind_Resume
+0000000000026400 000000000000001c t _Unwind_DeleteException
+0000000000026420 0000000000000018 t fde_unencoded_compare
+0000000000026440 000000000000002c t fde_unencoded_extract
+0000000000026480 00000000000000ec t frame_downheap
+0000000000026580 0000000000000138 t read_encoded_value_with_base
+00000000000266c0 0000000000000220 t fde_radixsort
+00000000000268e0 0000000000000110 t __deregister_frame_info_bases.part.0
+0000000000026a00 0000000000000124 t get_cie_encoding
+0000000000026b40 00000000000000d8 t fde_mixed_encoding_extract
+0000000000026c20 00000000000001e0 t classify_object_over_fdes.constprop.0
+0000000000026e00 00000000000000bc t fde_single_encoding_extract
+0000000000026ec0 00000000000000a8 t fde_single_encoding_compare
+0000000000026f80 000000000000010c t fde_mixed_encoding_compare
+00000000000270a0 0000000000000234 t add_fdes.isra.0
+00000000000272e0 00000000000002e8 t linear_search_fdes
+00000000000275e0 0000000000000558 t search_object
+0000000000027b40 0000000000000060 t __register_frame_info
+0000000000027ba0 0000000000000018 t __deregister_frame_info
+0000000000027bc0 00000000000001d0 t _Unwind_Find_FDE
+0000000000027d90 0000000000000030 T __arm_za_disable
+0000000000027d90 0000000000000030 t __libgcc_arm_za_disable
+0000000000027dc0 00000000000000a0 T __arm_tpidr2_save
+0000000000027dc0 00000000000000a0 t __libgcc_arm_tpidr2_save
+0000000000027e60 0000000000000024 T tolower
+0000000000027ec0 0000000000000104 T strrchr
+0000000000027fe0 0000000000000024 T getenv
+0000000000028020 0000000000000064 T __assert_func
+00000000000280c0 0000000000000104 T memset
+0000000000028200 0000000000000134 T strcmp
+0000000000028340 0000000000000080 T fiprintf
+00000000000283c0 00000000000001b4 T strncmp
+0000000000028580 00000000000000dc T memchr
+0000000000028660 000000000000009c T sprintf
+0000000000028700 000000000000001c t stdio_exit_handler
+0000000000028720 000000000000006c t cleanup_stdio
+00000000000287a0 0000000000000134 t global_stdio_init.part.0
+00000000000288e0 000000000000000c T __sfp_lock_acquire
+0000000000028900 000000000000000c T __sfp_lock_release
+0000000000028920 0000000000000054 T __sinit
+0000000000028980 00000000000001a4 t _strtoul_l.isra.0
+0000000000028b40 0000000000000040 T strtoul
+0000000000028b80 00000000000000a4 T __libc_init_array
+0000000000028c40 0000000000000098 T _fwalk_sglue
+0000000000028ce0 0000000000000014 T __errno
+0000000000028d00 00000000000000cc T strchr
+0000000000028de0 000000000000002c T aligned_alloc
+0000000000028e20 0000000000000018 T abort
+0000000000028e40 000000000000022c T memcpy
+0000000000028e40 T memmove
+0000000000029080 000000000000002c T realloc
+00000000000290c0 0000000000000840 T _malloc_r
+0000000000029900 0000000000000074 T strcasecmp
+0000000000029980 000000000000011c T _malloc_trim_r
+0000000000029aa0 00000000000002d8 T _free_r
+0000000000029d80 00000000000000f8 T snprintf
+0000000000029e78 0000000000000790 t get_arg
+000000000002a608 0000000000003a84 T _svfprintf_r
+000000000002e0a0 00000000000002c0 t _strtol_l.part.0
+000000000002e360 0000000000000078 T strtol
+000000000002e400 000000000000012c T strcpy
+000000000002e540 0000000000000038 T malloc
+000000000002e580 000000000000001c T free
+000000000002e5c0 0000000000000130 T strlen
+000000000002e700 00000000000000f4 T _findenv_r
+000000000002e800 0000000000000568 T _realloc_r
+000000000002ed80 0000000000000084 T strncasecmp
+000000000002ee20 000000000000000c T __malloc_lock
+000000000002ee40 000000000000000c T __malloc_unlock
+000000000002ee80 00000000000001c8 T memcmp
+000000000002f060 0000000000000004 W __call_exitprocs
+000000000002f080 00000000000000ac T strncpy
+000000000002f140 0000000000000010 T _wcsrtombs_r
+000000000002f160 000000000000007c T frexp
+000000000002f1e0 000000000000004c T __sread
+000000000002f240 0000000000000070 T __swrite
+000000000002f2c0 0000000000000050 T __sseek
+000000000002f320 0000000000000008 T __sclose
+000000000002f340 000000000000009c T _raise_r
+000000000002f3e0 000000000000001c T raise
+000000000002f400 000000000000000c T __env_lock
+000000000002f420 000000000000000c T __env_unlock
+000000000002f440 00000000000000a4 T _Balloc
+000000000002f500 0000000000000020 T _Bfree
+000000000002f520 0000000000000118 T __multadd
+000000000002f640 0000000000000094 T __hi0bits
+000000000002f6e0 0000000000000100 T __lo0bits
+000000000002f7e0 000000000000004c T __i2b
+000000000002f840 0000000000000210 T __multiply
+000000000002fa60 0000000000000104 T __pow5mult
+000000000002fb80 0000000000000174 T __lshift
+000000000002fd00 0000000000000050 T __mcmp
+000000000002fd60 00000000000001c4 T __mdiff
+000000000002ff40 000000000000014c T __d2b
+00000000000300a0 0000000000000130 T _fclose_r
+00000000000301e0 000000000000002c T __locale_mb_cur_max
+0000000000030220 00000000000000c8 T __ssprint_r
+00000000000302e8 0000000000000790 t get_arg
+0000000000030a78 0000000000002964 T _vfiprintf_r
+00000000000333dc 00000000000000d0 t __sbprintf
+00000000000334c0 000000000000018c T _memalign_r
+0000000000033660 0000000000000188 T _wcsnrtombs_l
+0000000000033800 0000000000000054 T _wcsnrtombs_r
+0000000000033860 00000000000002dc T __utf8_mbtowc
+0000000000033b40 0000000000000038 T __sprint_r
+0000000000033b80 0000000000000008 T __localeconv_l
+0000000000033ba0 0000000000000028 T _localeconv_r
+0000000000033be0 00000000000000bc T _calloc_r
+0000000000033ca0 00000000000001a4 t quorem
+0000000000033e60 0000000000001320 T _dtoa_r
+0000000000035180 00000000000000d0 T _wcrtomb_r
+0000000000035260 0000000000000044 T __libc_fini_array
+00000000000352c0 00000000000001ec T __sflush_r
+00000000000354c0 00000000000000bc T _fflush_r
+0000000000035580 0000000000000188 T __ssputs_r
+0000000000035720 00000000000000e0 T __utf8_wctomb
+0000000000035800 000000000000012c T __swsetup_r
+0000000000035940 00000000000004a4 T __sfvwrite_r
+0000000000035e00 00000000000000b0 T __swhatbuf_r
+0000000000035ec0 00000000000000e8 T __smakebuf_r
+0000000000035fc0 0000000000000020 T _exit
+0000000000035fe0 000000000000009c T _fstat_r
+0000000000036080 0000000000000010 T _getpid_r
+00000000000360a0 0000000000000020 T __getreent
+00000000000360c0 0000000000000060 T __get_handle
+0000000000036120 00000000000000f4 T _close_r
+0000000000036220 0000000000000008 t null_write
+0000000000036240 0000000000000008 T _isatty_r
+0000000000036260 0000000000000010 T _kill_r
+0000000000036280 00000000000000a0 T _lseek_r
+0000000000036320 000000000000006c T pthread_mutex_lock
+00000000000363a0 000000000000006c T pthread_mutex_unlock
+0000000000036420 00000000000000d4 T pthread_once
+0000000000036500 0000000000000024 T pthread_key_create
+0000000000036540 0000000000000018 T pthread_setspecific
+0000000000036560 0000000000000018 T pthread_getspecific
+0000000000036580 0000000000000018 T pthread_key_delete
+00000000000365a0 00000000000000b0 T _read_r
+0000000000036660 0000000000000078 W _sbrk_r
+00000000000366e0 0000000000000014 T __libc_lock_acquire
+0000000000036700 0000000000000014 T __libc_lock_release
+0000000000036720 0000000000000014 T __libc_lock_acquire_recursive
+0000000000036740 0000000000000014 T __libc_lock_release_recursive
+0000000000036760 0000000000000018 T __libc_cond_broadcast
+0000000000036780 0000000000000018 T __libc_cond_wait
+00000000000367a0 00000000000000b0 T _write_r
+0000000000036860 0000000000000380 t __trunctfdf2
+0000000000036be0 0000000000000070 t __sfp_handle_exceptions
+0000000000036c50 T _init
+0000000000036c88 T _fini
+00000000000390e0 0000000000000018 r drmp3_L3_imdct12(float*, float*, float*)::g_twid3
+0000000000039100 0000000000000010 r drwavGUID_W64_RIFF
+0000000000039110 0000000000000010 r drwavGUID_W64_WAVE
+0000000000039120 0000000000000010 r drwavGUID_W64_FMT
+0000000000039130 0000000000000010 r drwavGUID_W64_DATA
+0000000000039140 0000000000000040 r drwav_read_pcm_frames_s16__msadpcm(drwav*, unsigned long, short*)::adaptationTable
+0000000000039180 000000000000001c r drwav_read_pcm_frames_s16__msadpcm(drwav*, unsigned long, short*)::coeff1Table
+00000000000391a0 000000000000001c r drwav_read_pcm_frames_s16__msadpcm(drwav*, unsigned long, short*)::coeff2Table
+00000000000391c0 0000000000000164 r drwav_read_pcm_frames_s16__ima(drwav*, unsigned long, short*)::stepTable
+0000000000039330 0000000000000040 r drwav_read_pcm_frames_s16__ima(drwav*, unsigned long, short*)::indexTable
+0000000000039370 0000000000000200 r drflac__crc16_table
+0000000000039570 0000000000000100 r drflac__crc8_table
+0000000000039670 0000000000000040 r drflac__clz_software(unsigned long)::clz_table_4
+00000000000396b0 0000000000000048 r drmp3_L3_imdct36(float*, float*, float const*, int)::g_twid9
+0000000000039700 0000000000000060 r drmp3d_DCT_II(float*, int)::g_sec
+0000000000039760 00000000000003c0 r drmp3d_synth(float*, short*, int, float*)::g_win
+0000000000039b50 000000000000005a r drmp3_hdr_bitrate_kbps(unsigned char const*)::halfrate
+0000000000039bb0 000000000000000c r drmp3_hdr_sample_rate_hz(unsigned char const*)::g_hz
+0000000000039bc0 0000000000000010 r drwavGUID_W64_FACT
+0000000000039bd0 0000000000000010 r drmp3_L3_huffman(float*, drmp3_bs*, drmp3_L3_gr_info const*, float const*, int)::tab33
+0000000000039be0 000000000000001c r drmp3_L3_huffman(float*, drmp3_bs*, drmp3_L3_gr_info const*, float const*, int)::tab32
+0000000000039c00 000000000000000c r drmp3_L12_subband_alloc_table(unsigned char const*, drmp3_L12_scale_info*)::g_alloc_L2M1
+0000000000039c10 0000000000000006 r drmp3_L12_subband_alloc_table(unsigned char const*, drmp3_L12_scale_info*)::g_alloc_L2M1_lowrate
+0000000000039c18 0000000000000003 r drmp3_L12_subband_alloc_table(unsigned char const*, drmp3_L12_scale_info*)::g_alloc_L1
+0000000000039c20 0000000000000009 r drmp3_L12_subband_alloc_table(unsigned char const*, drmp3_L12_scale_info*)::g_alloc_L2M2
+0000000000039c30 000000000000005c r drmp3_L12_read_scale_info(unsigned char const*, drmp3_bs*, drmp3_L12_scale_info*)::g_bitalloc_code_tab
+0000000000039c90 00000000000000b8 r drmp3_L3_read_side_info(drmp3_bs*, drmp3_L3_gr_info*, unsigned char const*)::g_scf_long
+0000000000039d50 0000000000000140 r drmp3_L3_read_side_info(drmp3_bs*, drmp3_L3_gr_info*, unsigned char const*)::g_scf_short
+0000000000039e90 0000000000000140 r drmp3_L3_read_side_info(drmp3_bs*, drmp3_L3_gr_info*, unsigned char const*)::g_scf_mixed
+0000000000039fd0 0000000000000054 r drmp3_L3_decode_scalefactors(unsigned char const*, unsigned char*, drmp3_bs*, drmp3_L3_gr_info const*, float*, int)::g_scf_partitions
+000000000003a030 0000000000000010 r drmp3_L3_decode_scalefactors(unsigned char const*, unsigned char*, drmp3_bs*, drmp3_L3_gr_info const*, float*, int)::g_scfc_decode
+000000000003a040 0000000000000018 r drmp3_L3_decode_scalefactors(unsigned char const*, unsigned char*, drmp3_bs*, drmp3_L3_gr_info const*, float*, int)::g_mod
+000000000003a060 0000000000000010 r drmp3_L3_ldexp_q2(float, int)::g_expfrac
+000000000003a070 0000000000000040 r drmp3_L3_huffman(float*, drmp3_bs*, drmp3_L3_gr_info const*, float const*, int)::tabindex
+000000000003a0b0 0000000000000020 r drmp3_L3_huffman(float*, drmp3_bs*, drmp3_L3_gr_info const*, float const*, int)::g_linbits
+000000000003a0d0 0000000000000244 r g_drmp3_pow43
+000000000003a320 0000000000000038 r drmp3_L3_stereo_process(float*, unsigned char const*, unsigned char const*, unsigned char const*, int*, int)::g_pan
+000000000003a360 0000000000000090 r drmp3_L3_imdct_gr(float*, float*, unsigned int, unsigned int)::g_mdct_window
+000000000003a3f0 00000000000000d8 r drmp3_L12_read_scalefactors(drmp3_bs*, unsigned char*, unsigned char*, int, float*)::g_deq_L12
+000000000003a4d0 0000000000000200 r g_drwavAlawTable
+000000000003a6d0 0000000000000200 r g_drwavMulawTable
+000000000003a8d0 00000000000010e8 r drmp3_L3_huffman(float*, drmp3_bs*, drmp3_L3_gr_info const*, float const*, int)::tabs
+000000000003bb40 000000000000001d r (anonymous namespace)::CONFIG_PATH
+000000000003bb60 0000000000000020 r (anonymous namespace)::BLACKLIST_PATH
+000000000003bb80 0000000000000020 r (anonymous namespace)::WHITELIST_PATH
+000000000003bba0 000000000000000c r __func__.0
+000000000003bbb0 000000000000000c r __func__.6
+000000000003bbc0 000000000000000e r __func__.1
+000000000003bbd0 000000000000000d r __func__.11
+000000000003bbe0 0000000000000009 r __func__.5
+000000000003bc00 0000000000000016 V typeinfo name for std::bad_function_call
+000000000003bc18 000000000000000d V typeinfo name for std::bad_alloc
+000000000003bc28 0000000000000027 V typeinfo name for __gnu_cxx::__concurrence_lock_error
+000000000003bc50 0000000000000029 V typeinfo name for __gnu_cxx::__concurrence_unlock_error
+000000000003bc80 000000000000000d V typeinfo name for std::exception
+000000000003bc90 0000000000000020 V typeinfo name for __cxxabiv1::__forced_unwind
+000000000003bcb0 0000000000000024 V typeinfo name for __cxxabiv1::__foreign_exception
+000000000003bcd8 0000000000000025 V typeinfo name for __cxxabiv1::__si_class_type_info
+000000000003bd00 000000000000000d V typeinfo name for std::type_info
+000000000003bd10 0000000000000010 V typeinfo name for std::logic_error
+000000000003bd20 0000000000000011 V typeinfo name for std::length_error
+000000000003bd38 0000000000000022 V typeinfo name for __cxxabiv1::__class_type_info
+000000000003be78 0000000000000008 r terminator.0
+000000000003be80 0000000000000001 R __aarch64_have_sme
+000000000003bfc0 0000000000000010 r zeroes.0
+000000000003bfd0 0000000000000010 r blanks.1
+000000000003bfe0 0000000000000101 R _ctype_
+000000000003c0e8 000000000000006c R __action_table
+000000000003c158 000000000000006c R __state_table
+000000000003c1c8 0000000000000100 R __chclass
+000000000003c2c8 000000000000000c r p05.0
+000000000003c2d8 0000000000000028 R __mprec_bigtens
+000000000003c300 00000000000000c8 R __mprec_tens
+000000000003c4c0 0000000000000010 r zeroes.0
+000000000003c4d0 0000000000000010 r blanks.1
+000000000003c4e0 r __tls_align
+000000000003c54c r __eh_frame_hdr_end
+000000000003c54c r __eh_frame_hdr_start
+000000000003c550 r __EH_FRAME_BEGIN__
+00000000000433b4 r __FRAME_END__
+0000000000044000 d __frame_dummy_init_array_entry
+0000000000044000 d __init_array_start
+0000000000044000 d __preinit_array_end
+0000000000044000 d __preinit_array_start
+0000000000044000 d __relro_start
+0000000000044020 d __do_global_dtors_aux_fini_array_entry
+0000000000044020 d __fini_array_start
+0000000000044020 d __init_array_end
+0000000000044030 d __fini_array_end
+0000000000044030 0000000000000020 V vtable for LockableMutex
+0000000000044050 0000000000000050 V vtable for FlacFile
+00000000000440a0 0000000000000050 V vtable for Mp3File
+00000000000440f0 0000000000000050 V vtable for WavFile
+0000000000044140 0000000000000100 D dotab_stdnull
+0000000000044240 0000000000000050 V vtable for Source
+0000000000044290 0000000000000018 V typeinfo for std::bad_function_call
+00000000000442a8 0000000000000028 V vtable for std::bad_function_call
+00000000000442d0 0000000000000018 V typeinfo for std::bad_alloc
+00000000000442e8 0000000000000028 V vtable for std::bad_alloc
+0000000000044310 0000000000000018 V typeinfo for __gnu_cxx::__concurrence_lock_error
+0000000000044328 0000000000000018 V typeinfo for __gnu_cxx::__concurrence_unlock_error
+0000000000044340 0000000000000028 V vtable for __gnu_cxx::__concurrence_lock_error
+0000000000044368 0000000000000028 V vtable for __gnu_cxx::__concurrence_unlock_error
+0000000000044390 0000000000000010 V typeinfo for std::exception
+00000000000443a0 0000000000000010 V typeinfo for __cxxabiv1::__forced_unwind
+00000000000443b0 0000000000000010 V typeinfo for __cxxabiv1::__foreign_exception
+00000000000443c0 0000000000000018 V typeinfo for __cxxabiv1::__si_class_type_info
+00000000000443d8 0000000000000058 V vtable for __cxxabiv1::__si_class_type_info
+0000000000044430 0000000000000010 V typeinfo for std::type_info
+0000000000044440 0000000000000018 V typeinfo for std::logic_error
+0000000000044458 0000000000000018 V typeinfo for std::length_error
+0000000000044470 0000000000000028 V vtable for std::logic_error
+0000000000044498 0000000000000028 V vtable for std::length_error
+00000000000444c0 0000000000000018 V typeinfo for __cxxabiv1::__class_type_info
+00000000000444d8 0000000000000058 V vtable for __cxxabiv1::__class_type_info
+0000000000044530 a _DYNAMIC
+0000000000044680 d __got_start__
+0000000000044680 a _GLOBAL_OFFSET_TABLE_
+0000000000044998 d __got_end__
+0000000000045000 d __data_start
+0000000000045000 0000000000000004 D __nx_fs_num_sessions
+0000000000045004 0000000000000004 D __nx_applet_type
+0000000000045008 0000000000000001 d tune::(anonymous namespace)::running
+000000000004500c 0000000000000001 d tune::impl::(anonymous namespace)::g_should_run
+000000000004500d 0000000000000001 d tune::impl::(anonymous namespace)::g_should_pause
+0000000000045010 0000000000000004 d tune::impl::(anonymous namespace)::g_title_volume
+0000000000045014 0000000000000001 d tune::impl::(anonymous namespace)::g_repeat
+0000000000045015 0000000000000001 d tune::impl::(anonymous namespace)::g_status
+0000000000045018 0000000000000004 d tune::impl::(anonymous namespace)::g_tune_volume
+000000000004501c 0000000000000004 d tune::impl::(anonymous namespace)::g_default_title_volume
+0000000000045020 0000000000000050 d drflac__decode_samples__fixed(drflac_bs*, unsigned int, unsigned int, unsigned char, int*)::lpcCoefficientsTable
+0000000000045070 0000000000000008 V __nx_exception_stack_size
+0000000000045078 0000000000000008 V DW.ref.__gxx_personality_v0
+0000000000045080 0000000000000008 D __cxxabiv1::__unexpected_handler
+0000000000045088 0000000000000008 D __cxxabiv1::__terminate_handler
+0000000000045090 0000000000000018 D __sglue
+00000000000450a8 0000000000000008 D __malloc_sbrk_base
+00000000000450b0 0000000000000008 D __malloc_trim_threshold
+00000000000450b8 0000000000000810 D __malloc_av_
+00000000000458c8 0000000000000008 D _impure_ptr
+00000000000458d0 0000000000000180 D _impure_data
+0000000000045a50 00000000000001a8 D __global_locale
+0000000000045bf8 0000000000000008 D environ
+0000000000045c00 0000000000002000 d handles
+0000000000047c00 0000000000000010 d __stderr_handle
+0000000000047c10 0000000000000010 d __stdout_handle
+0000000000047c20 0000000000000010 d __stdin_handle
+0000000000047c30 0000000000000118 D devoptab_list
+0000000000047d48 d __tdata_lma
+0000000000047d48 d __tdata_lma_end
+0000000000048000 b __bss_start__
+0000000000048000 b completed.1
+0000000000048008 b object.0
+0000000000049000 0000000000006000 b (anonymous namespace)::tuneThreadBuffer
+000000000004f000 0000000000001000 b (anonymous namespace)::pmdmntThreadBuffer
+0000000000050000 0000000000001000 b (anonymous namespace)::pscmThreadBuffer
+0000000000051000 0000000000001000 b (anonymous namespace)::gpioThreadBuffer
+0000000000052000 0000000000073000 b __libnx_initheap::inner_heap
+00000000000c5000 0000000000000110 b tune::(anonymous namespace)::g_server
+00000000000c6000 0000000000000048 b tune::impl::(anonymous namespace)::g_drv
+00000000000c6048 0000000000000008 b tune::impl::(anonymous namespace)::g_playlist
+00000000000c6050 0000000000000001 b tune::impl::(anonymous namespace)::g_close_audren
+00000000000c6058 0000000000000010 b tune::impl::(anonymous namespace)::g_mutex
+00000000000c6068 0000000000000004 b tune::impl::(anonymous namespace)::g_queue_position
+00000000000c606c 0000000000000001 b tune::impl::(anonymous namespace)::g_shuffle
+00000000000c6070 0000000000000008 b tune::impl::(anonymous namespace)::g_source
+00000000000c6078 0000000000000008 b tune::impl::(anonymous namespace)::g_current
+00000000000c6080 0000000000000008 b tune::impl::(anonymous namespace)::g_shuffle_playlist
+00000000000c6088 0000000000000001 b tune::impl::(anonymous namespace)::PollAudrenCloseState()::close_audren_previous
+00000000000c608c 0000000000000004 b tune::impl::Enqueue(char const*, unsigned long, tune::EnqueueType)::playlist_id
+00000000000c7000 0000000000002000 b tune::impl::(anonymous namespace)::AudioMemoryPool
+00000000000c9000 0000000000003f80 b drmp3dec_decode_frame::scratch
+00000000000ccf80 00000000000010c0 b drflac_open_with_metadata_private(unsigned long (*)(void*, void*, unsigned long), unsigned int (*)(void*, int, drflac_seek_origin), void (*)(void*, drflac_metadata*), drflac_container, void*, void*, drflac_allocation_callbacks const*)::init
+00000000000ce040 0000000000000010 b sdmc::(anonymous namespace)::sdmc
+00000000000ce050 0000000000000301 b sdmc::(anonymous namespace)::path_buffer
+00000000000ce360 0000000000000015 b (anonymous namespace)::get_tid_str(unsigned long)::buf
+00000000000ce378 0000000000000008 b (anonymous namespace)::CURRENT_TITLE_ID
+00000000000ce380 0000000000000010 b g_audaSrv
+00000000000ce390 0000000000000010 b g_auddSrv
+00000000000ce3a0 0000000000000010 b g_audoutaSrv
+00000000000ce3b0 0000000000000010 b g_audoutdSrv
+00000000000ce3c0 0000000000000004 b g_randMutex
+00000000000ce3c4 0000000000000001 b g_randInit
+00000000000ce3d0 0000000000000040 b g_chacha
+00000000000ce410 00000000000000d8 b g_tlsDestructors
+00000000000ce4e8 0000000000000008 b g_tlsUsageMask
+00000000000ce4f0 0000000000000038 b g_mainThread
+00000000000ce528 0000000000000008 b g_threadList
+00000000000ce530 0000000000000004 b g_threadMutex
+00000000000ce534 0000000000000001 b g_IsLegacyKernel
+00000000000ce538 0000000000000008 b g_Reservations
+00000000000ce540 0000000000000010 b g_StackRegion
+00000000000ce550 0000000000000010 b g_AslrRegion
+00000000000ce560 0000000000000010 b g_HeapRegion
+00000000000ce570 0000000000000010 b g_AliasRegion
+00000000000ce580 0000000000000004 b g_VirtmemMutex
+00000000000ce588 0000000000000008 b g_audrenGuard
+00000000000ce590 000000000000000c b g_audrenEvent
+00000000000ce5a0 0000000000000028 b g_audrenWorkBuf
+00000000000ce5c8 0000000000000010 b g_audrenIAudioRenderer
+00000000000ce5d8 0000000000000004 B g_audrenRevision
+00000000000ce5e0 0000000000000008 b g_fsGuard
+00000000000ce5f0 0000000000000054 b g_fsSessionMgr
+00000000000ce648 0000000000000010 b g_fsSrv
+00000000000ce658 0000000000000008 b g_gpioGuard
+00000000000ce660 0000000000000010 b g_gpioSrv
+00000000000ce670 0000000000000008 b g_pminfoGuard
+00000000000ce678 0000000000000010 b g_pminfoSrv
+00000000000ce688 0000000000000008 b g_pmdmntGuard
+00000000000ce690 0000000000000010 b g_pmdmntSrv
+00000000000ce6a0 0000000000000008 b g_pscmGuard
+00000000000ce6a8 0000000000000010 b g_pscmSrv
+00000000000ce6b8 0000000000000008 b g_setsysGuard
+00000000000ce6c0 0000000000000010 b g_setsysSrv
+00000000000ce6d0 0000000000000008 b g_smGuard
+00000000000ce6d8 0000000000000008 b g_smOverridesNum
+00000000000ce6e0 0000000000000180 b g_smOverrides
+00000000000ce860 0000000000000010 b g_smSrv
+00000000000ce870 0000000000000008 b g_userIdStorage
+00000000000ce880 0000000000000010 b g_randomSeed
+00000000000ce890 0000000000000001 b g_hasRandomSeed
+00000000000ce894 0000000000000004 b g_lastLoadResult
+00000000000ce898 0000000000000008 b g_nextLoadArgv
+00000000000ce8a0 0000000000000008 b g_nextLoadPath
+00000000000ce8a8 0000000000000004 b g_processHandle
+00000000000ce8b0 0000000000000018 b g_syscallHints
+00000000000ce8c8 0000000000000008 b g_overrideArgv
+00000000000ce8d0 0000000000000008 b g_overrideHeapSize
+00000000000ce8d8 0000000000000008 b g_overrideHeapAddr
+00000000000ce8e0 0000000000000008 b g_loaderRetAddr
+00000000000ce8e8 0000000000000004 b g_mainThreadHandle
+00000000000ce8f0 0000000000000008 b g_loaderInfoSize
+00000000000ce8f8 0000000000000008 b g_loaderInfo
+00000000000ce900 0000000000000001 b g_isNso
+00000000000ce904 0000000000000004 b g_hosVersion
+00000000000ce908 B __stack_top
+00000000000ce910 0000000000000008 b g_appletResourceUserId
+00000000000ce918 0000000000000008 b g_argv_empty
+00000000000ce920 0000000000000008 B __system_argv
+00000000000ce928 0000000000000004 B __system_argc
+00000000000ce930 0000000000000340 B __nx_exceptiondump
+00000000000cec70 0000000000000004 V __nx_exception_ignoredebug
+00000000000cec80 0000000000000400 V __nx_exception_stack
+00000000000cf080 0000000000000004 B __nxlink_host
+00000000000cf090 0000000000000028 b (anonymous namespace)::emergency_pool
+00000000000cf0b8 0000000000000004 b init
+00000000000cf0bc 0000000000000001 B __eh_globals_init::_S_init
+00000000000cf0c0 0000000000000010 b (anonymous namespace)::eh_globals
+00000000000cf0d0 0000000000000008 b (anonymous namespace)::__new_handler
+00000000000cf0d8 0000000000000020 V std::string::_Rep::_S_empty_rep_storage
+00000000000cf0f8 0000000000000004 b once_regsizes.0
+00000000000cf100 0000000000000062 b dwarf_reg_size_table
+00000000000cf168 0000000000000010 b object_mutex
+00000000000cf178 0000000000000008 b seen_objects
+00000000000cf180 0000000000000008 b unseen_objects
+00000000000cf188 000000000000000c b __sfp_recursive_mutex
+00000000000cf198 0000000000000228 B __sf
+00000000000cf3c0 0000000000000008 B __stdio_exit_handler
+00000000000cf3c8 0000000000000050 B __malloc_current_mallinfo
+00000000000cf418 0000000000000008 B __malloc_max_total_mem
+00000000000cf420 0000000000000008 B __malloc_max_sbrked_mem
+00000000000cf428 0000000000000008 B __malloc_top_pad
+00000000000cf430 000000000000000c b __malloc_recursive_mutex
+00000000000cf440 000000000000000c b __env_recursive_mutex
+00000000000cf450 0000000000000008 b initial_env
+00000000000cf458 0000000000000004 b __hndl_lock
+00000000000cf460 0000000000000008 B fake_heap_start
+00000000000cf468 0000000000000008 B fake_heap_end
+00000000000cf470 0000000000000004 b __pthread_once_cv
+00000000000cf474 0000000000000004 b __pthread_once_lock
+00000000000cf478 0000000000000008 b heap_start.0
+00000000000cf480 b __tls_start
+00000000000cf488 b __bss_end__
+00000000000cf488 b __end__
+00000000000cf488 b __tls_end
+00000000000d0000 b __argdata__
