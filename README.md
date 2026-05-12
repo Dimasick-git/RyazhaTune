@@ -1,41 +1,71 @@
-# РяжаТюн 🎵
+# RyazhaTune
 
-Добро пожаловать в **РяжаТюн** — самый крутой мод для кастомной музыки на твой Nintendo Switch!
+RyazhaTune is a custom background music module for the Nintendo Switch. It allows users to play custom audio files during gameplay and system navigation. This project is a fork of the original sys-tune implementation, extended with additional features for improved user experience and configuration management.
 
-## Что это вообще?
+## Features
 
-РяжаТюн — это форк оригинального репо (спс ребятам за основу 🙌), который позволяет заливать свою музыку на консоль и слушать её прямо в играх.
+- **Persistent Playlists**: Playlist state is preserved across system reboots.
+- **Autoplay Capability**: Configurable automatic playback initialization upon system startup.
+- **Whitelist Mode**: Configurable title ID whitelisting to restrict background music playback to specific applications.
+- **Audio Format Support**: Native decoding for MP3, FLAC, WAV, and WAVE formats.
+- **Overlay Integration**: Seamless control via the Tesla overlay interface.
 
-## Что новенького? 🔥
+## Installation
 
-- **Плейлисты теперь не теряются** — заливаешь музыку, перезагружаешь консоль, а плейлист остался! 
-- **Автозапуск** — хочешь, чтобы музыка сама начинала играть при включении? Легко!
-- **Режим whitelist** — обратное чёрному списку. Музыка играет ТОЛЬКО при определённом ID игры. 
+1. Download the latest release archive (`.zip`) from the repository releases page.
+2. Extract the contents of the archive to the root directory of the Nintendo Switch SD card.
+3. Place supported audio files (MP3, FLAC, WAV) onto the SD card.
+4. Launch the Tesla overlay menu to control playback and manage configurations.
 
-## Как установить? 💿
+## Architecture and Components
 
-1. **Скачай релиз** — заходишь сюда, качаешь зип
-2. **Распакуй на SD карту** — просто распакуешь в корень, всё просто!
-3. **Забрось музыку** — кидаешь свои mp3, flac, wav файлы на карту
-4. **Наслаждайся** — запускаешь через Tesla overlay, слушаешь свою музыку в любых играх!
+The project consists of several core components:
 
-## Поддерживаемые форматы 🎧
+- **sys-tune**: The main background system module (sysmodule) responsible for audio decoding and playback via the `audren` service.
+- **overlay**: The Tesla overlay plugin (`.ovl`) providing the graphical user interface for playback control.
+- **ipc**: Inter-process communication definitions facilitating interaction between the overlay and the sysmodule.
+- **libtesla**: A bundled UI library for rendering the overlay interface.
+- **common**: Shared utilities for configuration management (`minIni`), SD card access, and process management.
 
-- MP3 ✅
-- FLAC ✅
-- WAV ✅
-- WAVE ✅
-- И другие. 
+## Configuration
 
-## Управление 🎮
+Configuration files are automatically generated upon first use and are stored in `/config/RyazhTune/`. The module utilizes `minIni` for configuration parsing.
 
-Управляешь всем через Tesla overlay. Там всё интуитивно понятно, даже если ты первый раз с модом работаешь.
+- `config.ini`: Main configuration parameters (autoplay, volume, shuffle, repeat).
+- `whitelist.ini`: Title IDs configured for whitelist mode.
+- `blacklist.ini`: Title IDs configured for blacklist mode.
+- `playlist.txt`: Persistent playlist state.
 
-## Спасибо! 🙏
+## Building from Source
 
-Спасибо оригинальным разработчикам за такую крутую идею! Мы просто добавили фишечек и тепла в проект.
+### Prerequisites
 
----
+- [devkitPro](https://devkitpro.org/) with the `switch-dev` package group installed.
+- Ensure the `DEVKITPRO` environment variable is correctly configured.
 
-**Версия:** 4.7.0
-**Статус:** Работает отлично! 
+### Build Process
+
+To compile the entire project (sysmodule and overlay), execute the following command in the root directory:
+
+```bash
+make all
+```
+
+To generate a distributable release archive:
+
+```bash
+make dist
+```
+
+## Acknowledgments
+
+This project builds upon the foundational work of the original sys-tune developers. We extend our gratitude to the contributors of the original repository and the broader Nintendo Switch homebrew community.
+
+## Version Information
+
+- **Current Version:** 4.7.0
+- **Status:** Stable
+
+## License
+
+This project is licensed under the GNU General Public License Version 2 (GPLv2). See the `LICENSE` file for full details. The bundled `libtesla` component is also distributed under the GPLv2.
