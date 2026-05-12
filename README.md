@@ -1,71 +1,71 @@
 # RyazhaTune
 
-RyazhaTune is a custom background music module for the Nintendo Switch. It allows users to play custom audio files during gameplay and system navigation. This project is a fork of the original sys-tune implementation, extended with additional features for improved user experience and configuration management.
+RyazhaTune — это пользовательский модуль фоновой музыки для Nintendo Switch. Он позволяет пользователям воспроизводить собственные аудиофайлы во время игрового процесса и навигации по системе. Этот проект является форком оригинальной реализации sys-tune, расширенным дополнительными функциями для улучшения пользовательского опыта и управления конфигурацией.
 
-## Features
+## Возможности
 
-- **Persistent Playlists**: Playlist state is preserved across system reboots.
-- **Autoplay Capability**: Configurable automatic playback initialization upon system startup.
-- **Whitelist Mode**: Configurable title ID whitelisting to restrict background music playback to specific applications.
-- **Audio Format Support**: Native decoding for MP3, FLAC, WAV, and WAVE formats.
-- **Overlay Integration**: Seamless control via the Tesla overlay interface.
+- **Постоянные плейлисты**: Состояние плейлиста сохраняется при перезагрузках системы.
+- **Функция автозапуска**: Настраиваемая автоматическая инициализация воспроизведения при запуске системы.
+- **Режим белого списка**: Настраиваемый белый список идентификаторов игр для ограничения воспроизведения фоновой музыки только для определенных приложений.
+- **Поддержка аудиоформатов**: Встроенное декодирование форматов MP3, FLAC, WAV и WAVE.
+- **Интеграция с оверлеем**: Бесшовное управление через интерфейс оверлея Tesla.
 
-## Installation
+## Установка
 
-1. Download the latest release archive (`.zip`) from the repository releases page.
-2. Extract the contents of the archive to the root directory of the Nintendo Switch SD card.
-3. Place supported audio files (MP3, FLAC, WAV) onto the SD card.
-4. Launch the Tesla overlay menu to control playback and manage configurations.
+1. Загрузите последний архив релиза (`.zip`) со страницы релизов репозитория.
+2. Извлеките содержимое архива в корневой каталог SD-карты Nintendo Switch.
+3. Разместите поддерживаемые аудиофайлы (MP3, FLAC, WAV) на SD-карте.
+4. Запустите меню оверлея Tesla для управления воспроизведением и конфигурациями.
 
-## Architecture and Components
+## Архитектура и компоненты
 
-The project consists of several core components:
+Проект состоит из нескольких основных компонентов:
 
-- **sys-tune**: The main background system module (sysmodule) responsible for audio decoding and playback via the `audren` service.
-- **overlay**: The Tesla overlay plugin (`.ovl`) providing the graphical user interface for playback control.
-- **ipc**: Inter-process communication definitions facilitating interaction between the overlay and the sysmodule.
-- **libtesla**: A bundled UI library for rendering the overlay interface.
-- **common**: Shared utilities for configuration management (`minIni`), SD card access, and process management.
+- **sys-tune**: Основной фоновый системный модуль (sysmodule), отвечающий за декодирование и воспроизведение аудио через службу `audren`.
+- **overlay**: Плагин оверлея Tesla (`.ovl`), предоставляющий графический пользовательский интерфейс для управления воспроизведением.
+- **ipc**: Определения межпроцессного взаимодействия, облегчающие взаимодействие между оверлеем и системным модулем.
+- **libtesla**: Встроенная библиотека пользовательского интерфейса для рендеринга интерфейса оверлея.
+- **common**: Общие утилиты для управления конфигурацией (`minIni`), доступа к SD-карте и управления процессами.
 
-## Configuration
+## Конфигурация
 
-Configuration files are automatically generated upon first use and are stored in `/config/RyazhTune/`. The module utilizes `minIni` for configuration parsing.
+Файлы конфигурации автоматически генерируются при первом использовании и хранятся в `/config/RyazhaTune/`. Модуль использует `minIni` для анализа конфигурации.
 
-- `config.ini`: Main configuration parameters (autoplay, volume, shuffle, repeat).
-- `whitelist.ini`: Title IDs configured for whitelist mode.
-- `blacklist.ini`: Title IDs configured for blacklist mode.
-- `playlist.txt`: Persistent playlist state.
+- `config.ini`: Основные параметры конфигурации (автозапуск, громкость, перемешивание, повтор).
+- `whitelist.ini`: Идентификаторы игр, настроенные для режима белого списка.
+- `blacklist.ini`: Идентификаторы игр, настроенные для режима черного списка.
+- `playlist.txt`: Состояние постоянного плейлиста.
 
-## Building from Source
+## Сборка из исходного кода
 
-### Prerequisites
+### Предварительные требования
 
-- [devkitPro](https://devkitpro.org/) with the `switch-dev` package group installed.
-- Ensure the `DEVKITPRO` environment variable is correctly configured.
+- [devkitPro](https://devkitpro.org/) с установленной группой пакетов `switch-dev`.
+- Убедитесь, что переменная окружения `DEVKITPRO` правильно настроена.
 
-### Build Process
+### Процесс сборки
 
-To compile the entire project (sysmodule and overlay), execute the following command in the root directory:
+Для компиляции всего проекта (системного модуля и оверлея) выполните следующую команду в корневом каталоге:
 
 ```bash
 make all
 ```
 
-To generate a distributable release archive:
+Для создания дистрибутивного архива релиза:
 
 ```bash
 make dist
 ```
 
-## Acknowledgments
+## Благодарности
 
-This project builds upon the foundational work of the original sys-tune developers. We extend our gratitude to the contributors of the original repository and the broader Nintendo Switch homebrew community.
+Этот проект основан на фундаментальной работе разработчиков оригинального sys-tune. Мы выражаем благодарность авторам оригинального репозитория и всему сообществу homebrew Nintendo Switch.
 
-## Version Information
+## Информация о версии
 
-- **Current Version:** 4.7.0
-- **Status:** Stable
+- **Текущая версия:** 4.7.0
+- **Статус:** Стабильный
 
-## License
+## Лицензия
 
-This project is licensed under the GNU General Public License Version 2 (GPLv2). See the `LICENSE` file for full details. The bundled `libtesla` component is also distributed under the GPLv2.
+Этот проект распространяется под лицензией GNU General Public License Version 2 (GPLv2). Полную информацию см. в файле `LICENSE`. Включенный компонент `libtesla` также распространяется под лицензией GPLv2.
