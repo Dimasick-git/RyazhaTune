@@ -64,7 +64,7 @@ ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
 CFLAGS	:=	-g -Wall -Os -ffunction-sections -fdata-sections \
 			-ffast-math -fomit-frame-pointer -fno-stack-protector \
-			-flto -ffat-lto-objects \
+			-flto=auto -ffat-lto-objects \
             -fuse-linker-plugin -finline-small-functions \
             -fno-strict-aliasing -frename-registers -falign-functions=16 \
 			$(ARCH) $(DEFINES)

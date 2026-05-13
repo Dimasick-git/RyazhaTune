@@ -165,4 +165,14 @@ void set_load_path(const char* path) {
     ini_puts("config", "load_path", path, CONFIG_PATH);
 }
 
+auto get_language(char* out, int max_len) -> int {
+    // Russian is the project default when the user has not selected another language.
+    return ini_gets("config", "language", "ru", out, max_len, CONFIG_PATH);
+}
+
+void set_language(const char* language) {
+    create_config_dir();
+    ini_puts("config", "language", language, CONFIG_PATH);
+}
+
 }

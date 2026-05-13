@@ -48,7 +48,14 @@ APP_VERSION	:=	$(VERSION)
 NO_ICON		:=  1
 
 # This location should reflect where you place the libryazhahand directory (lib can vary between projects).
-include ${TOPDIR}/lib/libryazhahand/ryazhahand.mk
+RYAZHAHAND_DIR ?= ${TOPDIR}/lib/libryazhahand
+RYAZHAHAND_MK  := ${RYAZHAHAND_DIR}/ryazhahand.mk
+
+ifeq ($(wildcard $(RYAZHAHAND_MK)),)
+$(error Missing $(RYAZHAHAND_MK). Run `make prepare-overlay-lib` from the repository root to clone libultrahand and install ryazhahand.mk)
+endif
+
+include $(RYAZHAHAND_MK)
 
 #ifeq ($(RELEASE),)
 #	APP_VERSION	:=	$(APP_VERSION)-$(shell git describe --dirty --always)
@@ -73,7 +80,7 @@ endif
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
-CFLAGS := -g -Wall -Os -ffunction-sections -fdata-sections -flto \
+CFLAGS := -g -Wall -Os -ffunction-sections -fdata-sections -flto=auto \
           -fuse-linker-plugin -fomit-frame-pointer -finline-small-functions \
           -fno-strict-aliasing -frename-registers -falign-functions=16 \
           $(ARCH) $(DEFINES)
