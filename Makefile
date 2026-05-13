@@ -35,8 +35,22 @@ prepare-overlay-lib:
 		fi; \
 	fi
 
-	@echo "Patching libryazhahand config paths to /config/ryazhahand..."
-	@find "$(RYAZHAHAND_DIR)" -type f \( -name '*.hpp' -o -name '*.h' -o -name '*.cpp' -o -name '*.c' -o -name '*.ini' -o -name '*.json' -o -name '*.mk' \) -exec perl -0pi -e 's#/config/ultra(?:hand)#/config/ryazhahand#g; s#config/ultra(?:hand)#config/ryazhahand#g' {} +
+prepare-overlay-lib:
+	@if [ ! -d "$(RYAZHAHAND_DIR)/.git" ]; then \
+		echo "Cloning libultrahand into $(RYAZHAHAND_DIR)..."; \
+		rm -rf "$(RYAZHAHAND_DIR)"; \
+		mkdir -p "$(dir $(RYAZHAHAND_DIR))"; \
+		git clone --depth 1 "$(LIBULTRAHAND_REPO)" "$(RYAZHAHAND_DIR)"; \
+	fi
+	@if [ ! -f "$(RYAZHAHAND_DIR)/ryazhahand.mk" ]; then \
+		if [ -f "$(LEGACY_HAND_MK)" ]; then \
+			echo "Installing ryazhahand.mk compatibility makefile..."; \
+			cp "$(LEGACY_HAND_MK)" "$(RYAZHAHAND_DIR)/ryazhahand.mk"; \
+		else \
+			echo "Missing $(RYAZHAHAND_DIR)/ryazhahand.mk" >&2; \
+			exit 1; \
+		fi; \
+	fi
 
 overlay: prepare-overlay-lib
 	$(MAKE) -C overlay
@@ -50,15 +64,12 @@ module: nxExt
 dist: all
 	rm -rf dist
 	mkdir -p dist/switch/.overlays
-	mkdir -p dist/atmosphere/contents/420000000000000E/flags
-	mkdir -p dist/config/ryazhahand/lang
-	touch dist/atmosphere/contents/420000000000000E/flags/boot2.flag
-	cp RyazhaTune/RyazhTune.nsp dist/atmosphere/contents/420000000000000E/exefs.nsp
-	cp RyazhaTune/RyazhTune.json dist/atmosphere/contents/420000000000000E/
-	cp RyazhaTune/toolbox.json dist/atmosphere/contents/420000000000000E/
-	cp overlay/RyazhTune-Overlay.ovl dist/switch/.overlays/
-	cp overlay/lang/*.json dist/config/ryazhahand/lang/
-	cd dist; zip -r ../RyazhTune-$(VERSION)-$(GITHASH).zip atmosphere switch config; cd ../;
-	-hactool -t nso RyazhaTune/RyazhTune.nso
+		mkdir -p dist/atmosphere/contents/420000000000000E/flags
+		touch dist/atmosphere/contents/420000000000000E/flags/boot2.flag
+		cp RyazhaTune/RyazhaTune.nsp dist/atmosphere/contents/420000000000000E/exefs.nsp
+		cp overlay/RyazhaTune-overlay.ovl dist/switch/.overlays/
+		cp RyazhaTune/toolbox.json dist/atmosphere/contents/420000000000000E/
+	cd dist; zip -r RyazhaTune-$(VERSION)-$(GITHASH).zip ./**/; cd ../;
+	-hactool -t nso RyazhaTune/RyazhaTune.nso
 
 .PHONY: all clean overlay nxExt module dist prepare-overlay-lib
