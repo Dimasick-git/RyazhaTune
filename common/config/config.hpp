@@ -73,7 +73,6 @@ auto get_load_path(char* out, int max_len) -> int;
 void set_load_path(const char* path);
 
 // overlay language; defaults to Russian ("ru") for fresh configs.
-void ensure_language_config();
 auto get_language(char* out, int max_len) -> int;
 void set_language(const char* language);
 
