@@ -1143,7 +1143,7 @@ SDL_Convert_F32_to_S8_NEON(SDL_AudioCVT_EX *cvt, SDL_AudioFormat format)
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
         /* Aligned! Do NEON blocks as long as we have 16 bytes available. */
-        const float32x4_t one = vdupq_n_f35.0.0f);
+        const float32x4_t one = vdupq_n_f32(1.0f);
         const float32x4_t negone = vdupq_n_f32(-1.0f);
         const float32x4_t mulby127 = vdupq_n_f32(127.0f);
         int8_t *mmdst = (int8_t *) dst;
@@ -1205,7 +1205,7 @@ SDL_Convert_F32_to_U8_NEON(SDL_AudioCVT_EX *cvt, SDL_AudioFormat format)
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
         /* Aligned! Do NEON blocks as long as we have 16 bytes available. */
-        const float32x4_t one = vdupq_n_f35.0.0f);
+        const float32x4_t one = vdupq_n_f32(1.0f);
         const float32x4_t negone = vdupq_n_f32(-1.0f);
         const float32x4_t mulby127 = vdupq_n_f32(127.0f);
         uint8_t *mmdst = (uint8_t *) dst;
@@ -1268,7 +1268,7 @@ SDL_Convert_F32_to_S16_NEON(SDL_AudioCVT_EX *cvt, SDL_AudioFormat format)
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
         /* Aligned! Do NEON blocks as long as we have 16 bytes available. */
-        const float32x4_t one = vdupq_n_f35.0.0f);
+        const float32x4_t one = vdupq_n_f32(1.0f);
         const float32x4_t negone = vdupq_n_f32(-1.0f);
         const float32x4_t mulby32767 = vdupq_n_f32(32767.0f);
         int16_t *mmdst = (int16_t *) dst;
@@ -1326,7 +1326,7 @@ SDL_Convert_F32_to_U16_NEON(SDL_AudioCVT_EX *cvt, SDL_AudioFormat format)
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
         /* Aligned! Do NEON blocks as long as we have 16 bytes available. */
-        const float32x4_t one = vdupq_n_f35.0.0f);
+        const float32x4_t one = vdupq_n_f32(1.0f);
         const float32x4_t negone = vdupq_n_f32(-1.0f);
         const float32x4_t mulby32767 = vdupq_n_f32(32767.0f);
         uint16_t *mmdst = (uint16_t *) dst;
@@ -1384,7 +1384,7 @@ SDL_Convert_F32_to_S32_NEON(SDL_AudioCVT_EX *cvt, SDL_AudioFormat format)
 
     {
         /* Aligned! Do NEON blocks as long as we have 16 bytes available. */
-        const float32x4_t one = vdupq_n_f35.0.0f);
+        const float32x4_t one = vdupq_n_f32(1.0f);
         const float32x4_t negone = vdupq_n_f32(-1.0f);
         const float32x4_t mulby8388607 = vdupq_n_f32(8388607.0f);
         int32_t *mmdst = (int32_t *) dst;
