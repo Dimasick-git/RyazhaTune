@@ -100,27 +100,12 @@ namespace {
     constexpr LanguageOption kLanguages[] = {
         {"ru", "Русский"},
         {"en", "English"},
-        {"de", "Deutsch"},
-        {"es", "Español"},
-        {"fr", "Français"},
-        {"it", "Italiano"},
-        {"ja", "日本語"},
-        {"ko", "한국어"},
-        {"nl", "Nederlands"},
-        {"pl", "Polski"},
-        {"pt", "Português"},
-        {"uk", "Українська"},
-        {"zh-cn", "简体中文"},
-        {"zh-tw", "繁體中文"},
+        {"zh", "中文"},
     };
 
     size_t currentLanguageIndex() {
         char language[8]{};
         config::get_language(language, sizeof(language));
-        if (std::strcmp(language, "zh") == 0) {
-            config::set_language("zh-cn");
-            std::strncpy(language, "zh-cn", sizeof(language) - 1);
-        }
         for (size_t i = 0; i < std::size(kLanguages); ++i) {
             if (std::strcmp(language, kLanguages[i].code) == 0)
                 return i;
@@ -658,14 +643,16 @@ tsl::elm::Element* SettingsGui::createUI() {
     {
         const size_t language_index = currentLanguageIndex();
         auto *language_item = new tsl::elm::ListItem("Language", kLanguages[language_index].label);
-        m_language_button = language_item;
-        language_item->setClickListener([](u64 keys) -> bool {
-            if (keys & HidNpadButton_A) {
-                tsl::changeTo<LanguageGui>();
-                return true;
-            }
-            return false;
-        });
+        language_item->setClickListener(
+            [language_item, index = language_index](u64 keys) mutable -> bool {
+                if (keys & HidNpadButton_A) {
+                    index = (index + 1) % std::size(kLanguages);
+                    config::set_language(kLanguages[index].code);
+                    language_item->setValue(kLanguages[index].label);
+                    return true;
+                }
+                return false;
+            });
         m_list->addItem(language_item);
     }
 
