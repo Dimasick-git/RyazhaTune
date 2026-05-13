@@ -5,26 +5,46 @@ on:
     types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   update-version:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || !github.event.release.draft }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
+
+      - name: Настройка безопасного Git каталога
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Get latest release version
         id: get_version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
-          # Remove 'v' prefix if present
+          VERSION=$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
+          if [[ -z "$VERSION" || "$VERSION" == "null" ]]; then
+            echo "Не удалось получить последнюю версию релиза" >&2
+            exit 1
+          fi
           VERSION_CLEAN=${VERSION#v}
-          echo "VERSION=$VERSION_CLEAN" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION_CLEAN" >> "$GITHUB_OUTPUT"
 
       - name: Update README.md
         run: |
-          VERSION=${{ steps.get_version.outputs.VERSION }}
+          VERSION='${{ steps.get_version.outputs.VERSION }}'
           sed -i "s/- \*\*Текущая версия:\*\* .*/- **Текущая версия:** $VERSION/" README.md
 
       - name: Commit and push changes
@@ -32,5 +52,9 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "docs: update current version in README to ${{ steps.get_version.outputs.VERSION }}" && git push origin main)
-          
+          if git diff --cached --quiet; then
+            echo "README.md already contains the latest version."
+          else
+            git commit -m "docs: update current version in README to ${{ steps.get_version.outputs.VERSION }}"
+            git push origin main
+          fi

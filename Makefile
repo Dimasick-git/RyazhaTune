@@ -45,6 +45,7 @@ module: nxExt
 	$(MAKE) -C RyazhaTune
 
 dist: all
+	rm -rf dist
 	mkdir -p dist/switch/.overlays
 		mkdir -p dist/atmosphere/contents/420000000000000E/flags
 		touch dist/atmosphere/contents/420000000000000E/flags/boot2.flag
