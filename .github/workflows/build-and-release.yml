@@ -50,6 +50,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Настройка безопасного Git каталога
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Сборка проекта
         run: |
           make -j$(nproc)

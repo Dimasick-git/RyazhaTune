@@ -1,0 +1,14 @@
+# Local build artifacts and fetched overlay dependencies
+build/
+dist/
+release/
+*.zip
+*.elf
+*.nso
+*.nsp
+*.nro
+*.ovl
+*.map
+
+# Fetched by `make prepare-overlay-lib`
+overlay/lib/
