@@ -1,0 +1,105 @@
+name: Автоматическая сборка и релиз RyazhaTune
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  check-version:
+    name: Проверка версии и сборка
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.get_version.outputs.VERSION }}
+      version_changed: ${{ steps.check_change.outputs.CHANGED }}
+    steps:
+      - name: Получение исходного кода
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Извлечение текущей версии из Makefile
+        id: get_version
+        run: |
+          VERSION=$(grep "export VERSION" Makefile | cut -d '=' -f2 | xargs)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Текущая версия в Makefile: $VERSION"
+
+      - name: Проверка изменения версии
+        id: check_change
+        run: |
+          CURRENT_VERSION=${{ steps.get_version.outputs.VERSION }}
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LATEST_VERSION=${LATEST_TAG#v}
+          
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            echo "CHANGED=true" >> $GITHUB_OUTPUT
+          else
+            echo "CHANGED=false" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-release:
+    name: Сборка и публикация
+    needs: check-version
+    if: needs.check-version.outputs.version_changed == 'true'
+    runs-on: ubuntu-latest
+    container: devkitpro/devkita64:latest
+    steps:
+      - name: Получение исходного кода
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Сборка проекта
+        run: |
+          make -j$(nproc)
+
+      - name: Проверка целостности сборки
+        run: |
+          if [ ! -f "RyazhaTune/RyazhaTune.nsp" ]; then echo "Ошибка: RyazhaTune.nsp не найден"; exit 1; fi
+          if [ ! -f "overlay/RyazhaTune-overlay.ovl" ]; then echo "Ошибка: RyazhaTune-overlay.ovl не найден"; exit 1; fi
+
+      - name: Подготовка архива RyazhaTune.zip
+        run: |
+          mkdir -p release/atmosphere/contents/420000000000000E/flags
+          touch release/atmosphere/contents/420000000000000E/flags/boot2.flag
+          cp RyazhaTune/RyazhaTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
+          cp RyazhaTune/RyazhaTune.json release/atmosphere/contents/420000000000000E/ || cp RyazhaTune/toolbox.json release/atmosphere/contents/420000000000000E/
+          mkdir -p release/switch/.overlays
+          cp overlay/RyazhaTune-overlay.ovl release/switch/.overlays/
+          cd release
+          zip -r ../RyazhaTune.zip atmosphere switch
+          cd ..
+
+      - name: Генерация списка изменений (Changelog)
+        id: changelog
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LATEST_TAG" ]; then
+            LOG=$(git log --pretty=format:"* %s (%h)")
+          else
+            LOG=$(git log ${LATEST_TAG}..HEAD --pretty=format:"* %s (%h)")
+          fi
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$LOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Создание тега и релиза
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.check-version.outputs.new_version }}
+          name: RyazhaTune v${{ needs.check-version.outputs.new_version }}
+          files: |
+            RyazhaTune.zip
+            overlay/RyazhaTune-overlay.ovl
+          body: |
+            ## Релиз RyazhaTune v${{ needs.check-version.outputs.new_version }}
+            
+            ### Перечень изменений:
+            ${{ env.CHANGELOG }}
+            
+            ---
+            *Сборка выполнена автоматически при обновлении версии в Makefile.*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
