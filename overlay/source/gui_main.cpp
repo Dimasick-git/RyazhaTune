@@ -9,8 +9,10 @@
 #include "config/config.hpp"
 
 #include <algorithm>
-#include <functional>
 #include <cstdio>
+#include <cstring>
+#include <functional>
+#include <iterator>
 
 // =============================================================================
 // PlayerRightDest + browser return path globals
@@ -24,7 +26,7 @@ static std::string     g_browser_return_root;
 // Volume mute-backup persistence
 // Three integers (0-100), one per line: Music, Game, Game (default).
 // ---------------------------------------------------------------------------
-static constexpr const char* kVolBackupFile = "/config/RyazhaTune/volume_backup.txt";
+static constexpr const char* kVolBackupFile = "/config/RyazhTune/volume_backup.txt";
 
 static void readVolBackups(u8 &music, u8 &game, u8 &game_def) {
     music = game = game_def = 100;
@@ -89,6 +91,44 @@ namespace {
             default:               return FocusMode::Pass;
         }
     }
+
+    struct LanguageOption {
+        const char *code;
+        const char *label;
+    };
+
+    constexpr LanguageOption kLanguages[] = {
+        {"ru", "Русский"},
+        {"en", "English"},
+        {"de", "Deutsch"},
+        {"es", "Español"},
+        {"fr", "Français"},
+        {"it", "Italiano"},
+        {"ja", "日本語"},
+        {"ko", "한국어"},
+        {"nl", "Nederlands"},
+        {"pl", "Polski"},
+        {"pt", "Português"},
+        {"uk", "Українська"},
+        {"zh-cn", "简体中文"},
+        {"zh-tw", "繁體中文"},
+    };
+
+    size_t currentLanguageIndex() {
+        char language[8]{};
+        config::get_language(language, sizeof(language));
+        if (std::strcmp(language, "zh") == 0) {
+            config::set_language("zh-cn");
+            std::strncpy(language, "zh-cn", sizeof(language) - 1);
+        }
+        for (size_t i = 0; i < std::size(kLanguages); ++i) {
+            if (std::strcmp(language, kLanguages[i].code) == 0)
+                return i;
+        }
+
+        config::set_language(kLanguages[0].code);
+        return 0;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -123,7 +163,7 @@ static void pushBrowserStack() {
 
 MainGui::MainGui() {
     // Initialise play context once on overlay open.
-    // Loads persisted state from /config/RyazhaTune/ and snapshots IPC on first run.
+    // Loads persisted state from /config/RyazhTune/ and snapshots IPC on first run.
     play_ctx::init();
 
     m_status_bar = new StatusBar();
@@ -287,6 +327,55 @@ bool MainGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touch
 
 // =============================================================================
 // SettingsGui  (Page 1 — Settings)
+// =============================================================================
+
+LanguageGui::~LanguageGui() {
+    delete m_list;
+}
+
+tsl::elm::Element* LanguageGui::createUI() {
+    m_frame = new SysTuneOverlayFrame(/*pageLeft=*/"Settings", /*pageRight=*/"");
+    m_list = new tsl::elm::List();
+
+    m_list->addItem(new tsl::elm::CategoryHeader("Language"));
+
+    const size_t selected = currentLanguageIndex();
+    for (size_t i = 0; i < std::size(kLanguages); ++i) {
+        auto *item = new tsl::elm::ListItem(kLanguages[i].label);
+        item->setValue(i == selected ? ult::INPROGRESS_SYMBOL : "", i == selected);
+        item->setClickListener([i](u64 keys) -> bool {
+            if (keys & HidNpadButton_A) {
+                config::set_language(kLanguages[i].code);
+                if (tsl::notification)
+                    tsl::notification->showNow(kLanguages[i].label, 26, "Language", 2000, false);
+                tsl::goBack();
+                return true;
+            }
+            return false;
+        });
+        m_list->addItem(item);
+    }
+
+    m_frame->setContent(m_list);
+    m_list->jumpToItem(kLanguages[selected].label);
+    return m_frame;
+}
+
+bool LanguageGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
+                              HidAnalogStickState joyStickPosLeft,
+                              HidAnalogStickState joyStickPosRight) {
+    if (SysTuneGui::handleInput(keysDown, keysHeld, touchPos, joyStickPosLeft, joyStickPosRight))
+        return true;
+
+    if (keysDown & KEY_LEFT) {
+        tsl::goBack();
+        triggerNavigationFeedback();
+        return true;
+    }
+
+    return false;
+}
+
 // =============================================================================
 
 SettingsGui::~SettingsGui() {
@@ -566,6 +655,20 @@ tsl::elm::Element* SettingsGui::createUI() {
     // ---- Misc ----
     m_list->addItem(new tsl::elm::CategoryHeader("Miscellaneous"));
 
+    {
+        const size_t language_index = currentLanguageIndex();
+        auto *language_item = new tsl::elm::ListItem("Language", kLanguages[language_index].label);
+        m_language_button = language_item;
+        language_item->setClickListener([](u64 keys) -> bool {
+            if (keys & HidNpadButton_A) {
+                tsl::changeTo<LanguageGui>();
+                return true;
+            }
+            return false;
+        });
+        m_list->addItem(language_item);
+    }
+
     // Title Focus — global default applied to any title whose per-title
     // "Default Focus" is ON (the factory default). Cycling tri-state:
     //
@@ -698,7 +801,7 @@ tsl::elm::Element* SettingsGui::createUI() {
     });
     m_list->addItem(startup_button);
 
-    auto exit_button = new tsl::elm::SilentListItem("Stop RyazhaTune");
+    auto exit_button = new tsl::elm::SilentListItem("Stop RyazhTune");
     exit_button->setValue("\uE071", true);
     exit_button->setClickListener([exit_button](u64 keys) -> bool {
         if (keys & HidNpadButton_A) {
@@ -789,6 +892,10 @@ void SettingsGui::update() {
     if (m_browser_button) {
         m_browser_button->setValue(
             (inFolder && hasTrack) ? ult::INPROGRESS_SYMBOL : ult::DROPDOWN_SYMBOL);
+    }
+
+    if (m_language_button) {
+        m_language_button->setValue(kLanguages[currentLanguageIndex()].label);
     }
 }
 

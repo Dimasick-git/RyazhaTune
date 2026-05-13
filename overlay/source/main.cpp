@@ -102,10 +102,12 @@ class SysTuneOverlay final : public tsl::Overlay {
             return;
         }
 
+        config::ensure_language_config();
+
         u32 api;
         if (R_FAILED(tuneGetApiVersion(&api)) || api != TUNE_API_VERSION) {
             this->msg = "   Unsupported\n"
-                        "RyazhaTune version!";
+                        "RyazhTune version!";
         }
     }
 

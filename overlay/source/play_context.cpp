@@ -45,8 +45,8 @@ namespace {
 
     // ---- Persistence paths ---------------------------------------------
 
-    constexpr const char* kSavedFile = "/config/RyazhaTune/saved_playlist.txt";
-    constexpr const char* kStateFile = "/config/RyazhaTune/play_source.txt";
+    constexpr const char* kSavedFile = "/config/RyazhTune/saved_playlist.txt";
+    constexpr const char* kStateFile = "/config/RyazhTune/play_source.txt";
 
     // ---- Disk helpers --------------------------------------------------
 

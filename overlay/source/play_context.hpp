@@ -17,11 +17,11 @@
 //              on-disk, untouched by folder playback.
 //
 // Persistence:
-//   /config/RyazhaTune/saved_playlist.txt   — one absolute path per line
-//   /config/RyazhaTune/play_source.txt      — "Playlist" | "Folder:<path>"
+//   /config/RyazhTune/saved_playlist.txt   — one absolute path per line
+//   /config/RyazhTune/play_source.txt      — "Playlist" | "Folder:<path>"
 //
 //   These files are updated on every mutation so state survives overlay
-//   close/reopen while the RyazhaTune background service keeps running.
+//   close/reopen while the RyazhTune background service keeps running.
 //
 // Thread safety: all callers run on the Tesla UI thread — no locking needed.
 // =============================================================================

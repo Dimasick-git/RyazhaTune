@@ -336,7 +336,7 @@ namespace tune::impl {
          * lifecycle. We use it to drive HOME-aware pause/play policy.
          *
          * Credit: masagrator (SaltyNX) posted this approach in the
-         * RyazhaTune GitHub discussion. The cache avoids re-reading the
+         * RyazhTune GitHub discussion. The cache avoids re-reading the
          * event log on every 10 ms tick — the event-count check is cheap
          * (one IPC round-trip, returns counters) and only when the count
          * increments do we pull the latest 16 events. The event log on
@@ -626,10 +626,14 @@ namespace tune::impl {
                                 return strcasecmp(a.c_str(), b.c_str()) < 0;
                             });
 
-                            char full_path[PATH_SIZE_MAX];
                             for (const auto &name : file_names) {
-                                std::snprintf(full_path, sizeof(full_path), "%s/%s", load_path, name.c_str());
-                                const Result rc = Enqueue(full_path, std::strlen(full_path), EnqueueType::Back);
+                                std::string full_path(load_path);
+                                full_path.push_back('/');
+                                full_path.append(name);
+                                if (full_path.size() >= PATH_SIZE_MAX)
+                                    continue;
+
+                                const Result rc = Enqueue(full_path.c_str(), full_path.size(), EnqueueType::Back);
                                 if (rc == tune::OutOfMemory)
                                     break;
                             }
@@ -1061,7 +1065,7 @@ namespace tune::impl {
         int  s_retry_ticks      = 0;
         int  s_transition_ticks = 0;
 
-        /* Immediately write RyazhaTune's per-title master volume to the
+        /* Immediately write RyazhTune's per-title master volume to the
          * foreground game process.  Called at the TOP of each focus
          * transition branch, BEFORE any blocking fadeIn/fadeOut, so the
          * game audio correction and the music fade start simultaneously.
@@ -1319,7 +1323,7 @@ namespace tune::impl {
                              *       Writing our per-title level on top of that
                              *       races with — and undoes — that suppress,
                              *       making the game audio briefly audible at the
-                             *       RyazhaTune level during the HOME transition.
+                             *       RyazhTune level during the HOME transition.
                              *
                              *   (2) The Switch resets audproc during the RESUME
                              *       sequence (not the suspend), so any write here
@@ -1630,7 +1634,7 @@ namespace tune::impl {
              *       system, producing the brief full-volume flash.  Writing
              *       every 10 ms for 300 ms means any system reset is corrected
              *       within one tick — imperceptible to the user.
-             *       Outside this window RyazhaTune is event-driven and never
+             *       Outside this window RyazhTune is event-driven and never
              *       writes in steady state, so UltraGB cooperation is intact.
              */
             if (current_pid) {
@@ -1698,7 +1702,7 @@ namespace tune::impl {
                  * 1.0 sticks indefinitely.
                  *
                  * Every ~5 s in steady state, read the current audproc value.
-                 * If it is at the system default of 1.0 AND RyazhaTune's
+                 * If it is at the system default of 1.0 AND RyazhTune's
                  * configured level for this title is something other than 1.0,
                  * the delta is unambiguously a system reset (UltraGB would
                  * never write 1.0 intentionally).  Trigger a one-shot
