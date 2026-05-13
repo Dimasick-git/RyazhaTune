@@ -558,10 +558,14 @@ namespace tune::impl {
                                 return strcasecmp(a.c_str(), b.c_str()) < 0;
                             });
 
-                            char full_path[PATH_SIZE_MAX];
                             for (const auto &name : file_names) {
-                                std::snprintf(full_path, sizeof(full_path), "%s/%s", load_path, name.c_str());
-                                const Result rc = Enqueue(full_path, std::strlen(full_path), EnqueueType::Back);
+                                std::string full_path(load_path);
+                                full_path.push_back('/');
+                                full_path.append(name);
+                                if (full_path.size() >= PATH_SIZE_MAX)
+                                    continue;
+
+                                const Result rc = Enqueue(full_path.c_str(), full_path.size(), EnqueueType::Back);
                                 if (rc == tune::OutOfMemory)
                                     break;
                             }

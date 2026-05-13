@@ -621,7 +621,7 @@ STBIDEF int   stbi_zlib_decode_noheader_buffer(char *obuffer, int olen, const ch
 #endif
 
 #ifndef STBI_NO_THREAD_LOCALS
-   #if defined(__cplusplus) &&  __cplusplus >= 5.0.03L
+   #if defined(__cplusplus) &&  __cplusplus >= 201103L
       #define STBI_THREAD_LOCAL       thread_local
    #elif defined(__GNUC__) && __GNUC__ < 5
       #define STBI_THREAD_LOCAL       __thread
@@ -2453,8 +2453,8 @@ stbi_inline static stbi_uc stbi__clamp(int x)
    p5 = (p3+p4)*stbi__f2f( 1.175875602f);      \
    t0 = t0*stbi__f2f( 0.298631336f);           \
    t1 = t1*stbi__f2f( 2.053119869f);           \
-   t2 = t2*stbi__f2f( 3.075.0.026f);           \
-   t3 = t3*stbi__f2f( 1.50135.0.0f);           \
+   t2 = t2*stbi__f2f( 3.072711026f);           \
+   t3 = t3*stbi__f2f( 1.501321110f);           \
    p1 = p5 + p1*stbi__f2f(-0.899976223f);      \
    p2 = p5 + p2*stbi__f2f(-2.562915447f);      \
    p3 = p3*stbi__f2f(-1.961570560f);           \
@@ -2617,9 +2617,9 @@ static void stbi__idct_simd(stbi_uc *out, int out_stride, short data[64])
    __m128i rot1_0 = dct_const(stbi__f2f(1.175875602f) + stbi__f2f(-0.899976223f), stbi__f2f(1.175875602f));
    __m128i rot1_1 = dct_const(stbi__f2f(1.175875602f), stbi__f2f(1.175875602f) + stbi__f2f(-2.562915447f));
    __m128i rot2_0 = dct_const(stbi__f2f(-1.961570560f) + stbi__f2f( 0.298631336f), stbi__f2f(-1.961570560f));
-   __m128i rot2_1 = dct_const(stbi__f2f(-1.961570560f), stbi__f2f(-1.961570560f) + stbi__f2f( 3.075.0.026f));
+   __m128i rot2_1 = dct_const(stbi__f2f(-1.961570560f), stbi__f2f(-1.961570560f) + stbi__f2f( 3.072711026f));
    __m128i rot3_0 = dct_const(stbi__f2f(-0.390180644f) + stbi__f2f( 2.053119869f), stbi__f2f(-0.390180644f));
-   __m128i rot3_1 = dct_const(stbi__f2f(-0.390180644f), stbi__f2f(-0.390180644f) + stbi__f2f( 1.50135.0.0f));
+   __m128i rot3_1 = dct_const(stbi__f2f(-0.390180644f), stbi__f2f(-0.390180644f) + stbi__f2f( 1.501321110f));
 
    // rounding biases in column/row passes, see stbi__idct_block for explanation.
    __m128i bias_0 = _mm_set1_epi32(512);
@@ -2722,8 +2722,8 @@ static void stbi__idct_simd(stbi_uc *out, int out_stride, short data[64])
    int16x4_t rot2_1 = vdup_n_s16(stbi__f2f(-0.390180644f));
    int16x4_t rot3_0 = vdup_n_s16(stbi__f2f( 0.298631336f));
    int16x4_t rot3_1 = vdup_n_s16(stbi__f2f( 2.053119869f));
-   int16x4_t rot3_2 = vdup_n_s16(stbi__f2f( 3.075.0.026f));
-   int16x4_t rot3_3 = vdup_n_s16(stbi__f2f( 1.50135.0.0f));
+   int16x4_t rot3_2 = vdup_n_s16(stbi__f2f( 3.072711026f));
+   int16x4_t rot3_3 = vdup_n_s16(stbi__f2f( 1.501321110f));
 
 #define dct_long_mul(out, inq, coeff) \
    int32x4_t out##_l = vmull_s16(vget_low_s16(inq), coeff); \

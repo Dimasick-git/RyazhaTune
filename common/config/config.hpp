@@ -72,4 +72,8 @@ void set_default_title_volume(float value);
 auto get_load_path(char* out, int max_len) -> int;
 void set_load_path(const char* path);
 
+// overlay language; defaults to Russian ("ru") for fresh configs.
+auto get_language(char* out, int max_len) -> int;
+void set_language(const char* language);
+
 }
