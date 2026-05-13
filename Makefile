@@ -1,4 +1,4 @@
-export GITHASH 		:= $(shell git rev-parse --short HEAD)
+export GITHASH 		:= $(shell git -c safe.directory=$(CURDIR) rev-parse --short HEAD 2>/dev/null || echo unknown)
 export VERSION 		:= 5.0.0
 export API_VERSION 	:= 4
 export WANT_FLAC 	:= 1
@@ -41,7 +41,7 @@ overlay: prepare-overlay-lib
 nxExt:
 	$(MAKE) -C RyazhaTune/nxExt
 
-module:
+module: nxExt
 	$(MAKE) -C RyazhaTune
 
 dist: all
@@ -49,7 +49,7 @@ dist: all
 		mkdir -p dist/atmosphere/contents/420000000000000E/flags
 		touch dist/atmosphere/contents/420000000000000E/flags/boot2.flag
 		cp RyazhaTune/RyazhaTune.nsp dist/atmosphere/contents/420000000000000E/exefs.nsp
-		cp overlay/RyazhaTune.ovl dist/switch/.overlays/
+		cp overlay/RyazhaTune-overlay.ovl dist/switch/.overlays/
 		cp RyazhaTune/toolbox.json dist/atmosphere/contents/420000000000000E/
 	cd dist; zip -r RyazhaTune-$(VERSION)-$(GITHASH).zip ./**/; cd ../;
 	-hactool -t nso RyazhaTune/RyazhaTune.nso
