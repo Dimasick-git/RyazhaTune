@@ -97,31 +97,31 @@ jobs:
 
       - name: Проверка целостности сборки
         run: |
-          test -f RyazhaTune/RyazhaTune.nsp || { echo "Ошибка: RyazhaTune.nsp не найден" >&2; exit 1; }
-          test -f overlay/RyazhaTune-overlay.ovl || { echo "Ошибка: RyazhaTune-overlay.ovl не найден" >&2; exit 1; }
+          test -f RyazhaTune/RyazhTune.nsp || { echo "Ошибка: RyazhTune.nsp не найден" >&2; exit 1; }
+          test -f overlay/RyazhTune-Overlay.ovl || { echo "Ошибка: RyazhTune-Overlay.ovl не найден" >&2; exit 1; }
           test -f overlay/lang/ru.json || { echo "Ошибка: ru.json не найден" >&2; exit 1; }
           test -f overlay/lang/en.json || { echo "Ошибка: en.json не найден" >&2; exit 1; }
           test -f overlay/lang/zh.json || { echo "Ошибка: zh.json не найден" >&2; exit 1; }
 
       - name: Подготовка архива RyazhTune.zip
         run: |
-          rm -rf release RyazhaTune.zip
+          rm -rf release RyazhTune.zip
           mkdir -p release/atmosphere/contents/420000000000000E/flags
           touch release/atmosphere/contents/420000000000000E/flags/boot2.flag
-          cp RyazhaTune/RyazhaTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
-          cp RyazhaTune/RyazhaTune.json release/atmosphere/contents/420000000000000E/
+          cp RyazhaTune/RyazhTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
+          cp RyazhaTune/RyazhTune.json release/atmosphere/contents/420000000000000E/
           cp RyazhaTune/toolbox.json release/atmosphere/contents/420000000000000E/
 
           mkdir -p release/switch/.overlays
-          cp overlay/RyazhaTune-overlay.ovl release/switch/.overlays/
+          cp overlay/RyazhTune-Overlay.ovl release/switch/.overlays/
 
           mkdir -p release/config/RyazhaTune/lang
           cp overlay/lang/*.json release/config/RyazhaTune/lang/
 
-          (cd release && zip -r ../RyazhaTune.zip atmosphere switch config)
-          zip -sf RyazhaTune.zip | grep -q 'config/RyazhaTune/lang/ru.json'
-          zip -sf RyazhaTune.zip | grep -q 'config/RyazhaTune/lang/en.json'
-          zip -sf RyazhaTune.zip | grep -q 'config/RyazhaTune/lang/zh.json'
+          (cd release && zip -r ../RyazhTune.zip atmosphere switch config)
+          zip -sf RyazhTune.zip | grep -q 'config/RyazhaTune/lang/ru.json'
+          zip -sf RyazhTune.zip | grep -q 'config/RyazhaTune/lang/en.json'
+          zip -sf RyazhTune.zip | grep -q 'config/RyazhaTune/lang/zh.json'
 
       - name: Генерация списка изменений (Changelog)
         id: changelog
