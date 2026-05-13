@@ -9,8 +9,10 @@
 #include "config/config.hpp"
 
 #include <algorithm>
-#include <functional>
 #include <cstdio>
+#include <cstring>
+#include <functional>
+#include <iterator>
 
 // =============================================================================
 // PlayerRightDest + browser return path globals
@@ -88,6 +90,29 @@ namespace {
             case FocusMode::Pause:
             default:               return FocusMode::Pass;
         }
+    }
+
+    struct LanguageOption {
+        const char *code;
+        const char *label;
+    };
+
+    constexpr LanguageOption kLanguages[] = {
+        {"ru", "Русский"},
+        {"en", "English"},
+        {"zh", "中文"},
+    };
+
+    size_t currentLanguageIndex() {
+        char language[8]{};
+        config::get_language(language, sizeof(language));
+        for (size_t i = 0; i < std::size(kLanguages); ++i) {
+            if (std::strcmp(language, kLanguages[i].code) == 0)
+                return i;
+        }
+
+        config::set_language(kLanguages[0].code);
+        return 0;
     }
 }
 
@@ -565,6 +590,22 @@ tsl::elm::Element* SettingsGui::createUI() {
 
     // ---- Misc ----
     m_list->addItem(new tsl::elm::CategoryHeader("Miscellaneous"));
+
+    {
+        const size_t language_index = currentLanguageIndex();
+        auto *language_item = new tsl::elm::ListItem("Language", kLanguages[language_index].label);
+        language_item->setClickListener(
+            [language_item, index = language_index](u64 keys) mutable -> bool {
+                if (keys & HidNpadButton_A) {
+                    index = (index + 1) % std::size(kLanguages);
+                    config::set_language(kLanguages[index].code);
+                    language_item->setValue(kLanguages[index].label);
+                    return true;
+                }
+                return false;
+            });
+        m_list->addItem(language_item);
+    }
 
     // Title Focus — global default applied to any title whose per-title
     // "Default Focus" is ON (the factory default). Cycling tri-state:
