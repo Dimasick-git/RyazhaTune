@@ -16,7 +16,24 @@ clean:
 	$(MAKE) -C overlay clean
 	$(MAKE) -C RyazhaTune clean
 	-rm -r dist
-	-rm RyazhaTune-*-*.zip
+	-rm RyazhTune-*-*.zip
+
+prepare-overlay-lib:
+	@if [ ! -d "$(RYAZHAHAND_DIR)/.git" ]; then \
+		echo "Cloning libultrahand into $(RYAZHAHAND_DIR)..."; \
+		rm -rf "$(RYAZHAHAND_DIR)"; \
+		mkdir -p "$(dir $(RYAZHAHAND_DIR))"; \
+		git clone --depth 1 "$(LIBULTRAHAND_REPO)" "$(RYAZHAHAND_DIR)"; \
+	fi
+	@if [ ! -f "$(RYAZHAHAND_DIR)/ryazhahand.mk" ]; then \
+		if [ -f "$(LEGACY_HAND_MK)" ]; then \
+			echo "Installing ryazhahand.mk compatibility makefile..."; \
+			cp "$(LEGACY_HAND_MK)" "$(RYAZHAHAND_DIR)/ryazhahand.mk"; \
+		else \
+			echo "Missing $(RYAZHAHAND_DIR)/ryazhahand.mk" >&2; \
+			exit 1; \
+		fi; \
+	fi
 
 prepare-overlay-lib:
 	@if [ ! -d "$(RYAZHAHAND_DIR)/.git" ]; then \

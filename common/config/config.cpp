@@ -7,14 +7,22 @@ namespace config {
 
 namespace {
 
-const char CONFIG_PATH[]{"/config/RyazhaTune/config.ini"};
+const char CONFIG_DIR[]{"/config/RyazhTune"};
+const char CONFIG_PATH[]{"/config/RyazhTune/config.ini"};
+const char HAND_CONFIG_DIR[]{"/config/ryazhahand"};
+const char HAND_CONFIG_PATH[]{"/config/ryazhahand/config.ini"};
 
 void create_config_dir() {
     /* Creating directory on every set call looks sus, but the user may delete the dir */
     /* whilst the sys-mod is running and then any changes made via the overlay */
     /* is lost, which sucks. */
     sdmc::CreateFolder("/config");
-    sdmc::CreateFolder("/config/RyazhaTune");
+    sdmc::CreateFolder(CONFIG_DIR);
+}
+
+void create_hand_config_dir() {
+    sdmc::CreateFolder("/config");
+    sdmc::CreateFolder(HAND_CONFIG_DIR);
 }
 
 auto get_tid_str(u64 tid) -> const char* {

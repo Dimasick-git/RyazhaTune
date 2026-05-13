@@ -1,4 +1,4 @@
-name: Автоматическая сборка и релиз RyazhaTune
+name: Автоматическая сборка и релиз RyazhTune
 
 on:
   push:
@@ -103,7 +103,7 @@ jobs:
           test -f overlay/lang/en.json || { echo "Ошибка: en.json не найден" >&2; exit 1; }
           test -f overlay/lang/zh.json || { echo "Ошибка: zh.json не найден" >&2; exit 1; }
 
-      - name: Подготовка архива RyazhaTune.zip
+      - name: Подготовка архива RyazhTune.zip
         run: |
           rm -rf release RyazhaTune.zip
           mkdir -p release/atmosphere/contents/420000000000000E/flags
@@ -142,10 +142,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.check-version.outputs.new_version }}
-          name: RyazhaTune v${{ needs.check-version.outputs.new_version }}
+          name: RyazhTune v${{ needs.check-version.outputs.new_version }}
           files: |
-            RyazhaTune.zip
-            overlay/RyazhaTune-overlay.ovl
+            RyazhTune.zip
+            overlay/RyazhTune-Overlay.ovl
           body: |
             ## Релиз RyazhaTune v${{ needs.check-version.outputs.new_version }}
 

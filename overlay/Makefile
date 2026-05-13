@@ -37,9 +37,9 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   of a homebrew executable (.nro). This is intended to be used for sysmodules.
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
-APP_TITLE	:=	RyazhaTune
+APP_TITLE	:=	RyazhTune
 
-TARGET		:=	RyazhaTune-overlay
+TARGET		:=	RyazhTune-Overlay
 BUILD		:=	build
 SOURCES		:=	source ../ipc ../common/minIni ../common/sdmc ../common/config ../common/pm ../common/aud
 DATA		:=	data
@@ -86,7 +86,7 @@ CFLAGS := -g -Wall -Os -ffunction-sections -fdata-sections -flto=auto \
           $(ARCH) $(DEFINES)
 
 # Enable appearance overriding
-UI_OVERRIDE_PATH := /config/RyazhaTune/
+UI_OVERRIDE_PATH := /config/ryazhahand/
 CFLAGS += -DUI_OVERRIDE_PATH="\"$(UI_OVERRIDE_PATH)\""
 
 # Enable Widget
@@ -234,7 +234,7 @@ $(OUTPUT).ovl		:	$(OUTPUT).elf $(OUTPUT).nacp
 	@elf2nro $< $@ $(NROFLAGS)
 	@echo "built ... $(notdir $(OUTPUT).ovl)"
 		@printf 'RYAZ' >> $@
-			@echo "RyazhaTune signature has been added."
+			@echo "RyazhTune signature has been added."
 
 $(OUTPUT).elf	:	$(OFILES)
 

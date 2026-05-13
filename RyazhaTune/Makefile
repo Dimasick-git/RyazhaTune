@@ -37,7 +37,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   of a homebrew executable (.nro). This is intended to be used for sysmodules.
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR))
+TARGET		:=	RyazhTune
 BUILD		:=	build
 SOURCES		:=	source source/impl ../common/minIni ../common/sdmc ../common/config ../common/pm ../common/aud source/impl/resamplers
 DATA		:=	data

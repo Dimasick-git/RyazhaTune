@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Скрипт автоматизации настройки окружения и сборки Horizon-OC
-# Основано на предоставленных инструкциях для RyazhaTune v5.0.0
+# Основано на предоставленных инструкциях для RyazhTune v5.0.0
 
 set -e
 
@@ -29,7 +29,7 @@ echo "Интеграция файлов Atmosphere..."
 cp -r Atmosphere/* Horizon-OC/build/
 
 # 5. Патчинг исходников (ldr_process_creation.cpp)
-# Предполагается, что в RyazhaTune есть папка Source с необходимым патчем
+# Предполагается, что в RyazhTune есть папка Source с необходимым патчем
 if [ -d "RyazhaTune/source" ]; then
     echo "Применение патча ldr_process_creation.cpp..."
     # Путь в инструкциях: Source/Atmosphere/stratosphere/loader/source/ldr_process_creation.cpp
