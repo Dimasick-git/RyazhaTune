@@ -173,14 +173,25 @@ void set_load_path(const char* path) {
     ini_puts("config", "load_path", path, CONFIG_PATH);
 }
 
+void ensure_language_config() {
+    create_hand_config_dir();
+    char language[8]{};
+    ini_gets("config", "language", "", language, sizeof(language), HAND_CONFIG_PATH);
+    if (language[0] == '\0')
+        ini_puts("config", "language", "ru", HAND_CONFIG_PATH);
+}
+
 auto get_language(char* out, int max_len) -> int {
-    // Russian is the project default when the user has not selected another language.
-    return ini_gets("config", "language", "ru", out, max_len, CONFIG_PATH);
+    // libryazhahand/libultrahand reads overlay languages from this config.
+    const int len = ini_gets("config", "language", "ru", out, max_len, HAND_CONFIG_PATH);
+    if (len <= 0)
+        ensure_language_config();
+    return len;
 }
 
 void set_language(const char* language) {
-    create_config_dir();
-    ini_puts("config", "language", language, CONFIG_PATH);
+    create_hand_config_dir();
+    ini_puts("config", "language", language, HAND_CONFIG_PATH);
 }
 
 }
