@@ -47,15 +47,12 @@ module: nxExt
 dist: all
 	rm -rf dist
 	mkdir -p dist/switch/.overlays
-	mkdir -p dist/atmosphere/contents/420000000000000E/flags
-	mkdir -p dist/config/RyazhaTune/lang
-	touch dist/atmosphere/contents/420000000000000E/flags/boot2.flag
-	cp RyazhaTune/RyazhaTune.nsp dist/atmosphere/contents/420000000000000E/exefs.nsp
-	cp RyazhaTune/RyazhaTune.json dist/atmosphere/contents/420000000000000E/
-	cp RyazhaTune/toolbox.json dist/atmosphere/contents/420000000000000E/
-	cp overlay/RyazhaTune-overlay.ovl dist/switch/.overlays/
-	cp overlay/lang/*.json dist/config/RyazhaTune/lang/
-	cd dist; zip -r ../RyazhaTune-$(VERSION)-$(GITHASH).zip atmosphere switch config; cd ../;
+		mkdir -p dist/atmosphere/contents/420000000000000E/flags
+		touch dist/atmosphere/contents/420000000000000E/flags/boot2.flag
+		cp RyazhaTune/RyazhaTune.nsp dist/atmosphere/contents/420000000000000E/exefs.nsp
+		cp overlay/RyazhaTune-overlay.ovl dist/switch/.overlays/
+		cp RyazhaTune/toolbox.json dist/atmosphere/contents/420000000000000E/
+	cd dist; zip -r RyazhaTune-$(VERSION)-$(GITHASH).zip ./**/; cd ../;
 	-hactool -t nso RyazhaTune/RyazhaTune.nso
 
 .PHONY: all clean overlay nxExt module dist prepare-overlay-lib
