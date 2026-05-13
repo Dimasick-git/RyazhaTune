@@ -46,6 +46,24 @@ private:
     std::string          m_right_label;
 };
 
+
+// ---------------------------------------------------------------------------
+// Language selection page
+// ---------------------------------------------------------------------------
+class LanguageGui final : public SysTuneGui {
+public:
+    ~LanguageGui();
+
+    tsl::elm::Element *createUI() final;
+    bool handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
+                     HidAnalogStickState joyStickPosLeft,
+                     HidAnalogStickState joyStickPosRight) override;
+
+private:
+    tsl::elm::List      *m_list  = nullptr;
+    SysTuneOverlayFrame *m_frame = nullptr;
+};
+
 // ---------------------------------------------------------------------------
 // Page 1 — Settings
 // ---------------------------------------------------------------------------
@@ -83,6 +101,7 @@ private:
     // value labels live.  Both owned by m_list — do NOT delete here.
     tsl::elm::ListItem  *m_queue_button   = nullptr;
     tsl::elm::ListItem  *m_browser_button = nullptr;
+    tsl::elm::ListItem  *m_language_button = nullptr;
     u32                  m_last_count     = UINT32_MAX; /* sentinel — forces first refresh */
 
     /* Called directly by the PlaylistGui callback and by update() for the

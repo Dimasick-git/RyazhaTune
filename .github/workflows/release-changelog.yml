@@ -4,38 +4,56 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
+concurrency:
+  group: release-changelog-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   update-release:
     runs-on: ubuntu-latest
+    if: ${{ !github.event.release.draft }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Настройка безопасного Git каталога
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Generate Changelog
         id: changelog
         run: |
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-          if [ -z "$PREV_TAG" ]; then
-            LOG=$(git log --pretty=format:"* %s (%h)")
+          CURRENT_TAG='${{ github.event.release.tag_name }}'
+          PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null || echo "")
+          if [[ -z "$PREV_TAG" ]]; then
+            LOG=$(git log "${CURRENT_TAG}" --pretty=format:"* %s (%h)")
           else
-            LOG=$(git log ${PREV_TAG}..HEAD --pretty=format:"* %s (%h)")
+            LOG=$(git log "${PREV_TAG}..${CURRENT_TAG}" --pretty=format:"* %s (%h)")
           fi
-          
-          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$LOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+
+          {
+            echo "CHANGELOG<<EOF"
+            echo "$LOG"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
 
       - name: Update Release Description
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.event.release.tag_name }}
           body: |
             ## Перечень изменений
             ${{ env.CHANGELOG }}
-            
+
             ---
             Документ сформирован автоматически средствами GitHub Actions.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
