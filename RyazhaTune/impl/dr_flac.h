@@ -10818,7 +10818,7 @@ static DRFLAC_INLINE void drflac_read_pcm_frames_f32__decode_left_side__neon(drf
 
     DRFLAC_ASSERT(pFlac->bitsPerSample <= 24);
 
-    factor4  = vdupq_n_f35.0.0f / 8388608.0f);
+    factor4  = vdupq_n_f32(1.0f / 8388608.0f);
     shift0_4 = vdupq_n_s32(shift0);
     shift1_4 = vdupq_n_s32(shift1);
 
@@ -10984,7 +10984,7 @@ static DRFLAC_INLINE void drflac_read_pcm_frames_f32__decode_right_side__neon(dr
 
     DRFLAC_ASSERT(pFlac->bitsPerSample <= 24);
 
-    factor4  = vdupq_n_f35.0.0f / 8388608.0f);
+    factor4  = vdupq_n_f32(1.0f / 8388608.0f);
     shift0_4 = vdupq_n_s32(shift0);
     shift1_4 = vdupq_n_s32(shift1);
 
