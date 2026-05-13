@@ -37,9 +37,9 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   of a homebrew executable (.nro). This is intended to be used for sysmodules.
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
-APP_TITLE	:=	RyazhaTune
+APP_TITLE	:=	RyazhTune
 
-TARGET		:=	RyazhaTune-overlay
+TARGET		:=	RyazhTune-Overlay
 BUILD		:=	build
 SOURCES		:=	source ../ipc ../common/minIni ../common/sdmc ../common/config ../common/pm ../common/aud
 DATA		:=	data
@@ -48,7 +48,14 @@ APP_VERSION	:=	$(VERSION)
 NO_ICON		:=  1
 
 # This location should reflect where you place the libryazhahand directory (lib can vary between projects).
-include ${TOPDIR}/lib/libryazhahand/ryazhahand.mk
+RYAZHAHAND_DIR ?= ${TOPDIR}/lib/libryazhahand
+RYAZHAHAND_MK  := ${RYAZHAHAND_DIR}/ryazhahand.mk
+
+ifeq ($(wildcard $(RYAZHAHAND_MK)),)
+$(error Missing $(RYAZHAHAND_MK). Run `make prepare-overlay-lib` from the repository root to clone libultrahand and install ryazhahand.mk)
+endif
+
+include $(RYAZHAHAND_MK)
 
 #ifeq ($(RELEASE),)
 #	APP_VERSION	:=	$(APP_VERSION)-$(shell git describe --dirty --always)
@@ -73,13 +80,13 @@ endif
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
-CFLAGS := -g -Wall -Os -ffunction-sections -fdata-sections -flto \
+CFLAGS := -g -Wall -Os -ffunction-sections -fdata-sections -flto=auto \
           -fuse-linker-plugin -fomit-frame-pointer -finline-small-functions \
           -fno-strict-aliasing -frename-registers -falign-functions=16 \
           $(ARCH) $(DEFINES)
 
 # Enable appearance overriding
-UI_OVERRIDE_PATH := /config/RyazhaTune/
+UI_OVERRIDE_PATH := /config/ryazhahand/
 CFLAGS += -DUI_OVERRIDE_PATH="\"$(UI_OVERRIDE_PATH)\""
 
 # Enable Widget
@@ -227,7 +234,7 @@ $(OUTPUT).ovl		:	$(OUTPUT).elf $(OUTPUT).nacp
 	@elf2nro $< $@ $(NROFLAGS)
 	@echo "built ... $(notdir $(OUTPUT).ovl)"
 		@printf 'RYAZ' >> $@
-			@echo "RyazhaTune signature has been added."
+			@echo "RyazhTune signature has been added."
 
 $(OUTPUT).elf	:	$(OFILES)
 

@@ -37,7 +37,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   of a homebrew executable (.nro). This is intended to be used for sysmodules.
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR))
+TARGET		:=	RyazhTune
 BUILD		:=	build
 SOURCES		:=	source source/impl ../common/minIni ../common/sdmc ../common/config ../common/pm ../common/aud source/impl/resamplers
 DATA		:=	data
@@ -64,7 +64,7 @@ ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
 CFLAGS	:=	-g -Wall -Os -ffunction-sections -fdata-sections \
 			-ffast-math -fomit-frame-pointer -fno-stack-protector \
-			-flto -ffat-lto-objects \
+			-flto=auto -ffat-lto-objects \
             -fuse-linker-plugin -finline-small-functions \
             -fno-strict-aliasing -frename-registers -falign-functions=16 \
 			$(ARCH) $(DEFINES)
