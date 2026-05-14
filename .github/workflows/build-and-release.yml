@@ -40,7 +40,8 @@ jobs:
         id: check
         run: |
           CURRENT_VERSION='${{ steps.version.outputs.VERSION }}'
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          # Ищем последний тег, исключая текущую версию, если она уже существует как тег
+          LATEST_TAG=$(git tag -l | grep -v "^v$CURRENT_VERSION$" | sort -V | tail -n 1 || echo "v0.0.0")
           LATEST_VERSION=${LATEST_TAG#v}
 
           if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
@@ -118,8 +119,9 @@ jobs:
       - name: Формирование текста релиза (AI + structured fallback)
         id: changelog
         run: |
-          # Улучшенный поиск последнего тега, чтобы избежать дублирования коммитов
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          CURRENT_VERSION='${{ needs.check-version.outputs.new_version }}'
+          LATEST_TAG=$(git tag -l | grep -v "^v$CURRENT_VERSION$" | sort -V | tail -n 1 || echo "")
+          
           if [[ -n "$LATEST_TAG" ]]; then
             RANGE="${LATEST_TAG}..HEAD"
             DIFF_RANGE="$RANGE"
@@ -138,7 +140,7 @@ jobs:
           [[ -z "$CHANGED_FILES" ]] && CHANGED_FILES="- Список файлов пуст."
 
           if [[ -n "${OPENROUTER_API_KEY}" && -n "$RAW_LOG" ]]; then
-            PROMPT="Ты — release-manager проекта RyazhTune. Напиши релиз-ноты на русском языке в markdown.\n\nФормат и правила:\n1) Короткое вступление о том, что нового стало доступно.\n2) Разделы (добавляй только релевантные):\n   - ## Новое\n   - ## Улучшения\n   - ## Исправления\n3) Обобщай технические изменения в понятные пользователю функции.\n4) Не упоминай ИИ.\n\nДанные:\n$RAW_LOG"
+            PROMPT="Ты — release-manager проекта RyazhTune. Напиши краткие и профессиональные релиз-ноты на русском языке в markdown.\n\nСтрогие правила:\n1) Без приветствий, без эмоций, без эмодзи.\n2) Без фраз про ИИ.\n3) Используй разделы:\n   ## Список изменений\n   ## Улучшения\n   ## Исправления\n4) Группируй изменения по смыслу.\n\nДанные:\n$RAW_LOG"
 
             PAYLOAD=$(jq -n \
               --arg model "openrouter/auto" \
@@ -146,10 +148,10 @@ jobs:
               '{
                 model: $model,
                 messages: [
-                  {role: "system", content: "Пиши только по-русски, структурно и понятно для пользователя."},
+                  {role: "system", content: "Пиши строго технический и лаконичный отчет в markdown."},
                   {role: "user", content: $prompt}
                 ],
-                temperature: 0.5
+                temperature: 0.1
               }')
 
             RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
@@ -167,12 +169,12 @@ jobs:
               l ~ /(fix|bug|crash|error|исправ|почин|ошиб)/ {fix=fix "- " $0 "\n"; next}
               {impr=impr "- " $0 "\n"}
               END{
-                if(new!="") printf "## Новое\n%s\n", new;
-                if(impr!="") printf "## Улучшения\n%s\n", impr;
-                if(fix!="") printf "## Исправления\n%s\n", fix;
+                if(new!="") printf "### Новое\n%s\n", new;
+                if(impr!="") printf "### Улучшения\n%s\n", impr;
+                if(fix!="") printf "### Исправления\n%s\n", fix;
               }')
           else
-            CHANGELOG_SECTIONS="- В этом обновлении проведены внутренние технические работы."
+            CHANGELOG_SECTIONS="- Внутренние технические изменения."
           fi
 
           if [[ -n "${AI_BODY}" && "${AI_BODY}" != "null" && "${AI_BODY}" != "" ]]; then
@@ -184,16 +186,14 @@ jobs:
           else
             {
               echo "RELEASE_BODY<<EOF"
-              echo "👋 Привет! Готово новое обновление RyazhTune."
+              echo "## Список изменений"
               echo ""
-              echo "### Что изменилось:"
               echo "$CHANGELOG_SECTIONS"
               echo ""
-              echo "### Технические детали:"
+              echo "### Технические детали"
+              echo "- Версия: $CURRENT_VERSION"
               echo "- Диапазон: \`$RANGE\`"
-              echo "- Сводка: $FILE_STATS"
-              echo ""
-              echo "Спасибо за использование RyazhTune! 🎧"
+              echo "- Статистика: $FILE_STATS"
               echo "EOF"
             } >> "$GITHUB_ENV"
           fi
