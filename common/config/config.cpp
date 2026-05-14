@@ -24,6 +24,11 @@ auto get_tid_str(u64 tid) -> const char* {
     return buf;
 }
 
+void create_hand_config_dir() {
+    sdmc::CreateFolder("/config");
+    sdmc::CreateFolder(HAND_CONFIG_DIR);
+}
+
 }
 
 auto get_shuffle() -> bool {
