@@ -9,8 +9,6 @@ namespace {
 
 const char CONFIG_DIR[]{"/config/RyazhTune"};
 const char CONFIG_PATH[]{"/config/RyazhTune/config.ini"};
-const char HAND_CONFIG_DIR[]{"/config/ryazhahand"};
-const char HAND_CONFIG_PATH[]{"/config/ryazhahand/config.ini"};
 
 void create_config_dir() {
     /* Creating directory on every set call looks sus, but the user may delete the dir */
@@ -28,7 +26,7 @@ auto get_tid_str(u64 tid) -> const char* {
 
 void create_hand_config_dir() {
     sdmc::CreateFolder("/config");
-    sdmc::CreateFolder("/config/ryazhahand");
+    sdmc::CreateFolder(HAND_CONFIG_DIR);
 }
 
 }
@@ -221,29 +219,17 @@ void ensure_language_config() {
     create_config_dir();
     char language[8]{};
     ini_gets("config", "language", "", language, sizeof(language), CONFIG_PATH);
-    if (language[0] == '\0')
-        ini_gets("config", "language", "", language, sizeof(language), HAND_CONFIG_PATH);
 
     if (language[0] == '\0')
         std::snprintf(language, sizeof(language), "%s", "ru");
 
     ini_puts("config", "language", language, CONFIG_PATH);
-    create_hand_config_dir();
-    ini_puts("config", "language", language, HAND_CONFIG_PATH);
 }
 
 auto get_language(char* out, int max_len) -> int {
     const int len = ini_gets("config", "language", "", out, max_len, CONFIG_PATH);
     if (len > 0)
         return len;
-
-    char language[8]{};
-    const int hand_len = ini_gets("config", "language", "", language, sizeof(language), HAND_CONFIG_PATH);
-    if (hand_len > 0) {
-        create_config_dir();
-        ini_puts("config", "language", language, CONFIG_PATH);
-        return ini_gets("config", "language", "ru", out, max_len, CONFIG_PATH);
-    }
 
     ensure_language_config();
     return ini_gets("config", "language", "ru", out, max_len, CONFIG_PATH);
@@ -252,8 +238,6 @@ auto get_language(char* out, int max_len) -> int {
 void set_language(const char* language) {
     create_config_dir();
     ini_puts("config", "language", language, CONFIG_PATH);
-    create_hand_config_dir();
-    ini_puts("config", "language", language, HAND_CONFIG_PATH);
 }
 
 }
