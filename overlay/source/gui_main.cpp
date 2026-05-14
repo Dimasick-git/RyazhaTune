@@ -4,7 +4,6 @@
 #include "elm_volume.hpp"
 #include "gui_browser.hpp"
 #include "gui_playlist.hpp"
-#include "overlay_i18n.hpp"
 #include "play_context.hpp"
 #include "pm/pm.hpp"
 #include "config/config.hpp"
@@ -16,6 +15,7 @@
 #include <cstring>
 #include <functional>
 #include <iterator>
+#include <string>
 
 // =============================================================================
 // PlayerRightDest + browser return path globals
@@ -226,6 +226,11 @@ tsl::elm::Element* MainGui::createUI() {
 // ---------------------------------------------------------------------------
 void MainGui::update() {
     i18n::syncFromConfig();
+    static bool s_whats_new_shown = false;
+    if (!s_whats_new_shown) {
+        s_whats_new_shown = true;
+        maybeShowOverlayWhatsNew();
+    }
     //static u8 tick = 0;
     //if ((tick % 15) == 0)
     m_status_bar->update();
@@ -372,8 +377,12 @@ tsl::elm::Element* LanguageGui::createUI() {
             if (keys & (HidNpadButton_A | HidNpadButton_X)) {
                 config::set_language(kLanguages[idx].code);
                 reloadRyazhTuneTranslations();
+                i18n::syncFromConfig();
+                const std::string body =
+                    std::string(i18n::t(i18n::Str::LanguageAppliedBody)) + "\n\n" + kLanguages[idx].label;
                 if (tsl::notification)
-                    tsl::notification->showNow(kLanguages[idx].label, 26, i18n::t(i18n::Str::Language), 2000, false);
+                    tsl::notification->showNow(body.c_str(), 24, i18n::t(i18n::Str::Language), 3200, false);
+                triggerNavigationFeedback();
                 s_settings_locale_rebuild = true;
                 tsl::goBack();
                 return true;

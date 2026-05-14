@@ -1,0 +1,216 @@
+name: "Автоматическая сборка и релиз RyazhTune"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Makefile'
+      - 'RyazhaTune/**'
+      - 'common/**'
+      - 'ipc/**'
+      - 'overlay/**'
+      - '.github/workflows/build-and-release.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version_changed: ${{ steps.check.outputs.CHANGED }}
+      new_version: ${{ steps.version.outputs.VERSION }}
+    steps:
+      - name: Получение исходного кода
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Настройка безопасного Git каталога
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Извлечение текущей версии из Makefile
+        id: version
+        run: |
+          VERSION=$(grep "export VERSION" Makefile | sed 's/.*:= *//' | xargs)
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Проверка изменения версии
+        id: check
+        run: |
+          CURRENT_VERSION='${{ steps.version.outputs.VERSION }}'
+          # Ищем последний тег, исключая текущую версию, если она уже существует как тег
+          LATEST_TAG=$(git tag -l | grep -v "^v$CURRENT_VERSION$" | sort -V | tail -n 1 || echo "v0.0.0")
+          LATEST_VERSION=${LATEST_TAG#v}
+
+          if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
+            echo "CHANGED=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "CHANGED=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check-version
+    if: needs.check-version.outputs.version_changed == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkita64:latest
+    steps:
+      - name: Установка зависимостей (jq)
+        run: apt-get update && apt-get install -y jq curl git
+
+      - name: Получение исходного кода
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Настройка безопасного Git каталога
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Проверка языковых файлов
+        run: |
+          if [ -d "overlay/lang" ]; then
+            echo "Языковые файлы найдены."
+          else
+            echo "Ошибка: Директория overlay/lang не найдена!"
+            exit 1
+          fi
+
+      - name: Подготовка библиотек
+        run: make prepare-overlay-lib
+
+      - name: Сборка проекта
+        run: make clean && make -j$(nproc)
+
+      - name: Проверка целостности сборки
+        run: |
+          if [ -f "RyazhTune/RyazhTune.nsp" ] && [ -f "overlay/RyazhTune-Overlay.ovl" ]; then
+            echo "Сборка успешно завершена."
+          else
+            echo "Ошибка: Файлы сборки не найдены!"
+            ls -R
+            exit 1
+          fi
+
+      - name: Подготовка архива RyazhTune.zip
+        run: |
+          mkdir -p release/atmosphere/contents/420000000000000E/flags
+          mkdir -p release/config/RyazhTune
+          mkdir -p release/switch/.overlays
+
+          # 1. Атмосфера (модуль)
+          touch release/atmosphere/contents/420000000000000E/flags/boot2.flag
+          cp RyazhTune/RyazhTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
+          cp RyazhTune/toolbox.json release/atmosphere/contents/420000000000000E/
+
+          # 2. Конфиги и языки
+          if [ -d "overlay/lang" ]; then
+            cp -r overlay/lang release/config/RyazhTune/
+          fi
+          cp .github/default-config.ini release/config/RyazhTune/config.ini
+
+          # 3. Оверлей
+          cp overlay/RyazhTune-Overlay.ovl release/switch/.overlays/
+
+          # Упаковка
+          cd release && zip -r ../RyazhTune.zip . && cd ..
+
+      - name: Формирование текста релиза (AI + structured fallback)
+        id: changelog
+        run: |
+          git fetch --tags --force
+          CURRENT_VERSION='${{ needs.check-version.outputs.new_version }}'
+          LATEST_TAG=$(git tag -l | grep -E "^v[0-9]" | sort -V | grep -v "^v$CURRENT_VERSION$" | tail -n 2 | head -n 1 || echo "")
+          
+          if [[ -n "$LATEST_TAG" ]]; then
+            RANGE="${LATEST_TAG}..HEAD"
+            DIFF_RANGE="$RANGE"
+          else
+            RANGE="HEAD"
+            DIFF_RANGE="$(git hash-object -t tree /dev/null)..HEAD"
+          fi
+
+          COMMITS=$(git log "$RANGE" --no-merges --pretty=format:"- %h %s" -n 40 || true)
+          FILE_STATS=$(git diff --shortstat "$DIFF_RANGE" || true)
+          CHANGED_FILES=$(git diff --name-only "$DIFF_RANGE" | sed -n '1,30s/^/- /p' || true)
+          RAW_LOG=$(git log "$RANGE" --no-merges --pretty=format:"%s" | grep -Evi "^merge|update workflow|fix yaml" | head -n 50)
+
+          [[ -z "$COMMITS" ]] && COMMITS="- Нет значимых коммитов в данном диапазоне."
+          [[ -z "$FILE_STATS" ]] && FILE_STATS="Изменений в файлах не зафиксировано."
+          [[ -z "$CHANGED_FILES" ]] && CHANGED_FILES="- Список файлов пуст."
+
+          if [[ -n "${OPENROUTER_API_KEY}" && -n "$RAW_LOG" ]]; then
+            PROMPT="Ты — release-manager проекта RyazhTune. Напиши краткие и профессиональные релиз-ноты на русском языке в markdown.\n\nСтрогие правила:\n1) Без приветствий, без эмоций, без эмодзи.\n2) Без фраз про ИИ.\n3) Используй разделы:\n   ## Список изменений\n   ## Улучшения\n   ## Исправления\n4) Группируй изменения по смыслу.\n\nДанные:\n$RAW_LOG"
+
+            PAYLOAD=$(jq -n \
+              --arg model "openrouter/auto" \
+              --arg prompt "$PROMPT" \
+              '{
+                model: $model,
+                messages: [
+                  {role: "system", content: "Пиши строго технический и лаконичный отчет в markdown."},
+                  {role: "user", content: $prompt}
+                ],
+                temperature: 0.1
+              }')
+
+            RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
+              -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD")
+            AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+          fi
+
+          if [[ -n "$RAW_LOG" ]]; then
+            CHANGELOG_SECTIONS=$(echo "$RAW_LOG" | awk '
+              BEGIN{new="";impr="";fix=""}
+              {l=tolower($0)}
+              l ~ /(add|feature|нов|support|lang|созд)/ {new=new "- " $0 "\n"; next}
+              l ~ /(fix|bug|crash|error|исправ|почин|ошиб)/ {fix=fix "- " $0 "\n"; next}
+              {impr=impr "- " $0 "\n"}
+              END{
+                if(new!="") printf "### Новое\n%s\n", new;
+                if(impr!="") printf "### Улучшения\n%s\n", impr;
+                if(fix!="") printf "### Исправления\n%s\n", fix;
+              }')
+          else
+            CHANGELOG_SECTIONS="- Внутренние технические изменения."
+          fi
+
+          if [[ -n "${AI_BODY}" && "${AI_BODY}" != "null" && "${AI_BODY}" != "" ]]; then
+            {
+              echo "RELEASE_BODY<<EOF"
+              echo "$AI_BODY"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
+          else
+            {
+              echo "RELEASE_BODY<<EOF"
+              echo "## Список изменений"
+              echo ""
+              echo "$CHANGELOG_SECTIONS"
+              echo ""
+              echo "### Технические детали"
+              echo "- Версия: $CURRENT_VERSION"
+              echo "- Диапазон: \`$RANGE\`"
+              echo "- Статистика: $FILE_STATS"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
+          fi
+
+      - name: Создание тега и релиза
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.check-version.outputs.new_version }}
+          name: RyazhTune v${{ needs.check-version.outputs.new_version }}
+          files: |
+            RyazhTune.zip
+            overlay/RyazhTune-Overlay.ovl
+          body: |
+            ${{ env.RELEASE_BODY }}
+
+            ---
+            _Сформировано автоматически на основе реальных изменений в коде._
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

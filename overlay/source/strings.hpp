@@ -67,6 +67,7 @@ enum class Str : std::uint8_t {
     TrackRemovedUndoHint,
     TrackRestoredToast,
     WhatsNewBody,
+    ByArtist,
     Count_
 };
 

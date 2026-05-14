@@ -1,14 +1,14 @@
 #include "strings.hpp"
 
 #include "config/config.hpp"
-#include "overlay_i18n.hpp"
 
 #include <array>
 #include <cstdio>
 #include <cstring>
-#include <string>
 
 namespace i18n {
+
+namespace {
 
 char g_lang[8] = {};
 
@@ -29,7 +29,7 @@ constexpr std::array<Pair, static_cast<std::size_t>(Str::Count_)> kPairs = {{
     {"Toggle Mute (Y)", "Без звука (Y)"},
     {"Music", "Музыка"},
     {"Game", "Игра"},
-    {"Title ID", "ID игры"},
+    {"Title ID", "Title ID"},
     {"Preset Volume", "Пресет громкости"},
     {"Default Focus", "Фокус по умолчанию"},
     {"Custom Focus", "Свой фокус"},
@@ -90,19 +90,15 @@ bool isRussian() {
     return std::strcmp(g_lang, "ru") == 0;
 }
 
+} // namespace
+
 void syncFromConfig() {
-    char next[sizeof(g_lang)];
-    config::get_language(next, sizeof(next));
-    if (next[0] == '\0') {
-        next[0] = 'r';
-        next[1] = 'u';
-        next[2] = '\0';
+    config::get_language(g_lang, sizeof(g_lang));
+    if (g_lang[0] == '\0') {
+        g_lang[0] = 'r';
+        g_lang[1] = 'u';
+        g_lang[2] = '\0';
     }
-    if (std::strcmp(next, g_lang) == 0)
-        return;
-    std::strncpy(g_lang, next, sizeof(g_lang) - 1);
-    g_lang[sizeof(g_lang) - 1] = '\0';
-    reloadRyazhTuneTranslations();
 }
 
 bool isRu() {
@@ -124,7 +120,6 @@ const char *trackCountLabel(std::uint32_t count) {
         return "1 track";
     }
     if (isRussian()) {
-        /* Russian plural rules for "трек". */
         const unsigned n     = static_cast<unsigned>(count);
         const unsigned n10   = n % 10u;
         const unsigned n100  = n % 100u;

@@ -58,13 +58,15 @@ namespace {
     static std::string buildFileLabel(u32 num,
                                       const std::string &title,
                                       const std::string &artist) {
+        i18n::syncFromConfig();
+        const char *sep = i18n::t(i18n::Str::ByArtist);
         // Reserve upfront to avoid reallocations from 4 concatenations.
         std::string s;
-        s.reserve(8 + ult::DIVIDER_SYMBOL.size() + title.size() + 4 + artist.size());
+        s.reserve(8 + ult::DIVIDER_SYMBOL.size() + title.size() + std::strlen(sep) + artist.size());
         s += std::to_string(num);
         s += ult::DIVIDER_SYMBOL;
         s += title;
-        s += " by ";
+        s += sep;
         s += artist;
         return s;
     }
