@@ -43,17 +43,28 @@ jobs:
           LOG=$(git log "$RANGE" --pretty=format:"- %s (%h)")
 
           if [[ -n "${OPENROUTER_API_KEY}" ]]; then
-            PROMPT="Ты — технический редактор релизов. На входе список коммитов. Сделай человекочитаемое описание релиза на русском языке БЕЗ смайликов. Формат: 1) Короткий абзац \"В этом релизе...\" 2) \"Основные изменения:\" (пункты) 3) \"Исправления:\" (пункты) 4) \"Важно для пользователей:\" (2-4 пункта) Не выдумывай факты, опирайся только на коммиты."
+            PROMPT="Ты — автор проекта RyazhaTune (мод для Nintendo Switch). Напиши пост о новом релизе для пользователей. 
+            Пиши живым, дружелюбным языком, как человек, а не робот. 
+            Используй умеренно подходящие эмодзи. 
+            Структура:
+            1. Приветствие и краткая суть обновления.
+            2. Список того, что реально изменилось (основывайся на коммитах ниже).
+            3. Если есть исправления — упомяни их.
+            4. Пожелай приятного пользования.
+            
+            Важно: Не выдумывай функции, которых нет в коммитах. Если коммитов мало или они технические, просто опиши их доступно.
+            
+            Список коммитов:
+            $LOG"
             
             PAYLOAD=$(jq -n \
-              --arg model "google/gemini-2.0-flash-lite-preview-02-05:free" \
+              --arg model "google/gemma-4-31b:free" \
               --arg prompt "$PROMPT" \
-              --arg log "$LOG" \
               '{
                 model: $model,
                 messages: [
-                  {role: "system", content: "Пиши кратко, по-деловому и без смайликов."},
-                  {role: "user", content: ($prompt + "\n\nКоммиты:\n" + $log)}
+                  {role: "system", content: "Ты — разработчик homebrew для Nintendo Switch. Пишешь на русском языке, дружелюбно и понятно."},
+                  {role: "user", content: $prompt}
                 ]
               }')
 
@@ -63,9 +74,19 @@ jobs:
               -d "$PAYLOAD")
             
             AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+
+            if [[ -z "$AI_BODY" || "$AI_BODY" == "null" ]]; then
+              echo "Ошибка: AI вернул пустой ответ. Пробуем резервную модель..."
+              PAYLOAD=$(echo "$PAYLOAD" | jq '.model = "meta-llama/llama-3.3-70b-instruct:free"')
+              RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
+                -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
+                -H "Content-Type: application/json" \
+                -d "$PAYLOAD")
+              AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+            fi
           fi
 
-          if [[ -n "${AI_BODY}" ]]; then
+          if [[ -n "${AI_BODY}" && "${AI_BODY}" != "null" ]]; then
             {
               echo "RELEASE_BODY<<EOF"
               echo "$AI_BODY"
@@ -74,30 +95,26 @@ jobs:
           else
             FEATURES=$(printf "%s\n" "$LOG" | grep -Ei "add|feat|new|реализ|добав" || true)
             FIXES=$(printf "%s\n" "$LOG" | grep -Ei "fix|bug|исправ|устран" || true)
-            OTHER=$(printf "%s\n" "$LOG" | grep -Eiv "add|feat|new|реализ|добав|fix|bug|исправ|устран" || true)
 
             {
               echo "RELEASE_BODY<<EOF"
-              echo "В этом релизе реализованы улучшения и исправлены ошибки по итогам последних изменений."
+              echo "👋 Привет! Вышло новое обновление RyazhTune."
               echo
-              echo "Основные изменения:"
+              echo "Что нового:"
               if [[ -n "$FEATURES" ]]; then
                 echo "$FEATURES"
               else
-                echo "- Обновления функциональности по внутренним задачам проекта."
+                echo "- Внутренние улучшения и оптимизация кода."
               fi
               echo
               echo "Исправления:"
               if [[ -n "$FIXES" ]]; then
                 echo "$FIXES"
               else
-                echo "- Исправления стабильности и совместимости."
+                echo "- Повышена стабильность работы модуля."
               fi
-              if [[ -n "$OTHER" ]]; then
-                echo
-                echo "Прочие изменения:"
-                echo "$OTHER"
-              fi
+              echo
+              echo "Спасибо, что пользуетесь RyazhTune! 🎧"
               echo "EOF"
             } >> "$GITHUB_ENV"
           fi
@@ -107,10 +124,9 @@ jobs:
         with:
           tag_name: ${{ github.event.release.tag_name }}
           body: |
-            ## Описание релиза
             ${{ env.RELEASE_BODY }}
 
             ---
-            Текст сформирован автоматически на основе истории коммитов.
+            _Текст сформирован автоматически на основе истории коммитов._
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
