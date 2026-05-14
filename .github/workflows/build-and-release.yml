@@ -79,7 +79,7 @@ jobs:
 
       - name: Проверка целостности сборки
         run: |
-          test -f RyazhaTune/RyazhTune.nsp || { echo "Ошибка: RyazhTune.nsp не найден" >&2; exit 1; }
+          test -f RyazhTune/RyazhTune.nsp || { echo "Ошибка: RyazhTune.nsp не найден" >&2; exit 1; }
           test -f overlay/RyazhTune-Overlay.ovl || { echo "Ошибка: RyazhTune-Overlay.ovl не найден" >&2; exit 1; }
           test -f overlay/lang/ru.json || { echo "Ошибка: ru.json не найден" >&2; exit 1; }
           test -f overlay/lang/en.json || { echo "Ошибка: en.json не найден" >&2; exit 1; }
@@ -90,9 +90,9 @@ jobs:
           rm -rf release RyazhTune.zip
           mkdir -p release/atmosphere/contents/420000000000000E/flags
           touch release/atmosphere/contents/420000000000000E/flags/boot2.flag
-          cp RyazhaTune/RyazhTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
-          cp RyazhaTune/RyazhTune.json release/atmosphere/contents/420000000000000E/
-          cp RyazhaTune/toolbox.json release/atmosphere/contents/420000000000000E/
+          cp RyazhTune/RyazhTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
+          cp RyazhTune/RyazhTune.json release/atmosphere/contents/420000000000000E/
+          cp RyazhTune/toolbox.json release/atmosphere/contents/420000000000000E/
 
           mkdir -p release/switch/.overlays
           cp overlay/RyazhTune-Overlay.ovl release/switch/.overlays/
