@@ -40,22 +40,23 @@ jobs:
           PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null || echo "")
           RANGE="${CURRENT_TAG}"
           [[ -n "$PREV_TAG" ]] && RANGE="${PREV_TAG}..${CURRENT_TAG}"
-          LOG=$(git log "$RANGE" --pretty=format:"- %s (%h)")
+          
+          # Фильтруем коммиты: убираем мержи и технический мусор
+          LOG=$(git log "$RANGE" --pretty=format:"%s" | grep -Evi "merge branch|merge pull request|fix syntax|update workflow|fix yaml|refactor" | head -n 15)
 
-          if [[ -n "${OPENROUTER_API_KEY}" ]]; then
-            PROMPT="Ты — автор проекта RyazhaTune (мод для Nintendo Switch). Напиши пост о новом релизе для пользователей. 
-            Пиши живым, дружелюбным языком, как человек, а не робот. 
-            Используй умеренно подходящие эмодзи. 
-            Структура:
-            1. Приветствие и краткая суть обновления.
-            2. Список того, что реально изменилось (основывайся на коммитах ниже).
-            3. Если есть исправления — упомяни их.
-            4. Пожелай приятного пользования.
+          if [[ -n "${OPENROUTER_API_KEY}" && -n "$LOG" ]]; then
+            PROMPT="Ты — разработчик проекта RyazhaTune. Напиши краткий и душевный пост об обновлении для пользователей на РУССКОМ языке.
             
-            Важно: Не выдумывай функции, которых нет в коммитах. Если коммитов мало или они технические, просто опиши их доступно.
+            Список изменений:
+            $LOG
             
-            Список коммитов:
-            $LOG"
+            Инструкции:
+            1. Пиши от ПЕРВОГО лица ('Я сделал', 'Я добавил', 'Исправил').
+            2. НЕ перечисляй коммиты списком. Вместо этого проанализируй их и напиши 2-3 предложения о главных изменениях человеческим языком.
+            3. Если изменений много, выдели только самое важное. Технические детали опускай.
+            4. Обязательно используй русский язык.
+            5. Тон: дружелюбный, неформальный. Можно использовать пару эмодзи.
+            6. Формат: Приветствие, суть обновления (1-2 абзаца), пожелание."
             
             PAYLOAD=$(jq -n \
               --arg model "google/gemma-4-31b-it:free" \
@@ -63,7 +64,7 @@ jobs:
               '{
                 model: $model,
                 messages: [
-                  {role: "system", content: "Ты — разработчик homebrew для Nintendo Switch. Пишешь на русском языке, дружелюбно и понятно."},
+                  {role: "system", content: "Ты — разработчик RyazhaTune. Пишешь только на русском языке, кратко и по-человечески."},
                   {role: "user", content: $prompt}
                 ]
               }')
@@ -76,7 +77,6 @@ jobs:
             AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
             if [[ -z "$AI_BODY" || "$AI_BODY" == "null" ]]; then
-              echo "Ошибка: AI вернул пустой ответ. Пробуем резервную модель..."
               PAYLOAD=$(echo "$PAYLOAD" | jq '.model = "meta-llama/llama-3.3-70b-instruct:free"')
               RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
                 -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
@@ -93,28 +93,9 @@ jobs:
               echo "EOF"
             } >> "$GITHUB_ENV"
           else
-            FEATURES=$(printf "%s\n" "$LOG" | grep -Ei "add|feat|new|реализ|добав" || true)
-            FIXES=$(printf "%s\n" "$LOG" | grep -Ei "fix|bug|исправ|устран" || true)
-
             {
               echo "RELEASE_BODY<<EOF"
-              echo "👋 Привет! Вышло новое обновление RyazhTune."
-              echo
-              echo "Что нового:"
-              if [[ -n "$FEATURES" ]]; then
-                echo "$FEATURES"
-              else
-                echo "- Внутренние улучшения и оптимизация кода."
-              fi
-              echo
-              echo "Исправления:"
-              if [[ -n "$FIXES" ]]; then
-                echo "$FIXES"
-              else
-                echo "- Повышена стабильность работы модуля."
-              fi
-              echo
-              echo "Спасибо, что пользуетесь RyazhTune! 🎧"
+              echo "👋 Привет! Я выпустил новое обновление RyazhTune. В этой версии я внес внутренние улучшения и повысил стабильность работы. Приятного пользования! 🎧"
               echo "EOF"
             } >> "$GITHUB_ENV"
           fi
@@ -127,6 +108,6 @@ jobs:
             ${{ env.RELEASE_BODY }}
 
             ---
-            _Текст сформирован автоматически на основе истории коммитов._
+            _Сгенерировано автоматически на основе истории изменений._
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

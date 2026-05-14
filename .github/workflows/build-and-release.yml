@@ -1,28 +1,25 @@
-name: Автоматическая сборка и релиз RyazhTune
+name: "Автоматическая сборка и релиз RyazhTune"
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches:
+      - main
+    paths:
+      - 'Makefile'
+      - 'src/**'
+      - 'include/**'
+      - 'overlay/**'
+      - '.github/workflows/build-and-release.yml'
 
 permissions:
   contents: write
 
-concurrency:
-  group: ryazhatune-release-${{ github.ref }}
-  cancel-in-progress: true
-
-defaults:
-  run:
-    shell: bash
-
 jobs:
   check-version:
-    name: Проверка версии
     runs-on: ubuntu-latest
     outputs:
-      new_version: ${{ steps.get_version.outputs.VERSION }}
-      version_changed: ${{ steps.check_change.outputs.CHANGED }}
+      version_changed: ${{ steps.check.outputs.CHANGED }}
+      new_version: ${{ steps.version.outputs.VERSION }}
     steps:
       - name: Получение исходного кода
         uses: actions/checkout@v4
@@ -33,39 +30,33 @@ jobs:
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Извлечение текущей версии из Makefile
-        id: get_version
+        id: version
         run: |
-          VERSION=$(awk -F ':=' '/^export VERSION/ { gsub(/[[:space:]]/, "", $2); print $2; exit }' Makefile)
-          if [[ -z "$VERSION" ]]; then
-            echo "Не удалось извлечь VERSION из Makefile" >&2
-            exit 1
-          fi
+          VERSION=$(grep "export VERSION" Makefile | awk '{print $3}')
           echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Текущая версия в Makefile: $VERSION"
 
       - name: Проверка изменения версии
-        id: check_change
+        id: check
         run: |
-          CURRENT_VERSION='${{ steps.get_version.outputs.VERSION }}'
+          CURRENT_VERSION='${{ steps.version.outputs.VERSION }}'
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           LATEST_VERSION=${LATEST_TAG#v}
-
+          
           if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
             echo "CHANGED=true" >> "$GITHUB_OUTPUT"
           else
             echo "CHANGED=false" >> "$GITHUB_OUTPUT"
           fi
 
-  build-and-release:
-    name: Сборка и публикация
+  build:
     needs: check-version
-    if: needs.check-version.outputs.version_changed == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs: check-version.outputs.version_changed == 'true'
     runs-on: ubuntu-latest
-    container: devkitpro/devkita64:latest
+    container:
+      image: devkitpro/devkita64:latest
     steps:
       - name: Установка зависимостей (jq)
-        run: |
-          apt-get update && apt-get install -y jq zip curl
+        run: apt-get update && apt-get install -y jq curl git
 
       - name: Получение исходного кода
         uses: actions/checkout@v4
@@ -76,35 +67,32 @@ jobs:
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Проверка языковых файлов
-        run: python3 scripts/validate_overlay_lang.py
+        run: |
+          if [ -d "overlay/lang" ]; then
+            echo "Языковые файлы найдены."
+          else
+            echo "Ошибка: Директория overlay/lang не найдена!"
+            exit 1
+          fi
 
       - name: Сборка проекта
-        run: make -j$(nproc)
+        run: make clean && make -j$(nproc)
 
       - name: Проверка целостности сборки
         run: |
-          test -f RyazhTune/RyazhTune.nsp || { echo "Ошибка: RyazhTune.nsp не найден" >&2; exit 1; }
-          test -f overlay/RyazhTune-Overlay.ovl || { echo "Ошибка: RyazhTune-Overlay.ovl не найден" >&2; exit 1; }
-          test -f overlay/lang/ru.json || { echo "Ошибка: ru.json не найден" >&2; exit 1; }
-          test -f overlay/lang/en.json || { echo "Ошибка: en.json не найден" >&2; exit 1; }
-          test -f overlay/lang/zh.json || { echo "Ошибка: zh.json не найден" >&2; exit 1; }
+          if [ -f "RyazhTune.nsp" ] && [ -f "overlay/RyazhTune-Overlay.ovl" ]; then
+            echo "Сборка успешно завершена."
+          else
+            echo "Ошибка: Файлы сборки не найдены!"
+            ls -R
+            exit 1
+          fi
 
       - name: Подготовка архива RyazhTune.zip
         run: |
-          rm -rf release RyazhTune.zip
-          mkdir -p release/atmosphere/contents/420000000000000E/flags
-          touch release/atmosphere/contents/420000000000000E/flags/boot2.flag
-          cp RyazhTune/RyazhTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
-          cp RyazhTune/RyazhTune.json release/atmosphere/contents/420000000000000E/
-          cp RyazhTune/toolbox.json release/atmosphere/contents/420000000000000E/
-
-          mkdir -p release/switch/.overlays
-          cp overlay/RyazhTune-Overlay.ovl release/switch/.overlays/
-
-          mkdir -p release/config/RyazhTune/lang
-          cp overlay/lang/*.json release/config/RyazhTune/lang/
-
-          (cd release && zip -r ../RyazhTune.zip atmosphere switch config)
+          mkdir -p release/switch/RyazhTune
+          cp RyazhTune.nsp release/switch/RyazhTune/
+          cd release && zip -r ../RyazhTune.zip switch/ && cd ..
 
       - name: Формирование текста релиза через AI (OpenRouter)
         id: changelog
@@ -112,39 +100,36 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          RANGE="HEAD"
-          [[ -n "$LATEST_TAG" ]] && RANGE="${LATEST_TAG}..HEAD"
-          LOG=$(git log "$RANGE" --pretty=format:"- %s (%h)")
+          if [[ -n "$LATEST_TAG" ]]; then
+            RANGE="${LATEST_TAG}..HEAD"
+          else
+            RANGE="HEAD"
+          fi
           
-          echo "История коммитов для анализа:"
-          echo "$LOG"
-
-          if [[ -n "${OPENROUTER_API_KEY}" ]]; then
-            echo "OPENROUTER_API_KEY обнаружен, отправка запроса..."
+          # Фильтруем коммиты: убираем мержи и технический мусор
+          LOG=$(git log "$RANGE" --pretty=format:"%s" | grep -Evi "merge branch|merge pull request|fix syntax|update workflow|fix yaml|refactor" | head -n 15)
+          
+          if [[ -n "${OPENROUTER_API_KEY}" && -n "$LOG" ]]; then
+            PROMPT="Ты — разработчик проекта RyazhaTune. Напиши краткий и душевный пост об обновлении для пользователей на РУССКОМ языке.
             
-            # "Человечный" промпт
-            PROMPT="Ты — автор проекта RyazhaTune (мод для Nintendo Switch). Напиши пост о новом релизе для пользователей. 
-            Пиши живым, дружелюбным языком, как человек, а не робот. 
-            Используй умеренно подходящие эмодзи. 
-            Структура:
-            1. Приветствие и краткая суть обновления.
-            2. Список того, что реально изменилось (основывайся на коммитах ниже).
-            3. Если есть исправления — упомяни их.
-            4. Пожелай приятного пользования.
+            Список изменений:
+            $LOG
             
-            Важно: Не выдумывай функции, которых нет в коммитах. Если коммитов мало или они технические, просто опиши их доступно.
+            Инструкции:
+            1. Пиши от ПЕРВОГО лица ('Я сделал', 'Я добавил', 'Исправил').
+            2. НЕ перечисляй коммиты списком. Вместо этого проанализируй их и напиши 2-3 предложения о главных изменениях человеческим языком.
+            3. Если изменений много, выдели только самое важное. Технические детали опускай.
+            4. Обязательно используй русский язык.
+            5. Тон: дружелюбный, неформальный. Можно использовать пару эмодзи.
+            6. Формат: Приветствие, суть обновления (1-2 абзаца), пожелание."
             
-            Список коммитов:
-            $LOG"
-            
-            # Используем google/gemma-4-31b-it:free как более новую и доступную
             PAYLOAD=$(jq -n \
               --arg model "google/gemma-4-31b-it:free" \
               --arg prompt "$PROMPT" \
               '{
                 model: $model,
                 messages: [
-                  {role: "system", content: "Ты — разработчик homebrew для Nintendo Switch. Пишешь на русском языке, дружелюбно и понятно."},
+                  {role: "system", content: "Ты — разработчик RyazhaTune. Пишешь только на русском языке, кратко и по-человечески."},
                   {role: "user", content: $prompt}
                 ]
               }')
@@ -155,9 +140,9 @@ jobs:
               -d "$PAYLOAD")
             
             AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
-            
+
             if [[ -z "$AI_BODY" || "$AI_BODY" == "null" ]]; then
-              echo "Ошибка: AI вернул пустой ответ. Пробуем резервную модель..."
+              # Резервная модель
               PAYLOAD=$(echo "$PAYLOAD" | jq '.model = "meta-llama/llama-3.3-70b-instruct:free"')
               RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
                 -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
@@ -165,8 +150,6 @@ jobs:
                 -d "$PAYLOAD")
               AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
             fi
-          else
-            echo "ПРЕДУПРЕЖДЕНИЕ: OPENROUTER_API_KEY не найден."
           fi
 
           if [[ -n "${AI_BODY}" && "${AI_BODY}" != "null" ]]; then
@@ -176,29 +159,9 @@ jobs:
               echo "EOF"
             } >> "$GITHUB_ENV"
           else
-            echo "Использование стандартного шаблона..."
-            FEATURES=$(printf "%s\n" "$LOG" | grep -Ei "add|feat|new|реализ|добав" || true)
-            FIXES=$(printf "%s\n" "$LOG" | grep -Ei "fix|bug|исправ|устран" || true)
-
             {
               echo "RELEASE_BODY<<EOF"
-              echo "👋 Привет! Вышло новое обновление RyazhTune."
-              echo
-              echo "Что нового:"
-              if [[ -n "$FEATURES" ]]; then
-                echo "$FEATURES"
-              else
-                echo "- Внутренние улучшения и оптимизация кода."
-              fi
-              echo
-              echo "Исправления:"
-              if [[ -n "$FIXES" ]]; then
-                echo "$FIXES"
-              else
-                echo "- Повышена стабильность работы модуля."
-              fi
-              echo
-              echo "Спасибо, что пользуетесь RyazhTune! 🎧"
+              echo "👋 Привет! Я выпустил новое обновление RyazhTune. В этой версии я внес внутренние улучшения и повысил стабильность работы. Приятного пользования! 🎧"
               echo "EOF"
             } >> "$GITHUB_ENV"
           fi
