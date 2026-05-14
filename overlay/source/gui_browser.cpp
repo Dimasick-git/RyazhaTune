@@ -8,6 +8,7 @@
 #include "tune.h"
 #include "strings.hpp"
 #include "get_funcs.hpp"    // ult::isDirectory, ult::DirCloser
+#include <tsl_utils.hpp>   // ult::translationCache
 
 #include <algorithm>
 #include <cstdio>
@@ -431,10 +432,14 @@ void BrowserGui::buildList() {
     if (hit_max) {
         if (tsl::notification) {
             char detail[96];
-            if (i18n::isRu())
-                std::snprintf(detail, sizeof(detail), "Найдено более %u элементов в папке.", kScanMax);
-            else
-                std::snprintf(detail, sizeof(detail), "Maximum of %u entries hit!", kScanMax);
+            const auto p1 = ult::translationCache.find("MAX_SCAN_HIT_PART1");
+            const auto p2 = ult::translationCache.find("MAX_SCAN_HIT_PART2");
+            if (p1 != ult::translationCache.end() && p2 != ult::translationCache.end()) {
+                std::snprintf(detail, sizeof(detail), "%s%u%s", p1->second.c_str(), kScanMax, p2->second.c_str());
+            } else {
+                std::strncpy(detail, i18n::t(i18n::Str::ScanStoppedBody), sizeof(detail) - 1);
+                detail[sizeof(detail) - 1] = '\0';
+            }
             tsl::notification->showNow(detail, 26, i18n::t(i18n::Str::ScanStoppedTitle), 2500, false);
         }
     }
@@ -759,10 +764,7 @@ void BrowserGui::addAllToPlaylist(const std::string &path) {
     }
 
     char msg[96];
-    if (i18n::isRu())
-        std::snprintf(msg, sizeof(msg), "Добавлено %lld треков в плейлист.", static_cast<long long>(songs_added));
-    else
-        std::snprintf(msg, sizeof(msg), "Added %lld tracks to Playlist.", static_cast<long long>(songs_added));
+    std::snprintf(msg, sizeof(msg), i18n::t(i18n::Str::AddedManyTracksFmt), static_cast<long long>(songs_added));
     if (tsl::notification) tsl::notification->showNow(msg);
     if (songs_added > 0)
         notifyCountChanged();

@@ -566,7 +566,7 @@ namespace tune::impl {
         {
             FsFileSystem sdFs;
             if (R_SUCCEEDED(fsOpenSdCardFileSystem(&sdFs))) {
-                fsFsDeleteFile(&sdFs, "/config/ryazhahand/flags/HOME_EVENT.flag");
+                fsFsDeleteFile(&sdFs, "/config/ultrahand/flags/HOME_EVENT.flag");
                 fsFsClose(&sdFs);
             }
         }
@@ -1045,7 +1045,7 @@ namespace tune::impl {
          * "/" paths correctly — identical to every other file access here. */
         auto readHomeFlagTick = []() -> u64 {
             FsFile f;
-            if (R_FAILED(sdmc::OpenFile(&f, "/config/ryazhahand/flags/HOME_EVENT.flag")))
+            if (R_FAILED(sdmc::OpenFile(&f, "/config/ultrahand/flags/HOME_EVENT.flag")))
                 return 0;
             char buf[17] = {};
             u64  n       = 0;

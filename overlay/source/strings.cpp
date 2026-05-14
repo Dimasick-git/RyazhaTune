@@ -2,6 +2,8 @@
 
 #include "config/config.hpp"
 
+#include <tsl_utils.hpp>
+
 #include <array>
 #include <cstdio>
 #include <cstring>
@@ -77,6 +79,9 @@ constexpr std::array<Pair, static_cast<std::size_t>(Str::Count_)> kPairs = {{
     {"Track restored to playlist.", "Трек возвращён в плейлист."},
     {"Tip: Settings has playback modes, Home Focus, and language.", "Подсказка: в «Настройках» — режимы, фокус HOME и язык."},
     {" by ", " — "},
+    {"Added %lld tracks to Playlist.", "Добавлено %lld треков в плейлист."},
+    {"1 track", "1 трек"},
+    {"%u tracks", "%u tracks"},
 }};
 
 static_assert(kPairs.size() == static_cast<std::size_t>(Str::Count_),
@@ -115,9 +120,9 @@ const char *t(Str id) {
 const char *trackCountLabel(std::uint32_t count) {
     static char buf[48];
     if (count == 1u) {
-        if (isRussian())
-            return "1 трек";
-        return "1 track";
+        if (auto it = ult::translationCache.find("ONE_TRACK"); it != ult::translationCache.end())
+            return it->second.c_str();
+        return t(Str::TrackCountOne);
     }
     if (isRussian()) {
         const unsigned n     = static_cast<unsigned>(count);
@@ -130,7 +135,11 @@ const char *trackCountLabel(std::uint32_t count) {
             word = "трека";
         std::snprintf(buf, sizeof(buf), "%u %s", n, word);
     } else {
-        std::snprintf(buf, sizeof(buf), "%u tracks", count);
+        if (auto it = ult::translationCache.find("N_TRACKS"); it != ult::translationCache.end()) {
+            std::snprintf(buf, sizeof(buf), "%u%s", static_cast<unsigned>(count), it->second.c_str());
+        } else {
+            std::snprintf(buf, sizeof(buf), t(Str::TrackCountManyFmt), static_cast<unsigned>(count));
+        }
     }
     return buf;
 }

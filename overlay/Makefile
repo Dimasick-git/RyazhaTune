@@ -39,6 +39,10 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 APP_TITLE	:=	RyazhTune
 
+# Defaults for standalone `make -C overlay` (root Makefile exports these).
+VERSION		?=	5.0.0
+API_VERSION	?=	4
+
 TARGET		:=	RyazhTune-Overlay
 BUILD		:=	build
 SOURCES		:=	source ../ipc ../common/minIni ../common/sdmc ../common/config ../common/pm ../common/aud
@@ -60,6 +64,11 @@ include $(RYAZHAHAND_MK)
 #ifeq ($(RELEASE),)
 #	APP_VERSION	:=	$(APP_VERSION)-$(shell git describe --dirty --always)
 #endif
+
+# Match root Makefile defaults so `make -C overlay` works standalone.
+WANT_MP3	?=	1
+WANT_FLAC	?=	1
+WANT_WAV	?=	1
 
 WANT_FLAGS	:=
 

@@ -17,17 +17,14 @@ void create_config_dir() {
     /* is lost, which sucks. */
     sdmc::CreateFolder("/config");
     sdmc::CreateFolder(CONFIG_DIR);
+    /* libryazhahand / overlay UI overrides and HOME flag live under HAND_CONFIG_DIR. */
+    sdmc::CreateFolder(HAND_CONFIG_DIR);
 }
 
 auto get_tid_str(u64 tid) -> const char* {
     static char buf[21]{};
     std::sprintf(buf, "%016lX", tid);
     return buf;
-}
-
-void create_hand_config_dir() {
-    sdmc::CreateFolder("/config");
-    sdmc::CreateFolder(HAND_CONFIG_DIR);
 }
 
 }

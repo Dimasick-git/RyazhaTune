@@ -68,6 +68,11 @@ enum class Str : std::uint8_t {
     TrackRestoredToast,
     WhatsNewBody,
     ByArtist,
+    /** snprintf format, one arg: long long count */
+    AddedManyTracksFmt,
+    TrackCountOne,
+    /** snprintf format, one arg: unsigned count — used when not Russian */
+    TrackCountManyFmt,
     Count_
 };
 

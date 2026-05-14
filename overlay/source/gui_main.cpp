@@ -10,6 +10,8 @@
 #include "strings.hpp"
 #include "overlay_i18n.hpp"
 
+#include <tsl_utils.hpp>
+
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -127,6 +129,14 @@ namespace {
 
         config::set_language(kLanguages[0].code);
         return 0;
+    }
+
+    /** Uses loaded package JSON (`ult::translationCache`) when the key matches the native endonym. */
+    const char *localizedLanguageLabel(const char *native) {
+        const auto it = ult::translationCache.find(native);
+        if (it != ult::translationCache.end())
+            return it->second.c_str();
+        return native;
     }
 }
 
@@ -361,8 +371,8 @@ tsl::elm::Element* LanguageGui::createUI() {
         const bool has_right = (i + 1) < std::size(kLanguages);
         const size_t right = has_right ? (i + 1) : i;
 
-        std::string row_label = kLanguages[left].label;
-        std::string row_value = has_right ? kLanguages[right].label : "";
+        std::string row_label = localizedLanguageLabel(kLanguages[left].label);
+        std::string row_value = has_right ? localizedLanguageLabel(kLanguages[right].label) : "";
         auto *item = new tsl::elm::ListItem(row_label, row_value);
         const bool left_selected = (left == selected);
         const bool right_selected = (has_right && right == selected);
@@ -379,7 +389,8 @@ tsl::elm::Element* LanguageGui::createUI() {
                 reloadRyazhTuneTranslations();
                 i18n::syncFromConfig();
                 const std::string body =
-                    std::string(i18n::t(i18n::Str::LanguageAppliedBody)) + "\n\n" + kLanguages[idx].label;
+                    std::string(i18n::t(i18n::Str::LanguageAppliedBody)) + "\n\n" +
+                    localizedLanguageLabel(kLanguages[idx].label);
                 if (tsl::notification)
                     tsl::notification->showNow(body.c_str(), 24, i18n::t(i18n::Str::Language), 3200, false);
                 triggerNavigationFeedback();
@@ -393,7 +404,7 @@ tsl::elm::Element* LanguageGui::createUI() {
     }
 
     m_frame->setContent(m_list);
-    m_list->jumpToItem(kLanguages[selected - (selected % 2)].label);
+    m_list->jumpToItem(localizedLanguageLabel(kLanguages[selected - (selected % 2)].label));
     return m_frame;
 }
 
@@ -737,7 +748,8 @@ tsl::elm::Element* SettingsGui::createUI() {
 
     {
         const size_t language_index = currentLanguageIndex();
-        auto *language_item = new tsl::elm::ListItem(i18n::t(i18n::Str::Language), kLanguages[language_index].label);
+        auto *language_item = new tsl::elm::ListItem(
+            i18n::t(i18n::Str::Language), localizedLanguageLabel(kLanguages[language_index].label));
         language_item->setClickListener(
             [](u64 keys) -> bool {
                 if (keys & HidNpadButton_A) {
@@ -984,7 +996,7 @@ void SettingsGui::update() {
     }
 
     if (m_language_button) {
-        m_language_button->setValue(kLanguages[currentLanguageIndex()].label);
+        m_language_button->setValue(localizedLanguageLabel(kLanguages[currentLanguageIndex()].label));
     }
 }
 

@@ -6,7 +6,9 @@ release/
 *.elf
 *.nso
 *.nsp
+*.npdm
 *.nro
+*.nacp
 *.ovl
 *.map
 
