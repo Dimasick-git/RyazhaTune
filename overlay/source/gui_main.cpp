@@ -358,9 +358,7 @@ tsl::elm::Element* LanguageGui::createUI() {
                 config::set_language(kLanguages[idx].code);
                 if (tsl::notification)
                     tsl::notification->showNow(kLanguages[idx].label, 26, "Language", 2000, false);
-                // Rebuild settings screen immediately so translated labels
-                // are re-resolved after language change.
-                tsl::swapTo<SettingsGui>();
+                tsl::goBack();
                 return true;
             }
             return false;
