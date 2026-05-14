@@ -32,15 +32,6 @@ jobs:
         id: changelog
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          AI_PROMPT: |
-            Ты — технический редактор релизов. На входе список коммитов.
-            Сделай человекочитаемое описание релиза на русском языке БЕЗ смайликов.
-            Формат:
-            1) Короткий абзац "В этом релизе..."
-            2) "Основные изменения:" (пункты)
-            3) "Исправления:" (пункты)
-            4) "Важно для пользователей:" (2-4 пункта)
-            Не выдумывай факты, опирайся только на коммиты.
         run: |
           CURRENT_TAG='${{ github.event.release.tag_name }}'
           PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null || echo "")
@@ -48,7 +39,6 @@ jobs:
           [[ -n "$PREV_TAG" ]] && RANGE="${PREV_TAG}..${CURRENT_TAG}"
           LOG=$(git log "$RANGE" --pretty=format:"- %s (%h)")
 
-          # Если задан OPENROUTER_API_KEY, используем бесплатную модель от OpenRouter.
           if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
             PROMPT=$(cat <<'EOF'
 Ты — технический редактор релизов. На входе список коммитов.
@@ -115,8 +105,6 @@ EOF
               echo "EOF"
             } >> "$GITHUB_ENV"
           fi
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Обновить описание релиза
         uses: softprops/action-gh-release@v2

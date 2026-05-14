@@ -109,15 +109,6 @@ jobs:
         id: changelog
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          AI_PROMPT: |
-            Ты — технический редактор релизов. На входе список коммитов.
-            Сделай человекочитаемое описание релиза на русском языке БЕЗ смайликов.
-            Формат:
-            1) Короткий абзац "В этом релизе..."
-            2) "Основные изменения:" (пункты)
-            3) "Исправления:" (пункты)
-            4) "Важно для пользователей:" (2-4 пункта)
-            Не выдумывай факты, опирайся только на коммиты.
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           RANGE="HEAD"
@@ -190,8 +181,6 @@ EOF
               echo "EOF"
             } >> "$GITHUB_ENV"
           fi
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Создание тега и релиза
         uses: softprops/action-gh-release@v2
