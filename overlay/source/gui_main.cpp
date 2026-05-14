@@ -101,11 +101,16 @@ namespace {
         {"ru", "Русский"},
         {"en", "English"},
         {"zh-cn", "简体中文"},
+        {"zh-tw", "繁體中文"},
         {"uk", "Українська"},
         {"pl", "Polski"},
         {"pt", "Português"},
         {"it", "Italiano"},
         {"nl", "Nederlands"},
+        {"de", "Deutsch"},
+        {"fr", "Français"},
+        {"es", "Español"},
+        {"ja", "日本語"},
         {"ko", "한국어"},
     };
 
@@ -331,15 +336,31 @@ tsl::elm::Element* LanguageGui::createUI() {
     m_list->addItem(new tsl::elm::CategoryHeader("Language"));
 
     const size_t selected = currentLanguageIndex();
-    for (size_t i = 0; i < std::size(kLanguages); ++i) {
-        auto *item = new tsl::elm::ListItem(kLanguages[i].label);
-        item->setValue(i == selected ? ult::INPROGRESS_SYMBOL : "", i == selected);
-        item->setClickListener([i](u64 keys) -> bool {
-            if (keys & HidNpadButton_A) {
-                config::set_language(kLanguages[i].code);
+    for (size_t i = 0; i < std::size(kLanguages); i += 2) {
+        const size_t left = i;
+        const bool has_right = (i + 1) < std::size(kLanguages);
+        const size_t right = has_right ? (i + 1) : i;
+
+        std::string row_label = kLanguages[left].label;
+        std::string row_value = has_right ? kLanguages[right].label : "";
+        auto *item = new tsl::elm::ListItem(row_label, row_value);
+        const bool left_selected = (left == selected);
+        const bool right_selected = (has_right && right == selected);
+        if (left_selected || right_selected) {
+            item->setValue((left_selected ? row_label : row_value) + " " + ult::INPROGRESS_SYMBOL);
+        }
+
+        item->setClickListener([left, right, has_right](u64 keys) -> bool {
+            size_t idx = left;
+            if ((keys & HidNpadButton_X) && has_right)
+                idx = right;
+            if (keys & (HidNpadButton_A | HidNpadButton_X)) {
+                config::set_language(kLanguages[idx].code);
                 if (tsl::notification)
-                    tsl::notification->showNow(kLanguages[i].label, 26, "Language", 2000, false);
-                tsl::goBack();
+                    tsl::notification->showNow(kLanguages[idx].label, 26, "Language", 2000, false);
+                // Rebuild settings screen immediately so translated labels
+                // are re-resolved after language change.
+                tsl::swapTo<SettingsGui>();
                 return true;
             }
             return false;
@@ -348,7 +369,7 @@ tsl::elm::Element* LanguageGui::createUI() {
     }
 
     m_frame->setContent(m_list);
-    m_list->jumpToItem(kLanguages[selected].label);
+    m_list->jumpToItem(kLanguages[selected - (selected % 2)].label);
     return m_frame;
 }
 
@@ -647,18 +668,59 @@ tsl::elm::Element* SettingsGui::createUI() {
     m_list->addItem(new tsl::elm::CategoryHeader("Miscellaneous"));
 
     {
+        auto modeLabel = []() -> const char* {
+            switch (config::get_tune_mode()) {
+                case config::TuneMode::Whitelist: return "Whitelist";
+                case config::TuneMode::Blacklist: return "Blacklist";
+                case config::TuneMode::Normal:
+                default: return "Normal";
+            }
+        };
+        auto *mode_item = new tsl::elm::ListItem("Playback Mode", modeLabel());
+        mode_item->setClickListener([mode_item, modeLabel](u64 keys) -> bool {
+            if (!(keys & HidNpadButton_A))
+                return false;
+            config::TuneMode next = config::TuneMode::Normal;
+            switch (config::get_tune_mode()) {
+                case config::TuneMode::Normal: next = config::TuneMode::Whitelist; break;
+                case config::TuneMode::Whitelist: next = config::TuneMode::Blacklist; break;
+                case config::TuneMode::Blacklist: next = config::TuneMode::Normal; break;
+            }
+            config::set_tune_mode(next);
+            mode_item->setValue(modeLabel());
+            return true;
+        });
+        m_list->addItem(mode_item);
+    }
+
+    if (tid && !at_home) {
+        auto *whitelist_item = new tsl::elm::ToggleListItem(
+            "Whitelist", config::is_tid_whitelisted(tid), "On", "Off");
+        whitelist_item->setStateChangedListener([tid](bool v) {
+            config::set_tid_whitelisted(tid, v);
+        });
+        m_list->addItem(whitelist_item);
+
+        auto *blacklist_item = new tsl::elm::ToggleListItem(
+            "Blacklist", config::is_tid_blacklisted(tid), "On", "Off");
+        blacklist_item->setStateChangedListener([tid](bool v) {
+            config::set_tid_blacklisted(tid, v);
+        });
+        m_list->addItem(blacklist_item);
+    }
+
+    {
         const size_t language_index = currentLanguageIndex();
         auto *language_item = new tsl::elm::ListItem("Language", kLanguages[language_index].label);
         language_item->setClickListener(
-            [language_item, index = language_index](u64 keys) mutable -> bool {
+            [](u64 keys) -> bool {
                 if (keys & HidNpadButton_A) {
-                    index = (index + 1) % std::size(kLanguages);
-                    config::set_language(kLanguages[index].code);
-                    language_item->setValue(kLanguages[index].label);
+                    tsl::changeTo<LanguageGui>();
                     return true;
                 }
                 return false;
             });
+        m_language_button = language_item;
         m_list->addItem(language_item);
     }
 

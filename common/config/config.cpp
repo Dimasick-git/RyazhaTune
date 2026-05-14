@@ -20,15 +20,15 @@ void create_config_dir() {
     sdmc::CreateFolder(CONFIG_DIR);
 }
 
-void create_hand_config_dir() {
-    sdmc::CreateFolder("/config");
-    sdmc::CreateFolder(HAND_CONFIG_DIR);
-}
-
 auto get_tid_str(u64 tid) -> const char* {
     static char buf[21]{};
     std::sprintf(buf, "%016lX", tid);
     return buf;
+}
+
+void create_hand_config_dir() {
+    sdmc::CreateFolder("/config");
+    sdmc::CreateFolder("/config/ryazhahand");
 }
 
 }
@@ -173,20 +173,60 @@ void set_load_path(const char* path) {
     ini_puts("config", "load_path", path, CONFIG_PATH);
 }
 
+auto get_tune_mode() -> TuneMode {
+    const int mode = static_cast<int>(ini_getl("config", "tune_mode", 0, CONFIG_PATH));
+    if (mode == static_cast<int>(TuneMode::Whitelist))
+        return TuneMode::Whitelist;
+    if (mode == static_cast<int>(TuneMode::Blacklist))
+        return TuneMode::Blacklist;
+    return TuneMode::Normal;
+}
+
+void set_tune_mode(TuneMode mode) {
+    create_config_dir();
+    ini_putl("config", "tune_mode", static_cast<long>(mode), CONFIG_PATH);
+}
+
+auto is_tid_whitelisted(u64 tid) -> bool {
+    return ini_getbool("whitelist", get_tid_str(tid), false, CONFIG_PATH);
+}
+
+void set_tid_whitelisted(u64 tid, bool value) {
+    create_config_dir();
+    ini_putl("whitelist", get_tid_str(tid), value, CONFIG_PATH);
+}
+
+auto is_tid_blacklisted(u64 tid) -> bool {
+    return ini_getbool("blacklist", get_tid_str(tid), false, CONFIG_PATH);
+}
+
+void set_tid_blacklisted(u64 tid, bool value) {
+    create_config_dir();
+    ini_putl("blacklist", get_tid_str(tid), value, CONFIG_PATH);
+}
+
+auto is_title_allowed(u64 tid) -> bool {
+    switch (get_tune_mode()) {
+        case TuneMode::Whitelist:
+            return is_tid_whitelisted(tid);
+        case TuneMode::Blacklist:
+            return !is_tid_blacklisted(tid);
+        case TuneMode::Normal:
+        default:
+            return true;
+    }
+}
+
 void ensure_language_config() {
     create_config_dir();
     char language[8]{};
     ini_gets("config", "language", "", language, sizeof(language), CONFIG_PATH);
-    if (language[0] == '\0') {
-        // Backward compatibility: migrate old language value from ryazhahand.
+    if (language[0] == '\0')
         ini_gets("config", "language", "", language, sizeof(language), HAND_CONFIG_PATH);
-    }
 
     if (language[0] == '\0')
         std::snprintf(language, sizeof(language), "%s", "ru");
 
-    // Keep both files in sync: CONFIG_PATH is canonical storage,
-    // HAND_CONFIG_PATH is retained for legacy readers.
     ini_puts("config", "language", language, CONFIG_PATH);
     create_hand_config_dir();
     ini_puts("config", "language", language, HAND_CONFIG_PATH);
@@ -197,10 +237,9 @@ auto get_language(char* out, int max_len) -> int {
     if (len > 0)
         return len;
 
-    // Fallback migration path for existing installs.
     char language[8]{};
-    const int legacy_len = ini_gets("config", "language", "", language, sizeof(language), HAND_CONFIG_PATH);
-    if (legacy_len > 0) {
+    const int hand_len = ini_gets("config", "language", "", language, sizeof(language), HAND_CONFIG_PATH);
+    if (hand_len > 0) {
         create_config_dir();
         ini_puts("config", "language", language, CONFIG_PATH);
         return ini_gets("config", "language", "ru", out, max_len, CONFIG_PATH);
@@ -213,8 +252,6 @@ auto get_language(char* out, int max_len) -> int {
 void set_language(const char* language) {
     create_config_dir();
     ini_puts("config", "language", language, CONFIG_PATH);
-
-    // Keep legacy overlay readers functional.
     create_hand_config_dir();
     ini_puts("config", "language", language, HAND_CONFIG_PATH);
 }
