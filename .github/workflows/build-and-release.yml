@@ -118,8 +118,6 @@ jobs:
 
       - name: Формирование текста релиза (AI + structured fallback)
         id: changelog
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [[ -n "$LATEST_TAG" ]]; then
