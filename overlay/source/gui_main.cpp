@@ -100,14 +100,20 @@ namespace {
     constexpr LanguageOption kLanguages[] = {
         {"ru", "Русский"},
         {"en", "English"},
-        {"zh", "中文"},
+        {"zh-cn", "简体中文"},
+        {"uk", "Українська"},
+        {"pl", "Polski"},
+        {"pt", "Português"},
+        {"it", "Italiano"},
+        {"nl", "Nederlands"},
+        {"ko", "한국어"},
     };
 
     size_t currentLanguageIndex() {
         char language[8]{};
         config::get_language(language, sizeof(language));
         for (size_t i = 0; i < std::size(kLanguages); ++i) {
-            if (std::strcmp(language, kLanguages[i].code) == 0)
+            if (std::strcmp(language, kLanguages[i].code) == 0 || (std::strcmp(language, "zh") == 0 && std::strcmp(kLanguages[i].code, "zh-cn") == 0))
                 return i;
         }
 
