@@ -9,6 +9,7 @@
 #include "pm/pm.hpp"
 #include "config/config.hpp"
 #include "strings.hpp"
+#include "overlay_i18n.hpp"
 
 #include <algorithm>
 #include <cstdio>
@@ -370,6 +371,7 @@ tsl::elm::Element* LanguageGui::createUI() {
                 idx = right;
             if (keys & (HidNpadButton_A | HidNpadButton_X)) {
                 config::set_language(kLanguages[idx].code);
+                reloadRyazhTuneTranslations();
                 if (tsl::notification)
                     tsl::notification->showNow(kLanguages[idx].label, 26, i18n::t(i18n::Str::Language), 2000, false);
                 s_settings_locale_rebuild = true;
