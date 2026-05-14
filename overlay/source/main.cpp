@@ -7,6 +7,8 @@
 #include "sdmc/sdmc.hpp"
 #include "pm/pm.hpp"
 #include "config/config.hpp"
+#include "overlay_i18n.hpp"
+#include "strings.hpp"
 
 #include <tesla.hpp>
 
@@ -103,6 +105,8 @@ class SysTuneOverlay final : public tsl::Overlay {
         }
 
         config::ensure_language_config();
+        reloadRyazhTuneTranslations();
+        i18n::syncFromConfig();
 
         u32 api;
         if (R_FAILED(tuneGetApiVersion(&api)) || api != TUNE_API_VERSION) {

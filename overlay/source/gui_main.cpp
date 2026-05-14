@@ -7,12 +7,15 @@
 #include "play_context.hpp"
 #include "pm/pm.hpp"
 #include "config/config.hpp"
+#include "strings.hpp"
+#include "overlay_i18n.hpp"
 
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <functional>
 #include <iterator>
+#include <string>
 
 // =============================================================================
 // PlayerRightDest + browser return path globals
@@ -74,12 +77,12 @@ void setBrowserReturnPath(const std::string& cwd, const std::string& root) {
 namespace {
     enum class FocusMode { Pass, Play, Pause };
 
-    constexpr const char* focusLabel(FocusMode m) {
+    const char* focusLabel(FocusMode m) {
         switch (m) {
-            case FocusMode::Play:  return "Play";
-            case FocusMode::Pause: return "Pause";
+            case FocusMode::Play:  return i18n::t(i18n::Str::Play);
+            case FocusMode::Pause: return i18n::t(i18n::Str::Pause);
             case FocusMode::Pass:
-            default:               return "Pass";
+            default:               return i18n::t(i18n::Str::Pass);
         }
     }
 
@@ -141,6 +144,14 @@ namespace {
 static bool        s_settings_rebuild_pending = false;
 static std::string s_settings_rebuild_jump;
 
+void requestDeferredSettingsRebuild(std::string jumpTo) {
+    s_settings_rebuild_pending = true;
+    s_settings_rebuild_jump    = std::move(jumpTo);
+}
+
+/** Set when the user picks a new language; SettingsGui::update rebuilds the list. */
+static bool s_settings_locale_rebuild = false;
+
 // ---------------------------------------------------------------------------
 // Return to the exact browser directory the user was in.
 // The stack is always [SettingsGui, BrowserGui] — one changeTo is enough.
@@ -158,6 +169,7 @@ static void pushBrowserStack() {
 // =============================================================================
 
 MainGui::MainGui() {
+    i18n::syncFromConfig();
     // Initialise play context once on overlay open.
     // Loads persisted state from /config/RyazhTune/ and snapshots IPC on first run.
     play_ctx::init();
@@ -173,9 +185,10 @@ MainGui::~MainGui() {
 
 // ---------------------------------------------------------------------------
 tsl::elm::Element* MainGui::createUI() {
-    m_right_label = (g_player_right_dest == PlayerRightDest::Playlist) ? "Playlist"
-                  : (g_player_right_dest == PlayerRightDest::Browse)   ? "Browse"
-                  : "Settings";
+    i18n::syncFromConfig();
+    m_right_label = (g_player_right_dest == PlayerRightDest::Playlist) ? i18n::t(i18n::Str::Playlist)
+                  : (g_player_right_dest == PlayerRightDest::Browse)   ? i18n::t(i18n::Str::Browse)
+                  : i18n::t(i18n::Str::Settings);
     m_frame = new SysTuneOverlayFrame(/*pageLeft=*/"", m_right_label);
 
     m_list = new tsl::elm::List();
@@ -212,6 +225,12 @@ tsl::elm::Element* MainGui::createUI() {
 
 // ---------------------------------------------------------------------------
 void MainGui::update() {
+    i18n::syncFromConfig();
+    static bool s_whats_new_shown = false;
+    if (!s_whats_new_shown) {
+        s_whats_new_shown = true;
+        maybeShowOverlayWhatsNew();
+    }
     //static u8 tick = 0;
     //if ((tick % 15) == 0)
     m_status_bar->update();
@@ -237,8 +256,8 @@ void MainGui::update() {
     }
 
     const std::string newLabel =
-        (g_player_right_dest == PlayerRightDest::Playlist) ? "Playlist" :
-        (g_player_right_dest == PlayerRightDest::Browse)   ? "Browse"   : "Settings";
+        (g_player_right_dest == PlayerRightDest::Playlist) ? i18n::t(i18n::Str::Playlist) :
+        (g_player_right_dest == PlayerRightDest::Browse)   ? i18n::t(i18n::Str::Browse)   : i18n::t(i18n::Str::Settings);
     if (newLabel != m_right_label) {
         m_right_label = newLabel;
         if (m_frame) m_frame->setPageNames("", m_right_label);
@@ -330,10 +349,11 @@ LanguageGui::~LanguageGui() {
 }
 
 tsl::elm::Element* LanguageGui::createUI() {
-    m_frame = new SysTuneOverlayFrame(/*pageLeft=*/"Settings", /*pageRight=*/"");
+    i18n::syncFromConfig();
+    m_frame = new SysTuneOverlayFrame(/*pageLeft=*/i18n::t(i18n::Str::Settings), /*pageRight=*/"");
     m_list = new tsl::elm::List();
 
-    m_list->addItem(new tsl::elm::CategoryHeader("Language"));
+    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::CategoryLanguage)));
 
     const size_t selected = currentLanguageIndex();
     for (size_t i = 0; i < std::size(kLanguages); i += 2) {
@@ -356,8 +376,14 @@ tsl::elm::Element* LanguageGui::createUI() {
                 idx = right;
             if (keys & (HidNpadButton_A | HidNpadButton_X)) {
                 config::set_language(kLanguages[idx].code);
+                reloadRyazhTuneTranslations();
+                i18n::syncFromConfig();
+                const std::string body =
+                    std::string(i18n::t(i18n::Str::LanguageAppliedBody)) + "\n\n" + kLanguages[idx].label;
                 if (tsl::notification)
-                    tsl::notification->showNow(kLanguages[idx].label, 26, "Language", 2000, false);
+                    tsl::notification->showNow(body.c_str(), 24, i18n::t(i18n::Str::Language), 3200, false);
+                triggerNavigationFeedback();
+                s_settings_locale_rebuild = true;
                 tsl::goBack();
                 return true;
             }
@@ -400,12 +426,13 @@ void SettingsGui::refreshPlaylistCount(u32 count) {
     const bool playlistActive = (play_ctx::source() == play_ctx::Source::Playlist)
                               && (play_ctx::currentPath()[0] != '\0');
     if (!playlistActive)
-        m_queue_button->setValue(count == 1 ? "1 track" : std::to_string(count) + " tracks");
+        m_queue_button->setValue(i18n::trackCountLabel(count));
 }
 
 // ---------------------------------------------------------------------------
 tsl::elm::Element* SettingsGui::createUI() {
-    m_frame = new SysTuneOverlayFrame(/*pageLeft=*/"Player", /*pageRight=*/"");
+    i18n::syncFromConfig();
+    m_frame = new SysTuneOverlayFrame(/*pageLeft=*/i18n::t(i18n::Str::Player), /*pageRight=*/"");
 
     u64 pid{}, tid{};
     pm::getCurrentPidTid(&pid, &tid);
@@ -422,7 +449,7 @@ tsl::elm::Element* SettingsGui::createUI() {
     m_list = new tsl::elm::List();
 
     // ---- Music Selection ----
-    m_list->addItem(new tsl::elm::CategoryHeader("Music Library"));
+    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::MusicLibrary)));
 
     /* Snapshot play_ctx state once so both buttons get the right initial value
        on frame 0, before any update() tick fires. */
@@ -435,8 +462,8 @@ tsl::elm::Element* SettingsGui::createUI() {
         m_last_count    = count;
         const std::string queueVal = (init_inPlaylist && init_hasTrack)
             ? ult::INPROGRESS_SYMBOL
-            : (count == 1 ? "1 track" : std::to_string(count) + " tracks");
-        m_queue_button = new tsl::elm::ListItem("Playlist", queueVal);
+            : i18n::trackCountLabel(count);
+        m_queue_button = new tsl::elm::ListItem(i18n::t(i18n::Str::Playlist), queueVal);
     }
 
     m_queue_button->setClickListener([this](u64 keys) -> bool {
@@ -453,7 +480,7 @@ tsl::elm::Element* SettingsGui::createUI() {
 
     const std::string browseVal = (init_inFolder && init_hasTrack)
         ? ult::INPROGRESS_SYMBOL : ult::DROPDOWN_SYMBOL;
-    auto browser_button = new tsl::elm::ListItem("Browse", browseVal);
+    auto browser_button = new tsl::elm::ListItem(i18n::t(i18n::Str::Browse), browseVal);
     m_browser_button = browser_button;
     browser_button->setClickListener([this, browser_button](u64 keys) -> bool {
         if (keys & HidNpadButton_A) {
@@ -468,7 +495,8 @@ tsl::elm::Element* SettingsGui::createUI() {
     m_list->addItem(browser_button);
 
     // ---- Volume ----
-    m_list->addItem(new tsl::elm::CategoryHeader("Volume "+ult::DIVIDER_SYMBOL+"  Toggle Mute"));
+    m_list->addItem(new tsl::elm::CategoryHeader(
+        std::string(i18n::t(i18n::Str::Volume)) + " " + ult::DIVIDER_SYMBOL + " \uE13C " + i18n::t(i18n::Str::ToggleMute)));
 
     float tune_volume = 1.f, title_volume = 1.f, default_title_volume = 1.f;
     tuneGetVolume(&tune_volume);
@@ -502,7 +530,7 @@ tsl::elm::Element* SettingsGui::createUI() {
         };
     };
 
-    auto tune_volume_slider = new VolumeTrackBar("\uE13C", false, false, true, "Music", "%", false);
+    auto tune_volume_slider = new VolumeTrackBar("\uE13C", false, false, true, i18n::t(i18n::Str::Music), "%", false);
     tune_volume_slider->setProgress(tune_volume * 100);
     tune_volume_slider->setValueChangedListener([this](u8 value) {
         m_music_vol = value;
@@ -515,7 +543,7 @@ tsl::elm::Element* SettingsGui::createUI() {
     m_list->addItem(tune_volume_slider);
     
     if (tid && pid) {
-        auto title_volume_slider = new VolumeTrackBar("\uE13C", false, false, true, "Game", "%", false);
+        auto title_volume_slider = new VolumeTrackBar("\uE13C", false, false, true, i18n::t(i18n::Str::Game), "%", false);
         title_volume_slider->setProgress(title_volume * 100);
         title_volume_slider->setValueChangedListener([this](u8 value) {
             m_game_vol = value;
@@ -548,11 +576,11 @@ tsl::elm::Element* SettingsGui::createUI() {
     const bool at_home = (tid == kHomeScreenTid);
 
     if (!at_home) {
-        auto* defaultTitleCategoryHeader = new tsl::elm::CategoryHeader("Title ID");
+        auto* defaultTitleCategoryHeader = new tsl::elm::CategoryHeader(i18n::t(i18n::Str::TitleId));
         defaultTitleCategoryHeader->setValue(tidLabel(tid), tsl::onTextColor);
         m_list->addItem(defaultTitleCategoryHeader);
 
-        auto default_title_volume_slider = new VolumeTrackBar("\uE13C", false, false, true, "Preset Volume", "%", false);
+        auto default_title_volume_slider = new VolumeTrackBar("\uE13C", false, false, true, i18n::t(i18n::Str::PresetVolume), "%", false);
         {
             float per_title_vol = 1.f;
             tuneGetDefaultTitleVolume(&per_title_vol);
@@ -605,7 +633,7 @@ tsl::elm::Element* SettingsGui::createUI() {
         // or disappears without any stale state.
         const bool init_default_focus = config::get_default_on_start(tid);
         auto default_focus = new tsl::elm::ToggleListItem(
-            "Default Focus", init_default_focus, "On", "Off");
+            i18n::t(i18n::Str::DefaultFocus), init_default_focus, i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         default_focus->setStateChangedListener([tid](bool v) {
             config::set_default_on_start(tid, v);
             // Defer the rebuild to SettingsGui::update() so the full
@@ -613,7 +641,7 @@ tsl::elm::Element* SettingsGui::createUI() {
             // Calling swapTo here directly would destroy the element while
             // its own onClick is still on the stack (use-after-free).
             s_settings_rebuild_pending = true;
-            s_settings_rebuild_jump    = "Default Focus";
+            s_settings_rebuild_jump    = i18n::t(i18n::Str::DefaultFocus);
         });
         m_list->addItem(default_focus);
 
@@ -629,7 +657,7 @@ tsl::elm::Element* SettingsGui::createUI() {
             else if (config::has_title_enabled(tid) && config::get_title_enabled(tid))
                 initial = FocusMode::Play;
 
-            auto *custom_focus = new tsl::elm::ListItem("Custom Focus", focusLabel(initial));
+            auto *custom_focus = new tsl::elm::ListItem(i18n::t(i18n::Str::CustomFocus), focusLabel(initial));
             // Render "Pass" faintly so it reads as "inactive", mirroring
             // how a ToggleListItem renders its OFF value.
             custom_focus->setValue(focusLabel(initial), initial == FocusMode::Pass);
@@ -663,18 +691,18 @@ tsl::elm::Element* SettingsGui::createUI() {
     }
 
     // ---- Misc ----
-    m_list->addItem(new tsl::elm::CategoryHeader("Miscellaneous"));
+    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::Miscellaneous)));
 
     {
         auto modeLabel = []() -> const char* {
             switch (config::get_tune_mode()) {
-                case config::TuneMode::Whitelist: return "Whitelist";
-                case config::TuneMode::Blacklist: return "Blacklist";
+                case config::TuneMode::Whitelist: return i18n::t(i18n::Str::ModeWhitelist);
+                case config::TuneMode::Blacklist: return i18n::t(i18n::Str::ModeBlacklist);
                 case config::TuneMode::Normal:
-                default: return "Normal";
+                default: return i18n::t(i18n::Str::ModeNormal);
             }
         };
-        auto *mode_item = new tsl::elm::ListItem("Playback Mode", modeLabel());
+        auto *mode_item = new tsl::elm::ListItem(i18n::t(i18n::Str::PlaybackMode), modeLabel());
         mode_item->setClickListener([mode_item, modeLabel](u64 keys) -> bool {
             if (!(keys & HidNpadButton_A))
                 return false;
@@ -693,14 +721,14 @@ tsl::elm::Element* SettingsGui::createUI() {
 
     if (tid && !at_home) {
         auto *whitelist_item = new tsl::elm::ToggleListItem(
-            "Whitelist", config::is_tid_whitelisted(tid), "On", "Off");
+            i18n::t(i18n::Str::WhitelistToggle), config::is_tid_whitelisted(tid), i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         whitelist_item->setStateChangedListener([tid](bool v) {
             config::set_tid_whitelisted(tid, v);
         });
         m_list->addItem(whitelist_item);
 
         auto *blacklist_item = new tsl::elm::ToggleListItem(
-            "Blacklist", config::is_tid_blacklisted(tid), "On", "Off");
+            i18n::t(i18n::Str::BlacklistToggle), config::is_tid_blacklisted(tid), i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         blacklist_item->setStateChangedListener([tid](bool v) {
             config::set_tid_blacklisted(tid, v);
         });
@@ -709,7 +737,7 @@ tsl::elm::Element* SettingsGui::createUI() {
 
     {
         const size_t language_index = currentLanguageIndex();
-        auto *language_item = new tsl::elm::ListItem("Language", kLanguages[language_index].label);
+        auto *language_item = new tsl::elm::ListItem(i18n::t(i18n::Str::Language), kLanguages[language_index].label);
         language_item->setClickListener(
             [](u64 keys) -> bool {
                 if (keys & HidNpadButton_A) {
@@ -745,7 +773,7 @@ tsl::elm::Element* SettingsGui::createUI() {
         else if (config::get_play_on_title())
             initial = FocusMode::Play;
 
-        auto *title_focus = new tsl::elm::ListItem("Title Focus", focusLabel(initial));
+        auto *title_focus = new tsl::elm::ListItem(i18n::t(i18n::Str::TitleFocus), focusLabel(initial));
         title_focus->setValue(focusLabel(initial), initial == FocusMode::Pass);
         title_focus->setClickListener(
             [title_focus, state = initial](u64 keys) mutable -> bool {
@@ -793,7 +821,7 @@ tsl::elm::Element* SettingsGui::createUI() {
         else if (config::has_title_enabled(kHomeScreenTid) && config::get_title_enabled(kHomeScreenTid))
             home_initial = FocusMode::Play;
 
-        auto *home_focus = new tsl::elm::ListItem("Home Focus", focusLabel(home_initial));
+        auto *home_focus = new tsl::elm::ListItem(i18n::t(i18n::Str::HomeFocus), focusLabel(home_initial));
         home_focus->setValue(focusLabel(home_initial), home_initial == FocusMode::Pass);
         home_focus->setClickListener(
             [home_focus, state = home_initial](u64 keys) mutable -> bool {
@@ -827,15 +855,15 @@ tsl::elm::Element* SettingsGui::createUI() {
     // sysmodule starts up (assuming a startup playlist is set),
     // regardless of which title is in foreground at boot time.
     auto auto_play_startup = new tsl::elm::ToggleListItem(
-        "Auto-play Startup",
+        i18n::t(i18n::Str::AutoPlayStartup),
         config::get_auto_play_startup(),
-        "On", "Off");
+        i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
     auto_play_startup->setStateChangedListener([](bool v) {
         config::set_auto_play_startup(v);
     });
     m_list->addItem(auto_play_startup);
 
-    auto startup_button = new tsl::elm::ListItem("Remove Startup");
+    auto startup_button = new tsl::elm::ListItem(i18n::t(i18n::Str::RemoveStartup));
     startup_button->setClickListener([this, startup_button](u64 keys) -> bool {
         if (keys & HidNpadButton_A) {
             //tsl::shiftItemFocus(startup_button);
@@ -844,9 +872,9 @@ tsl::elm::Element* SettingsGui::createUI() {
                 config::set_load_path("");
                 const char *p = path;
                 if (const char *ext = std::strrchr(path, '/')) p = ext + 1;
-                if (tsl::notification) tsl::notification->showNow(p, 26, "Startup Path Removed", 2500, false);
+                if (tsl::notification) tsl::notification->showNow(p, 26, i18n::t(i18n::Str::StartupPathRemoved), 2500, false);
             } else {
-                if (tsl::notification) tsl::notification->showNow("No startup path set in config.");
+                if (tsl::notification) tsl::notification->showNow(i18n::t(i18n::Str::NoStartupPath));
             }
             return true;
         }
@@ -854,7 +882,7 @@ tsl::elm::Element* SettingsGui::createUI() {
     });
     m_list->addItem(startup_button);
 
-    auto exit_button = new tsl::elm::SilentListItem("Stop RyazhTune");
+    auto exit_button = new tsl::elm::SilentListItem(i18n::t(i18n::Str::StopRyazhTune));
     exit_button->setValue("\uE071", true);
     exit_button->setClickListener([exit_button](u64 keys) -> bool {
         if (keys & HidNpadButton_A) {
@@ -874,9 +902,9 @@ tsl::elm::Element* SettingsGui::createUI() {
     if (!m_jump_to.empty()) {
         m_list->jumpToItem(m_jump_to);
     } else if (init_inPlaylist && init_hasTrack) {
-        m_list->jumpToItem("Playlist");
+        m_list->jumpToItem(i18n::t(i18n::Str::Playlist));
     } else if (init_inFolder && init_hasTrack) {
-        m_list->jumpToItem("Browse");
+        m_list->jumpToItem(i18n::t(i18n::Str::Browse));
     }
 
     return m_frame;
@@ -884,6 +912,14 @@ tsl::elm::Element* SettingsGui::createUI() {
 
 // ---------------------------------------------------------------------------
 void SettingsGui::update() {
+    i18n::syncFromConfig();
+
+    if (s_settings_locale_rebuild) {
+        s_settings_locale_rebuild = false;
+        tsl::swapTo<SettingsGui>();
+        return;
+    }
+
     // Consume any pending rebuild request.  This is set by the "Default On
     // Start" listener and intentionally deferred here so the swapTo fires
     // after the full onClick/handleInput chain has returned — not while the
@@ -938,7 +974,7 @@ void SettingsGui::update() {
         } else {
             const u32 count = play_ctx::savedPlaylistSize();
             m_last_count = count;
-            m_queue_button->setValue(count == 1 ? "1 track" : std::to_string(count) + " tracks");
+            m_queue_button->setValue(i18n::trackCountLabel(count));
         }
     }
 

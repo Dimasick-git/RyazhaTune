@@ -1,4 +1,5 @@
 #include "tag_reader.hpp"
+#include "strings.hpp"
 
 #include <cstring>
 #include <algorithm>
@@ -243,8 +244,10 @@ TitleArtist readTitleArtist(const char *path) {
         if (dot != std::string::npos && dot > 0)
             ta.title.resize(dot);
     }
-    if (ta.artist.empty())
-        ta.artist = "Unknown Artist";
+    if (ta.artist.empty()) {
+        i18n::syncFromConfig();
+        ta.artist = i18n::t(i18n::Str::UnknownArtist);
+    }
 
     return ta;
 }

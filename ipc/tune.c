@@ -128,7 +128,9 @@ Result tuneSeek(u32 position) {
 
 Result tuneEnqueue(const char *path, TuneEnqueueType type) {
     u8 tmp = type;
-    size_t path_length = strlen(path);
+    /* Include the terminating NUL so the sysmodule always sees a valid C string
+     * in the HIPC buffer (strlen alone can omit it and break path parsing). */
+    size_t path_length = strlen(path) + 1;
     return serviceDispatchIn(&g_tune, TuneIpcCmd_Enqueue, tmp,
                              .buffer_attrs = {SfBufferAttr_In | SfBufferAttr_HipcMapAlias},
                              .buffers = {{path, path_length}}, );

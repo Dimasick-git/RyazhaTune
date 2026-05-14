@@ -14,6 +14,9 @@ class SysTuneOverlayFrame;
 // and reset to Settings when Settings itself navigates back to the player.
 enum class PlayerRightDest { Settings, Playlist, Browse };
 void setPlayerRightDest(PlayerRightDest dest);
+
+/** Deferred tsl::swapTo<SettingsGui> on next SettingsGui::update() — safe from list click handlers. */
+void requestDeferredSettingsRebuild(std::string jumpTo = {});
 // Store the exact browser path the user was at, so right-from-player
 // returns there (not the currently-playing folder).
 void setBrowserReturnPath(const std::string& cwd, const std::string& root);

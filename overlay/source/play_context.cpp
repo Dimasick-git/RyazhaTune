@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
+#include <cstddef>
 #include <strings.h>
 
 // =============================================================================
@@ -180,6 +181,13 @@ bool isPlaying() { return g_is_playing; }
 
 void savedAppend(const std::string& path) {
     g_saved.push_back(path);
+    writeSaved();
+}
+
+void savedInsert(u32 idx, const std::string& path) {
+    const auto sz = static_cast<u32>(g_saved.size());
+    const u32 at = std::min(idx, sz);
+    g_saved.insert(g_saved.begin() + static_cast<std::ptrdiff_t>(at), path);
     writeSaved();
 }
 

@@ -48,6 +48,8 @@ namespace play_ctx {
     // These always update the in-memory vector AND flush to disk.
 
     void savedAppend(const std::string& path);
+    /** Insert a path into the saved playlist at idx (0-based). Clamps idx to size. */
+    void savedInsert(u32 idx, const std::string& path);
     void savedRemove(u32 idx);   // 0-based
     void savedClear();
 

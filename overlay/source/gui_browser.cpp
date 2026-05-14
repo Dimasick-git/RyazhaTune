@@ -6,6 +6,7 @@
 #include "tag_reader.hpp"
 #include "symbol.hpp"
 #include "tune.h"
+#include "strings.hpp"
 #include "get_funcs.hpp"    // ult::isDirectory, ult::DirCloser
 
 #include <algorithm>
@@ -57,13 +58,15 @@ namespace {
     static std::string buildFileLabel(u32 num,
                                       const std::string &title,
                                       const std::string &artist) {
+        i18n::syncFromConfig();
+        const char *sep = i18n::t(i18n::Str::ByArtist);
         // Reserve upfront to avoid reallocations from 4 concatenations.
         std::string s;
-        s.reserve(8 + ult::DIVIDER_SYMBOL.size() + title.size() + 4 + artist.size());
+        s.reserve(8 + ult::DIVIDER_SYMBOL.size() + title.size() + std::strlen(sep) + artist.size());
         s += std::to_string(num);
         s += ult::DIVIDER_SYMBOL;
         s += title;
-        s += " by ";
+        s += sep;
         s += artist;
         return s;
     }
@@ -301,7 +304,8 @@ void BrowserGui::notifyCountChanged() const {
 // ---------------------------------------------------------------------------
 
 tsl::elm::Element *BrowserGui::createUI() {
-    m_frame = new SysTuneOverlayFrame(/*pageLeft=*/"Player", /*pageRight=*/"");
+    i18n::syncFromConfig();
+    m_frame = new SysTuneOverlayFrame(/*pageLeft=*/i18n::t(i18n::Str::Player), /*pageRight=*/"");
     m_list  = new tsl::elm::List();
 
     buildList();
@@ -359,10 +363,12 @@ bool BrowserGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &to
 // ---------------------------------------------------------------------------
 
 void BrowserGui::buildList() {
+    i18n::syncFromConfig();
     // Use POSIX opendir/readdir — no FsFileSystem handle needed.
     std::unique_ptr<DIR, ult::DirCloser> d(opendir(m_cwd.c_str()));
     if (!d) {
-        m_list->addItem(new tsl::elm::ListItem("Couldn't open: " + m_cwd));
+        m_list->addItem(new tsl::elm::ListItem(
+            std::string(i18n::t(i18n::Str::CouldNotOpenPrefix)) + m_cwd));
         return;
     }
 
@@ -404,7 +410,7 @@ void BrowserGui::buildList() {
                     const std::string no_slash = sub_path.substr(0, sub_path.size() - 1);
                     config::set_load_path(no_slash.c_str());
                     if (tsl::notification)
-                        tsl::notification->showNow(item->getText(), 26, "Startup Folder Set", 2500, false);
+                        tsl::notification->showNow(item->getText(), 26, i18n::t(i18n::Str::StartupFolderSet), 2500, false);
                     return true;
                 }
                 return false;
@@ -423,14 +429,18 @@ void BrowserGui::buildList() {
     }
 
     if (hit_max) {
-        if (tsl::notification)
-            tsl::notification->showNow(
-                "Maximum of " + std::to_string(kScanMax) + " hit!", 26,
-                "Stopped Scanning Folder", 2500, false);
+        if (tsl::notification) {
+            char detail[96];
+            if (i18n::isRu())
+                std::snprintf(detail, sizeof(detail), "Найдено более %u элементов в папке.", kScanMax);
+            else
+                std::snprintf(detail, sizeof(detail), "Maximum of %u entries hit!", kScanMax);
+            tsl::notification->showNow(detail, 26, i18n::t(i18n::Str::ScanStoppedTitle), 2500, false);
+        }
     }
 
     if (folders.empty() && file_entries.empty()) {
-        m_list->addItem(new tsl::elm::CategoryHeader("Empty..."));
+        m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::EmptyFolder)));
         return;
     }
 
@@ -460,8 +470,8 @@ void BrowserGui::buildList() {
     // ---- Folders -----------------------------------------------------------
     if (!folders.empty()) {
         m_list->addItem(new tsl::elm::CategoryHeader(
-            m_cwd + " " + ult::DIVIDER_SYMBOL + " \uE0E3 Add To Playlist " +
-            ult::DIVIDER_SYMBOL + " \uE0B6 Set As Startup", true));
+            m_cwd + " " + ult::DIVIDER_SYMBOL + " \uE0E3 " + std::string(i18n::t(i18n::Str::AddToPlaylistShort)) + " " +
+            ult::DIVIDER_SYMBOL + " \uE0B6 " + i18n::t(i18n::Str::SetAsStartupShort), true));
 
         std::sort(folders.begin(), folders.end(), ListItemTextCompare);
         for (auto *el : folders) {
@@ -478,7 +488,7 @@ void BrowserGui::buildList() {
 
     // ---- Files -------------------------------------------------------------
     if (!file_entries.empty()) {
-        m_list->addItem(new tsl::elm::CategoryHeader("Tracks"));
+        m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::Tracks)));
 
         std::sort(file_entries.begin(), file_entries.end(), FileEntryCompare);
 
@@ -602,7 +612,7 @@ void BrowserGui::buildList() {
                         }
                         if (!play_ctx::switchToFolder(m_cwd, m_folder_songs, sorted_idx)) {
                             if (tsl::notification)
-                                tsl::notification->showNow("Failed to switch to folder.");
+                                tsl::notification->showNow(i18n::t(i18n::Str::FailedSwitchFolder));
                         }
                     }
 
@@ -620,17 +630,17 @@ void BrowserGui::buildList() {
                         if (R_SUCCEEDED(r)) {
                             play_ctx::savedAppend(full_path);
                             if (tsl::notification)
-                                tsl::notification->showNow("Added 1 track to Playlist.");
+                                tsl::notification->showNow(i18n::t(i18n::Str::AddedOneTrack));
                             notifyCountChanged();
                         } else {
                             if (tsl::notification)
-                                tsl::notification->showNow("Failed to add track.");
+                                tsl::notification->showNow(i18n::t(i18n::Str::FailedAddTrack));
                         }
                     } else {
                         // Folder context — IPC has folder songs; only update saved[].
                         play_ctx::savedAppend(full_path);
                         if (tsl::notification)
-                            tsl::notification->showNow("Added 1 track to Playlist.");
+                            tsl::notification->showNow(i18n::t(i18n::Str::AddedOneTrack));
                         notifyCountChanged();
                     }
                     return true;
@@ -646,7 +656,7 @@ void BrowserGui::buildList() {
                 if (down & KEY_MINUS) {
                     config::set_load_path(full_path.c_str());
                     if (tsl::notification)
-                        tsl::notification->showNow(item->getText(), 26, "Startup File Set", 2500, false);
+                        tsl::notification->showNow(item->getText(), 26, i18n::t(i18n::Str::StartupFileSet), 2500, false);
                     return true;
                 }
                 return false;
@@ -713,7 +723,7 @@ std::string BrowserGui::currentDirName() const {
 void BrowserGui::addAllToPlaylist(const std::string &path) {
     std::unique_ptr<DIR, ult::DirCloser> d(opendir(path.c_str()));
     if (!d) {
-        if (tsl::notification) tsl::notification->show("something went wrong :/");
+        if (tsl::notification) tsl::notification->show(i18n::t(i18n::Str::GenericError));
         return;
     }
 
@@ -748,8 +758,11 @@ void BrowserGui::addAllToPlaylist(const std::string &path) {
         }
     }
 
-    char msg[64];
-    std::snprintf(msg, sizeof(msg), "Added %ld tracks to Playlist.", songs_added);
+    char msg[96];
+    if (i18n::isRu())
+        std::snprintf(msg, sizeof(msg), "Добавлено %lld треков в плейлист.", static_cast<long long>(songs_added));
+    else
+        std::snprintf(msg, sizeof(msg), "Added %lld tracks to Playlist.", static_cast<long long>(songs_added));
     if (tsl::notification) tsl::notification->showNow(msg);
     if (songs_added > 0)
         notifyCountChanged();

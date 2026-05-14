@@ -9,6 +9,7 @@
 #include "symbol.hpp"
 #include "config/config.hpp"
 #include "play_context.hpp"
+#include "strings.hpp"
 
 #include <cstdio>
 #include <cstring>
@@ -597,6 +598,7 @@ namespace {
 // =============================================================================
 
 StatusBar::StatusBar() {
+    i18n::syncFromConfig();
     if (R_FAILED(tuneGetRepeatMode(&this->m_repeat)))
         this->m_repeat = TuneRepeatMode_Off;
     if (R_FAILED(tuneGetShuffleMode(&this->m_shuffle)))
@@ -607,7 +609,7 @@ StatusBar::StatusBar() {
         NullLastDot(path_buffer);
         const char *slash = std::strrchr(path_buffer, '/');
         m_song_title_str = slash ? (slash + 1) : path_buffer;
-        m_artist_str     = "Unknown Artist";
+        m_artist_str     = i18n::t(i18n::Str::UnknownArtist);
     } else {
         path_buffer[0]   = '\0';
         this->m_stats    = {};
@@ -1091,6 +1093,7 @@ bool StatusBar::onTouch(tsl::elm::TouchEvent event, s32 currX, s32 currY,
 // update
 // ---------------------------------------------------------------------------
 void StatusBar::update() {
+    i18n::syncFromConfig();
     /* Drain any queued seek first — tuneSeek must run on the main thread
        (the IPC session is not thread-safe).  NudgeSeek and scrub-commit
        store the target here so the UI never blocks on the IPC call. */
@@ -1116,7 +1119,7 @@ void StatusBar::update() {
             const char *slash    = std::strrchr(path_buffer, '/');
             const char *filename = slash ? (slash + 1) : path_buffer;
             m_song_title_str      = filename;
-            m_artist_str          = "Unknown Artist";
+            m_artist_str          = i18n::t(i18n::Str::UnknownArtist);
             m_text_width          = 0;
             m_artist_width        = 0;
             m_scroll_offset       = 0;
@@ -1217,7 +1220,7 @@ bool StatusBar::loadArt(const char *fullPath) {
         m_song_title_str = std::move(tags.title);
         m_text_width     = 0;
     }
-    m_artist_str          = tags.artist.empty() ? "Unknown Artist" : std::move(tags.artist);
+            m_artist_str          = tags.artist.empty() ? i18n::t(i18n::Str::UnknownArtist) : std::move(tags.artist);
     m_artist_width        = 0;
     m_artist_scroll_offset = 0;
     m_artist_counter      = 0;

@@ -7,10 +7,12 @@
 #include "tag_reader.hpp"
 #include "symbol.hpp"
 #include "tune.h"
+#include "strings.hpp"
 
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 namespace {
 
@@ -29,6 +31,38 @@ namespace {
     void notifyCountChanged(const std::function<void(u32)> &cb) {
         if (!cb) return;
         cb(play_ctx::savedPlaylistSize());
+    }
+
+    struct PlaylistUndoState {
+        bool        active        = false;
+        u16         ttl           = 0;
+        std::string path;
+        u32         idx           = 0;
+        bool        playlist_ctx = false;
+    };
+
+    PlaylistUndoState g_playlist_undo;
+
+    static void drawPlaylistEmpty(tsl::gfx::Renderer *r, s32 x, s32 y, s32 w, s32 h) {
+        i18n::syncFromConfig();
+        const s32 cx = x + w / 2;
+        const s32 mid = y + h / 2;
+
+        const char *icon = "\uE150";
+        const u16 iw = r->getTextDimensions(icon, false, 90).first;
+        r->drawString(icon, false, cx - static_cast<s32>(iw) / 2, mid - 100, 90, tsl::defaultTextColor);
+
+        const char *line1 = i18n::t(i18n::Str::PlaylistEmpty);
+        const u16   w1   = r->getTextDimensions(line1, false, 25).first;
+        r->drawString(line1, false, cx - static_cast<s32>(w1) / 2, mid - 18, 25, tsl::defaultTextColor);
+
+        const char *line2 = i18n::t(i18n::Str::EmptyPlaylistBrowseHint);
+        const u16   w2   = r->getTextDimensions(line2, false, 20).first;
+        r->drawString(line2, false, cx - static_cast<s32>(w2) / 2, mid + 28, 20, tsl::defaultTextColor);
+
+        const char *line3 = i18n::t(i18n::Str::EmptyPlaylistShortcutsHint);
+        const u16   w3   = r->getTextDimensions(line3, false, 18).first;
+        r->drawString(line3, false, cx - static_cast<s32>(w3) / 2, mid + 72, 18, tsl::defaultTextColor);
     }
 
 // =============================================================================
@@ -57,12 +91,14 @@ namespace {
         static std::string buildLabel(u32 num,
                                       const std::string &song,
                                       const std::string &artist) {
+            i18n::syncFromConfig();
+            const char *sep = i18n::t(i18n::Str::ByArtist);
             std::string s;
-            s.reserve(8 + ult::DIVIDER_SYMBOL.size() + song.size() + 4 + artist.size());
+            s.reserve(8 + ult::DIVIDER_SYMBOL.size() + song.size() + std::strlen(sep) + artist.size());
             s += std::to_string(num);
             s += ult::DIVIDER_SYMBOL;
             s += song;
-            s += " by ";
+            s += sep;
             s += artist;
             return s;
         }
@@ -199,12 +235,14 @@ namespace {
 // =============================================================================
 
 PlaylistGui::~PlaylistGui() {
+    g_playlist_undo = {};
     delete m_list;
 }
 
 PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
     : m_on_count_changed(std::move(on_count_changed)) {
 
+    i18n::syncFromConfig();
     m_list = new tsl::elm::List();
 
     // Re-snapshot the IPC queue order into g_saved so the list always reflects
@@ -216,16 +254,12 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
     const u32   count = static_cast<u32>(saved.size());
 
     if (count == 0) {
-        m_list->addItem(new tsl::elm::CustomDrawer([](tsl::gfx::Renderer *r, s32 x, s32 y, s32 w, s32 h) {
-            const size_t ix = x + (w - r->getTextDimensions("\uE150", false, 90).first) / 2;
-            r->drawString("\uE150", false, ix, y + (h / 2) - 10+30, 90, tsl::defaultTextColor);
-            const size_t tx = x + (w - r->getTextDimensions("Playlist is empty!", false, 25).first) / 2;
-            r->drawString("Playlist is empty!", false, tx, y + (h / 2) + 90+30, 25, tsl::defaultTextColor);
-        }), 380);
+        m_list->addItem(new tsl::elm::CustomDrawer(
+            [](tsl::gfx::Renderer *r, s32 x, s32 y, s32 w, s32 h) { drawPlaylistEmpty(r, x, y, w, h); }), 420);
         return;
     }
 
-    m_list->addItem(new tsl::elm::CategoryHeader("Playlist", true));
+    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::PlaylistHeader), true));
 
     m_items.reserve(count);
 
@@ -296,6 +330,10 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
 
             // ---- Y: remove this item from saved playlist -------------------
             } else if (keys & KEY_Y) {
+                const std::string undo_path = item->getFullPath();
+                const u32         undo_idx  = static_cast<u32>(tune_index);
+                const bool        undo_pl   = (play_ctx::source() == play_ctx::Source::Playlist);
+
                 bool ok = false;
                 if (play_ctx::source() == play_ctx::Source::Playlist) {
                     // IPC and saved[] are in sync — remove from both.
@@ -307,6 +345,16 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
                 }
 
                 if (ok) {
+                    g_playlist_undo.active        = true;
+                    g_playlist_undo.ttl           = 240;
+                    g_playlist_undo.path          = undo_path;
+                    g_playlist_undo.idx           = undo_idx;
+                    g_playlist_undo.playlist_ctx  = undo_pl;
+                    i18n::syncFromConfig();
+                    if (tsl::notification)
+                        tsl::notification->showNow(i18n::t(i18n::Str::TrackRemovedUndoHint), 22,
+                                                   i18n::t(i18n::Str::Playlist), 3200, false);
+
                     const s32 nextIndex = (index + 1 < this->m_list->getLastIndex())
                         ? index + 1 : index - 1;
                 
@@ -319,16 +367,12 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
                     // ---- NEW: handle empty playlist case -------------------------
                     if (this->m_items.empty()) {
                         this->m_list->clear();
-                
+
                         m_list->addItem(new tsl::elm::CustomDrawer(
                             [](tsl::gfx::Renderer *r, s32 x, s32 y, s32 w, s32 h) {
-                                const size_t ix = x + (w - r->getTextDimensions("\uE150", false, 90).first) / 2;
-                                r->drawString("\uE150", false, ix, y + (h / 2) - 10 + 30, 90, tsl::defaultTextColor);
-                
-                                const size_t tx = x + (w - r->getTextDimensions("Playlist is empty!", false, 25).first) / 2;
-                                r->drawString("Playlist is empty!", false, tx, y + (h / 2) + 90 + 30, 25, tsl::defaultTextColor);
-                            }), 380);
-                
+                                drawPlaylistEmpty(r, x, y, w, h);
+                            }), 420);
+
                         notifyCountChanged(m_on_count_changed);
                         triggerMoveFeedback();
                         return true;
@@ -358,15 +402,13 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
                 }
 
                 if (ok) {
+                    g_playlist_undo = {};
                     this->removeFocus();
                     this->m_list->clear();
                     this->m_items.clear();
-                    m_list->addItem(new tsl::elm::CustomDrawer([](tsl::gfx::Renderer *r, s32 x, s32 y, s32 w, s32 h) {
-                        const size_t ix = x + (w - r->getTextDimensions("\uE150", false, 90).first) / 2;
-                        r->drawString("\uE150", false, ix, y + (h / 2) - 10+30, 90, tsl::defaultTextColor);
-                        const size_t tx = x + (w - r->getTextDimensions("Playlist is empty!", false, 25).first) / 2;
-                        r->drawString("Playlist is empty!", false, tx, y + (h / 2) + 90+30, 25, tsl::defaultTextColor);
-                    }), 380);
+                    m_list->addItem(new tsl::elm::CustomDrawer(
+                        [](tsl::gfx::Renderer *r, s32 x, s32 y, s32 w, s32 h) { drawPlaylistEmpty(r, x, y, w, h); }),
+                        420);
                     if (m_on_count_changed) {
                         triggerMoveFeedback();
                         m_on_count_changed(0);
@@ -381,7 +423,7 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
                 if ((size_t)tune_index < sp.size()) {
                     config::set_load_path(sp[tune_index].c_str());
                     if (tsl::notification)
-                        tsl::notification->showNow(item->getText(), 26, "Startup File Set", 2500, false);
+                        tsl::notification->showNow(item->getText(), 26, i18n::t(i18n::Str::StartupFileSet), 2500, false);
                 }
                 return true;
             }
@@ -401,7 +443,8 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
 // =============================================================================
 
 tsl::elm::Element *PlaylistGui::createUI() {
-    auto *rootFrame = new SysTuneOverlayFrame(/*pageLeft=*/"Player", /*pageRight=*/"");
+    i18n::syncFromConfig();
+    auto *rootFrame = new SysTuneOverlayFrame(/*pageLeft=*/i18n::t(i18n::Str::Player), /*pageRight=*/"");
     rootFrame->setContent(this->m_list);
     return rootFrame;
 }
@@ -409,6 +452,14 @@ tsl::elm::Element *PlaylistGui::createUI() {
 // =============================================================================
 
 void PlaylistGui::update() {
+    i18n::syncFromConfig();
+    if (g_playlist_undo.active) {
+        if (g_playlist_undo.ttl > 0)
+            --g_playlist_undo.ttl;
+        else
+            g_playlist_undo = {};
+    }
+
     // Resolve any deferred focus change set during a click handler.
     if (g_focus_item) {
         const auto index = m_list->getIndexInList(g_focus_item);
@@ -429,6 +480,26 @@ void PlaylistGui::update() {
 bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
                               HidAnalogStickState joyStickPosLeft,
                               HidAnalogStickState joyStickPosRight) {
+    if (g_playlist_undo.active && g_playlist_undo.ttl > 0 &&
+        (keysDown & KEY_PLUS) && !(keysHeld & ~KEY_PLUS & ALL_KEYS_MASK)) {
+        i18n::syncFromConfig();
+        play_ctx::savedInsert(g_playlist_undo.idx, g_playlist_undo.path);
+        if (g_playlist_undo.playlist_ctx) {
+            const u32 sz = play_ctx::savedPlaylistSize();
+            if (sz > 0) {
+                const u32 pick = std::min(g_playlist_undo.idx, sz - 1u);
+                play_ctx::switchToPlaylist(pick);
+            }
+        }
+        g_playlist_undo = {};
+        if (tsl::notification)
+            tsl::notification->showNow(i18n::t(i18n::Str::TrackRestoredToast), 24,
+                                         i18n::t(i18n::Str::Playlist), 2200, false);
+        triggerNavigationFeedback();
+        tsl::changeTo<PlaylistGui>(m_on_count_changed);
+        return true;
+    }
+
     /* Left footer tap OR KEY_LEFT — swap back to player.
        Stack before: [SettingsGui, PlaylistGui]
        SwapDepth{2}: pop×2, push MainGui → [MainGui] → B exits cleanly. */
