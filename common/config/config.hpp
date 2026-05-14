@@ -72,6 +72,20 @@ void set_default_title_volume(float value);
 auto get_load_path(char* out, int max_len) -> int;
 void set_load_path(const char* path);
 
+enum class TuneMode : int {
+    Normal = 0,
+    Whitelist = 1,
+    Blacklist = 2,
+};
+
+auto get_tune_mode() -> TuneMode;
+void set_tune_mode(TuneMode mode);
+auto is_tid_whitelisted(u64 tid) -> bool;
+void set_tid_whitelisted(u64 tid, bool value);
+auto is_tid_blacklisted(u64 tid) -> bool;
+void set_tid_blacklisted(u64 tid, bool value);
+auto is_title_allowed(u64 tid) -> bool;
+
 // overlay language; defaults to Russian ("ru") for fresh configs.
 void ensure_language_config();
 auto get_language(char* out, int max_len) -> int;
