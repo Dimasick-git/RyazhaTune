@@ -20,6 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !github.event.release.draft }}
     steps:
+      - name: Установка jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:

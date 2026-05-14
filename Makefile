@@ -12,9 +12,9 @@ LEGACY_HAND_MK  := $(RYAZHAHAND_DIR)/$(subst ryazha,ultra,ryazhahand).mk
 all: overlay nxExt module
 
 clean:
-	$(MAKE) -C RyazhaTune/nxExt clean
+	$(MAKE) -C RyazhTune/nxExt clean
 	$(MAKE) -C overlay clean
-	$(MAKE) -C RyazhaTune clean
+	$(MAKE) -C RyazhTune clean
 	-rm -r dist
 	-rm RyazhTune-*-*.zip
 
@@ -39,20 +39,20 @@ overlay: prepare-overlay-lib
 	$(MAKE) -C overlay
 
 nxExt:
-	$(MAKE) -C RyazhaTune/nxExt
+	$(MAKE) -C RyazhTune/nxExt
 
 module: nxExt
-	$(MAKE) -C RyazhaTune
+	$(MAKE) -C RyazhTune
 
 dist: all
 	rm -rf dist
 	mkdir -p dist/switch/.overlays
 		mkdir -p dist/atmosphere/contents/420000000000000E/flags
 		touch dist/atmosphere/contents/420000000000000E/flags/boot2.flag
-		cp RyazhaTune/RyazhTune.nsp dist/atmosphere/contents/420000000000000E/exefs.nsp
+		cp RyazhTune/RyazhTune.nsp dist/atmosphere/contents/420000000000000E/exefs.nsp
 		cp overlay/RyazhTune-Overlay.ovl dist/switch/.overlays/
-		cp RyazhaTune/toolbox.json dist/atmosphere/contents/420000000000000E/
-	cd dist; zip -r RyazhaTune-$(VERSION)-$(GITHASH).zip ./**/; cd ../;
-	-hactool -t nso RyazhaTune/RyazhTune.nso
+		cp RyazhTune/toolbox.json dist/atmosphere/contents/420000000000000E/
+	cd dist; zip -r RyazhTune-$(VERSION)-$(GITHASH).zip ./**/; cd ../;
+	-hactool -t nso RyazhTune/RyazhTune.nso
 
 .PHONY: all clean overlay nxExt module dist prepare-overlay-lib

@@ -63,6 +63,10 @@ jobs:
     runs-on: ubuntu-latest
     container: devkitpro/devkita64:latest
     steps:
+      - name: Установка зависимостей (jq)
+        run: |
+          apt-get update && apt-get install -y jq zip
+
       - name: Получение исходного кода
         uses: actions/checkout@v4
         with:
@@ -79,7 +83,7 @@ jobs:
 
       - name: Проверка целостности сборки
         run: |
-          test -f RyazhaTune/RyazhTune.nsp || { echo "Ошибка: RyazhTune.nsp не найден" >&2; exit 1; }
+          test -f RyazhTune/RyazhTune.nsp || { echo "Ошибка: RyazhTune.nsp не найден" >&2; exit 1; }
           test -f overlay/RyazhTune-Overlay.ovl || { echo "Ошибка: RyazhTune-Overlay.ovl не найден" >&2; exit 1; }
           test -f overlay/lang/ru.json || { echo "Ошибка: ru.json не найден" >&2; exit 1; }
           test -f overlay/lang/en.json || { echo "Ошибка: en.json не найден" >&2; exit 1; }
@@ -90,20 +94,20 @@ jobs:
           rm -rf release RyazhTune.zip
           mkdir -p release/atmosphere/contents/420000000000000E/flags
           touch release/atmosphere/contents/420000000000000E/flags/boot2.flag
-          cp RyazhaTune/RyazhTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
-          cp RyazhaTune/RyazhTune.json release/atmosphere/contents/420000000000000E/
-          cp RyazhaTune/toolbox.json release/atmosphere/contents/420000000000000E/
+          cp RyazhTune/RyazhTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
+          cp RyazhTune/RyazhTune.json release/atmosphere/contents/420000000000000E/
+          cp RyazhTune/toolbox.json release/atmosphere/contents/420000000000000E/
 
           mkdir -p release/switch/.overlays
           cp overlay/RyazhTune-Overlay.ovl release/switch/.overlays/
 
-          mkdir -p release/config/RyazhaTune/lang
-          cp overlay/lang/*.json release/config/RyazhaTune/lang/
+          mkdir -p release/config/RyazhTune/lang
+          cp overlay/lang/*.json release/config/RyazhTune/lang/
 
           (cd release && zip -r ../RyazhTune.zip atmosphere switch config)
-          zip -sf RyazhTune.zip | grep -q 'config/RyazhaTune/lang/ru.json'
-          zip -sf RyazhTune.zip | grep -q 'config/RyazhaTune/lang/en.json'
-          zip -sf RyazhTune.zip | grep -q 'config/RyazhaTune/lang/zh.json'
+          zip -sf RyazhTune.zip | grep -q 'config/RyazhTune/lang/ru.json'
+          zip -sf RyazhTune.zip | grep -q 'config/RyazhTune/lang/en.json'
+          zip -sf RyazhTune.zip | grep -q 'config/RyazhTune/lang/zh.json'
 
       - name: Формирование текста релиза через AI (OpenRouter, опционально)
         id: changelog
@@ -191,7 +195,7 @@ jobs:
             RyazhTune.zip
             overlay/RyazhTune-Overlay.ovl
           body: |
-            ## Релиз RyazhaTune v${{ needs.check-version.outputs.new_version }}
+            ## Релиз RyazhTune v${{ needs.check-version.outputs.new_version }}
             ${{ env.RELEASE_BODY }}
 
             ---
