@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - 'Makefile'
-      - 'RyazhTune/**'
+      - 'RyazhaTune/**'
       - 'common/**'
       - 'ipc/**'
       - 'overlay/**'
@@ -96,6 +96,7 @@ jobs:
         run: |
           mkdir -p release/atmosphere/contents/420000000000000E/flags
           mkdir -p release/config/RyazhTune
+          mkdir -p release/config/ryazhahand
           mkdir -p release/switch/.overlays
           
           # 1. Атмосфера (модуль)
@@ -107,6 +108,8 @@ jobs:
           if [ -d "overlay/lang" ]; then
             cp -r overlay/lang release/config/RyazhTune/
           fi
+          cp .github/default-config.ini release/config/RyazhTune/config.ini
+          cp .github/default-config.ini release/config/ryazhahand/config.ini
           
           # 3. Оверлей
           cp overlay/RyazhTune-Overlay.ovl release/switch/.overlays/
@@ -114,10 +117,8 @@ jobs:
           # Упаковка
           cd release && zip -r ../RyazhTune.zip . && cd ..
 
-      - name: Формирование инженерного отчёта релиза (OpenRouter + fallback)
+      - name: Формирование текста релиза (AI + structured fallback)
         id: changelog
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [[ -n "$LATEST_TAG" ]]; then
@@ -131,12 +132,13 @@ jobs:
           COMMITS=$(git log "$RANGE" --no-merges --pretty=format:"- %h %s" -n 25 || true)
           FILE_STATS=$(git diff --shortstat "$DIFF_RANGE" || true)
           CHANGED_FILES=$(git diff --name-only "$DIFF_RANGE" | sed -n '1,25s/^/- /p' || true)
+          RAW_LOG=$(git log "$RANGE" --no-merges --pretty=format:"%s" | grep -Evi "^merge|update workflow|fix yaml" | head -n 40)
 
           [[ -z "$COMMITS" ]] && COMMITS="- Нет пользовательских коммитов в диапазоне релиза."
           [[ -z "$FILE_STATS" ]] && FILE_STATS="0 files changed, 0 insertions(+), 0 deletions(-)"
           [[ -z "$CHANGED_FILES" ]] && CHANGED_FILES="- Нет изменённых файлов."
 
-          if [[ -n "${OPENROUTER_API_KEY}" ]]; then
+          if [[ -n "${OPENROUTER_API_KEY}" && -n "$RAW_LOG" ]]; then
             PROMPT=$(cat <<EOF
 Ты пишешь ТОЛЬКО инженерный отчёт релиза RyazhTune на русском языке, в markdown.
 Строгие правила:
@@ -164,7 +166,6 @@ $CHANGED_FILES
 - В ZIP: config/RyazhTune/lang (при наличии)
 EOF
 )
-
             PAYLOAD=$(jq -n \
               --arg model "openrouter/auto" \
               --arg prompt "$PROMPT" \
@@ -184,37 +185,54 @@ EOF
             AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
           fi
 
+          if [[ -n "$RAW_LOG" ]]; then
+            CHANGELOG_SECTIONS=$(echo "$RAW_LOG" | awk '
+              BEGIN{new="";impr="";fix=""}
+              {l=tolower($0)}
+              l ~ /(add|feature|нов|support|lang)/ {new=new "- " $0 "\n"; next}
+              l ~ /(fix|bug|crash|error|исправ|почин)/ {fix=fix "- " $0 "\n"; next}
+              {impr=impr "- " $0 "\n"}
+              END{
+                if(new!="") printf "## Новое\n%s\n", new;
+                if(impr!="") printf "## Улучшения\n%s\n", impr;
+                if(fix!="") printf "## Исправления\n%s\n", fix;
+              }')
+          else
+            CHANGELOG_SECTIONS="- Существенных пользовательских изменений в этом теге не обнаружено."
+          fi
+
           if [[ -n "${AI_BODY}" && "${AI_BODY}" != "null" ]]; then
             {
               echo "RELEASE_BODY<<EOF"
               echo "$AI_BODY"
               echo "EOF"
             } >> "$GITHUB_ENV"
-            exit 0
+          else
+            {
+              echo "RELEASE_BODY<<EOF"
+              echo "## Инженерный отчёт релиза"
+              echo
+              echo "### 1) Диапазон изменений"
+              echo "- Тег-источник: ${LATEST_TAG:-<нет предыдущего тега>}"
+              echo "- Диапазон: \`$RANGE\`"
+              echo
+              echo "### 2) Сводка diff"
+              echo "- $FILE_STATS"
+              echo
+              echo "### 3) Коммиты в диапазоне"
+              echo "$COMMITS"
+              echo
+              echo "### 4) Изменённые файлы"
+              echo "$CHANGED_FILES"
+              echo
+              echo "### 5) Сборка и артефакты"
+              echo "- Артефакты: \`RyazhTune.zip\`, \`RyazhTune-Overlay.ovl\`."
+              echo "- В ZIP включён каталог \`config/RyazhTune/lang\` (при наличии)."
+              echo
+              echo "$CHANGELOG_SECTIONS"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
           fi
-
-          {
-            echo "RELEASE_BODY<<EOF"
-            echo "## Инженерный отчёт релиза"
-            echo
-            echo "### 1) Диапазон изменений"
-            echo "- Тег-источник: ${LATEST_TAG:-<нет предыдущего тега>}"
-            echo "- Диапазон: \`$RANGE\`"
-            echo
-            echo "### 2) Сводка diff"
-            echo "- $FILE_STATS"
-            echo
-            echo "### 3) Коммиты в диапазоне"
-            echo "$COMMITS"
-            echo
-            echo "### 4) Изменённые файлы"
-            echo "$CHANGED_FILES"
-            echo
-            echo "### 5) Сборка и артефакты"
-            echo "- Артефакты: \`RyazhTune.zip\`, \`RyazhTune-Overlay.ovl\`."
-            echo "- В ZIP включён каталог \`config/RyazhTune/lang\` (при наличии)."
-            echo "EOF"
-          } >> "$GITHUB_ENV"
 
       - name: Создание тега и релиза
         uses: softprops/action-gh-release@v2
@@ -228,6 +246,6 @@ EOF
             ${{ env.RELEASE_BODY }}
 
             ---
-            _Сформировано автоматически в формате инженерного отчёта._
+            _Сформировано автоматически на основе реальных изменений в коде._
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
