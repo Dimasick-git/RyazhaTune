@@ -71,26 +71,8 @@ jobs:
       - name: Настройка безопасного Git каталога
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Сборка проекта
-        run: |
-          python3 - <<'PY'
-          import json
-          import pathlib
-
-          lang_dir = pathlib.Path('overlay/lang')
-          languages = {path.stem: json.loads(path.read_text(encoding='utf-8')) for path in sorted(lang_dir.glob('*.json'))}
-          if not languages:
-              raise SystemExit('overlay/lang/*.json not found')
-
-          base_name = 'ru' if 'ru' in languages else next(iter(languages))
-          base_keys = set(languages[base_name])
-          for name, data in languages.items():
-              missing = sorted(base_keys - set(data))
-              extra = sorted(set(data) - base_keys)
-              if missing or extra:
-                  raise SystemExit(f'{name}.json key mismatch: missing={missing}, extra={extra}')
-          print(f'Validated {len(languages)} language files with {len(base_keys)} keys each.')
-          PY
+      - name: Проверка языковых файлов
+        run: python3 scripts/validate_overlay_lang.py
 
       - name: Сборка проекта
         run: make -j$(nproc)
@@ -125,6 +107,17 @@ jobs:
 
       - name: Формирование текста релиза через AI (OpenRouter, опционально)
         id: changelog
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          AI_PROMPT: |
+            Ты — технический редактор релизов. На входе список коммитов.
+            Сделай человекочитаемое описание релиза на русском языке БЕЗ смайликов.
+            Формат:
+            1) Короткий абзац "В этом релизе..."
+            2) "Основные изменения:" (пункты)
+            3) "Исправления:" (пункты)
+            4) "Важно для пользователей:" (2-4 пункта)
+            Не выдумывай факты, опирайся только на коммиты.
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           RANGE="HEAD"
