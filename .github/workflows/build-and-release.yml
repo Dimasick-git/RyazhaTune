@@ -119,6 +119,7 @@ jobs:
       - name: Формирование текста релиза (AI + structured fallback)
         id: changelog
         run: |
+          git fetch --tags --force
           CURRENT_VERSION='${{ needs.check-version.outputs.new_version }}'
           LATEST_TAG=$(git tag -l | grep -v "^v$CURRENT_VERSION$" | sort -V | tail -n 1 || echo "")
           
