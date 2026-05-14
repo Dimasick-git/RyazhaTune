@@ -123,13 +123,15 @@ jobs:
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [[ -n "$LATEST_TAG" ]]; then
             RANGE="${LATEST_TAG}..HEAD"
+            DIFF_RANGE="$RANGE"
           else
             RANGE="HEAD"
+            DIFF_RANGE="$(git hash-object -t tree /dev/null)..HEAD"
           fi
 
           COMMITS=$(git log "$RANGE" --no-merges --pretty=format:"- %h %s")
-          FILE_STATS=$(git diff --shortstat "$RANGE" || true)
-          CHANGED_FILES=$(git diff --name-only "$RANGE" | sed 's/^/- /')
+          FILE_STATS=$(git diff --shortstat "$DIFF_RANGE" || true)
+          CHANGED_FILES=$(git diff --name-only "$DIFF_RANGE" | sed 's/^/- /')
 
           [[ -z "$COMMITS" ]] && COMMITS="- Нет пользовательских коммитов в диапазоне релиза."
           [[ -z "$FILE_STATS" ]] && FILE_STATS="0 files changed, 0 insertions(+), 0 deletions(-)"
