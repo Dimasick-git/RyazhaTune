@@ -137,9 +137,9 @@ jobs:
             Список коммитов:
             $LOG"
             
-            # Используем google/gemma-4-31b:free как более новую и доступную
+            # Используем google/gemma-4-31b-it:free как более новую и доступную
             PAYLOAD=$(jq -n \
-              --arg model "google/gemma-4-31b:free" \
+              --arg model "google/gemma-4-31b-it:free" \
               --arg prompt "$PROMPT" \
               '{
                 model: $model,

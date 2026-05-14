@@ -58,7 +58,7 @@ jobs:
             $LOG"
             
             PAYLOAD=$(jq -n \
-              --arg model "google/gemma-4-31b:free" \
+              --arg model "google/gemma-4-31b-it:free" \
               --arg prompt "$PROMPT" \
               '{
                 model: $model,
