@@ -9,6 +9,7 @@ namespace {
 
 const char CONFIG_DIR[]{"/config/RyazhTune"};
 const char CONFIG_PATH[]{"/config/RyazhTune/config.ini"};
+const char HAND_CONFIG_DIR[]{"/config/ryazhahand"};
 
 void create_config_dir() {
     /* Creating directory on every set call looks sus, but the user may delete the dir */
