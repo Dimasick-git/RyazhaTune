@@ -32,7 +32,7 @@ jobs:
       - name: Извлечение текущей версии из Makefile
         id: version
         run: |
-          VERSION=$(grep "export VERSION" Makefile | awk '{print $3}')
+          VERSION=$(grep "export VERSION" Makefile | sed 's/.*:= *//' | xargs)
           echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Проверка изменения версии
