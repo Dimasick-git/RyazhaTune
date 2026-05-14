@@ -75,6 +75,9 @@ jobs:
             exit 1
           fi
 
+      - name: Подготовка библиотек
+        run: make prepare-overlay-lib
+
       - name: Сборка проекта
         run: make clean && make -j$(nproc)
 
