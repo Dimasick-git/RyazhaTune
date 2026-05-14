@@ -8,8 +8,6 @@
 
 namespace i18n {
 
-namespace {
-
 char g_lang[8] = {};
 
 struct Pair {
@@ -88,8 +86,6 @@ constexpr std::size_t idx(Str id) {
 bool isRussian() {
     return std::strcmp(g_lang, "ru") == 0;
 }
-
-} // namespace
 
 void syncFromConfig() {
     config::get_language(g_lang, sizeof(g_lang));
