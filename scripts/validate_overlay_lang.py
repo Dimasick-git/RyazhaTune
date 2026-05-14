@@ -78,7 +78,7 @@ def main() -> None:
                 f"{name}.json missing runtime aliases: {missing_runtime_aliases}"
             )
 
-    print(f"Validated {len(languages)} language files with {len(base_keys)} keys each.")
+    print(f"Successfully validated {len(languages)} language files with {len(base_keys)} keys each.")
 
 
 if __name__ == "__main__":
