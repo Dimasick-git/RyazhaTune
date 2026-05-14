@@ -31,7 +31,7 @@ jobs:
       - name: Настройка безопасного Git каталога
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Сформировать текст релиза через AI (OpenRouter)
+      - name: Сформировать текст релиза (AI + structured fallback)
         id: changelog
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -41,38 +41,35 @@ jobs:
           RANGE="${CURRENT_TAG}"
           [[ -n "$PREV_TAG" ]] && RANGE="${PREV_TAG}..${CURRENT_TAG}"
           
-          # Собираем логи более детально (заголовки + тела коммитов для контекста)
-          LOG=$(git log "$RANGE" --pretty=format:"- %s %b" | grep -Evi "merge branch|merge pull request|fix syntax|update workflow|fix yaml|refactor" | head -n 25)
+          RAW_LOG=$(git log "$RANGE" --no-merges --pretty=format:"%s" | grep -Evi "^merge|update workflow|fix yaml" | head -n 40)
 
-          if [[ -n "${OPENROUTER_API_KEY}" && -n "$LOG" ]]; then
-            PROMPT="Ты — автор крутого проекта RyazhaTune. Твоя задача: написать захватывающее и информативное описание нового релиза на РУССКОМ языке.
-            
-            Вот что изменилось в коде:
-            $LOG
-            
-            Твои правила:
-            1. Стиль: Эпичный, но человечный. Пиши от первого лица ('Я', 'Мой проект'). Используй живой язык, как будто рассказываешь друзьям о проделанной работе.
-            2. Структура: 
-               - Начни с яркого приветствия и общей фразы о том, что это важное обновление.
-               - Сгруппируй изменения по смыслу (например: 'Визуальные правки', 'Внутренняя магия', 'Стабильность').
-               - Опиши изменения ПОДРОБНО и ПОНЯТНО. Вместо 'исправил баг' напиши 'навел порядок в коде, чтобы всё работало как часы'.
-               - Если добавлена новая фича — выдели её как главное событие.
-            3. Оформление: Используй эмодзи для настроения, но не переборщи.
-            4. Язык: Только РУССКИЙ. Никакого сухого перевода коммитов.
-            5. Тон: Уверенный, дружелюбный, вдохновляющий.
-            6. Концовка: Теплое пожелание пользователям.
-            
-            Важно: Не просто переводи список, а создай цельный, интересный текст, который приятно читать."
+          if [[ -n "${OPENROUTER_API_KEY}" && -n "$RAW_LOG" ]]; then
+            PROMPT="Ты — release-manager проекта RyazhTune. Напиши релиз-ноты на русском языке в markdown.
+            Формат и правила:
+            1) Короткое вступление (1-2 предложения).
+            2) Разделы по порядку (добавляй только релевантные):
+               - ## Новое
+               - ## Улучшения
+               - ## Исправления
+               - ## Совместимость и миграция
+            3) Только значимые изменения для пользователей.
+            4) Не копируй коммиты дословно, обобщай по смыслу.
+            5) Не упоминай ИИ/автогенерацию.
+            6) Объём: 120-260 слов.
+
+            Сырые сообщения коммитов (только как контекст):
+            $RAW_LOG"
             
             PAYLOAD=$(jq -n \
-              --arg model "google/gemma-4-31b-it:free" \
+              --arg model "openrouter/auto" \
               --arg prompt "$PROMPT" \
               '{
                 model: $model,
                 messages: [
-                  {role: "system", content: "Ты — разработчик RyazhaTune. Пишешь только на русском языке, кратко и по-человечески."},
+                  {role: "system", content: "Пиши только по-русски, структурно и по делу."},
                   {role: "user", content: $prompt}
-                ]
+                ],
+                temperature: 0.5
               }')
 
             RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
@@ -81,15 +78,22 @@ jobs:
               -d "$PAYLOAD")
             
             AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+          fi
 
-            if [[ -z "$AI_BODY" || "$AI_BODY" == "null" ]]; then
-              PAYLOAD=$(echo "$PAYLOAD" | jq '.model = "meta-llama/llama-3.3-70b-instruct:free"')
-              RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
-                -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
-                -H "Content-Type: application/json" \
-                -d "$PAYLOAD")
-              AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
-            fi
+          if [[ -n "$RAW_LOG" ]]; then
+            CHANGELOG_SECTIONS=$(echo "$RAW_LOG" | awk '
+              BEGIN{new="";impr="";fix=""}
+              {l=tolower($0)}
+              l ~ /(add|feature|нов|support|lang)/ {new=new "- " $0 "\n"; next}
+              l ~ /(fix|bug|crash|error|исправ|почин)/ {fix=fix "- " $0 "\n"; next}
+              {impr=impr "- " $0 "\n"}
+              END{
+                if(new!="") printf "## Новое\n%s\n", new;
+                if(impr!="") printf "## Улучшения\n%s\n", impr;
+                if(fix!="") printf "## Исправления\n%s\n", fix;
+              }')
+          else
+            CHANGELOG_SECTIONS="- Существенных пользовательских изменений в этом теге не обнаружено."
           fi
 
           if [[ -n "${AI_BODY}" && "${AI_BODY}" != "null" ]]; then
@@ -101,7 +105,15 @@ jobs:
           else
             {
               echo "RELEASE_BODY<<EOF"
-              echo "👋 Привет! Я выпустил новое обновление RyazhTune. В этой версии я внес внутренние улучшения и повысил стабильность работы. Приятного пользования! 🎧"
+              echo "👋 Привет! Готово новое обновление RyazhTune."
+              echo
+              echo "$CHANGELOG_SECTIONS"
+              echo
+              echo "## Технические детали"
+              echo "- Релиз собран и упакован автоматически."
+              echo "- Описание собрано из фактических изменений кода за диапазон релиза."
+              echo
+              echo "Спасибо за использование RyazhTune! 🎧"
               echo "EOF"
             } >> "$GITHUB_ENV"
           fi
@@ -114,6 +126,6 @@ jobs:
             ${{ env.RELEASE_BODY }}
 
             ---
-            _Сгенерировано автоматически на основе истории изменений._
+            _Сформировано автоматически на основе реальных изменений в коде._
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
