@@ -86,7 +86,7 @@ CFLAGS := -g -Wall -Os -ffunction-sections -fdata-sections -flto=auto \
           $(ARCH) $(DEFINES)
 
 # Enable appearance overriding
-UI_OVERRIDE_PATH := /config/ryazhahand/
+UI_OVERRIDE_PATH := /config/RyazhTune/
 CFLAGS += -DUI_OVERRIDE_PATH="\"$(UI_OVERRIDE_PATH)\""
 
 # Enable Widget
