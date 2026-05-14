@@ -32,15 +32,6 @@ jobs:
         id: changelog
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          AI_PROMPT: |
-            Ты — технический редактор релизов. На входе список коммитов.
-            Сделай человекочитаемое описание релиза на русском языке БЕЗ смайликов.
-            Формат:
-            1) Короткий абзац "В этом релизе..."
-            2) "Основные изменения:" (пункты)
-            3) "Исправления:" (пункты)
-            4) "Важно для пользователей:" (2-4 пункта)
-            Не выдумывай факты, опирайся только на коммиты.
         run: |
           CURRENT_TAG='${{ github.event.release.tag_name }}'
           PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null || echo "")
@@ -48,7 +39,6 @@ jobs:
           [[ -n "$PREV_TAG" ]] && RANGE="${PREV_TAG}..${CURRENT_TAG}"
           LOG=$(git log "$RANGE" --pretty=format:"- %s (%h)")
 
-          # Если задан OPENROUTER_API_KEY, используем бесплатную модель от OpenRouter.
           if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
             PROMPT=$(cat <<'EOF'
 Ты — технический редактор релизов. На входе список коммитов.
@@ -59,74 +49,3 @@ jobs:
 3) "Исправления:" (пункты)
 4) "Важно для пользователей:" (2-4 пункта)
 Не выдумывай факты, опирайся только на коммиты.
-EOF
-)
-            PAYLOAD=$(jq -n \
-              --arg model "meta-llama/llama-3.2-3b-instruct:free" \
-              --arg prompt "$PROMPT" \
-              --arg log "$LOG" \
-              '{
-                model: $model,
-                messages: [
-                  {role: "system", content: "Пиши кратко, по-деловому и без смайликов."},
-                  {role: "user", content: ($prompt + "\n\nКоммиты:\n" + $log)}
-                ]
-              }')
-
-            AI_BODY=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
-              -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
-              -H "Content-Type: application/json" \
-              -d "$PAYLOAD" | jq -r '.choices[0].message.content // empty')
-          fi
-
-          if [[ -n "${AI_BODY:-}" ]]; then
-            {
-              echo "RELEASE_BODY<<EOF"
-              echo "$AI_BODY"
-              echo "EOF"
-            } >> "$GITHUB_ENV"
-          else
-            FEATURES=$(printf "%s\n" "$LOG" | grep -Ei "add|feat|new|реализ|добав" || true)
-            FIXES=$(printf "%s\n" "$LOG" | grep -Ei "fix|bug|исправ|устран" || true)
-            OTHER=$(printf "%s\n" "$LOG" | grep -Eiv "add|feat|new|реализ|добав|fix|bug|исправ|устран" || true)
-
-            {
-              echo "RELEASE_BODY<<EOF"
-              echo "В этом релизе реализованы улучшения и исправлены ошибки по итогам последних изменений."
-              echo
-              echo "Основные изменения:"
-              if [[ -n "$FEATURES" ]]; then
-                echo "$FEATURES"
-              else
-                echo "- Обновления функциональности по внутренним задачам проекта."
-              fi
-              echo
-              echo "Исправления:"
-              if [[ -n "$FIXES" ]]; then
-                echo "$FIXES"
-              else
-                echo "- Исправления стабильности и совместимости."
-              fi
-              if [[ -n "$OTHER" ]]; then
-                echo
-                echo "Прочие изменения:"
-                echo "$OTHER"
-              fi
-              echo "EOF"
-            } >> "$GITHUB_ENV"
-          fi
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-
-      - name: Обновить описание релиза
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.event.release.tag_name }}
-          body: |
-            ## Описание релиза
-            ${{ env.RELEASE_BODY }}
-
-            ---
-            Текст сформирован автоматически на основе истории коммитов.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
