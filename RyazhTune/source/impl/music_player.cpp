@@ -776,6 +776,9 @@ namespace tune::impl {
         enum class StartAction { DoNothing, ForcePlay, ForcePause };
 
         auto resolvePerTitlePolicy = [](u64 tid) -> StartAction {
+            if (!config::is_title_allowed(tid))
+                return StartAction::ForcePause;
+
             /* The HOME screen tid always uses its own per-title entry
              * (the dedicated "Pause On Home" toggle).  Never apply the
              * global Play/Pause On Title defaults to it. */

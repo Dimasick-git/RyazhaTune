@@ -478,11 +478,7 @@ void BrowserGui::buildList() {
 
     // ---- Files -------------------------------------------------------------
     if (!file_entries.empty()) {
-        m_list->addItem(new tsl::elm::CategoryHeader(
-            "Tracks " + ult::DIVIDER_SYMBOL +
-            " \uE0E3 Add To Playlist " + ult::DIVIDER_SYMBOL +
-            " \uE0E2 Add All "         + ult::DIVIDER_SYMBOL +
-            " \uE0B6 Set As Startup"));
+        m_list->addItem(new tsl::elm::CategoryHeader("Tracks"));
 
         std::sort(file_entries.begin(), file_entries.end(), FileEntryCompare);
 

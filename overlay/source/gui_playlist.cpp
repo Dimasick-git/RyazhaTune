@@ -225,11 +225,7 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
         return;
     }
 
-    m_list->addItem(new tsl::elm::CategoryHeader(
-        "Playlist " + ult::DIVIDER_SYMBOL +
-        " \uE0E3 Remove "   + ult::DIVIDER_SYMBOL +
-        " \uE0E2 Remove All " + ult::DIVIDER_SYMBOL +
-        " \uE0B6 Set As Startup", true));
+    m_list->addItem(new tsl::elm::CategoryHeader("Playlist", true));
 
     m_items.reserve(count);
 
