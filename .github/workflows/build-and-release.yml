@@ -50,7 +50,7 @@ jobs:
 
   build:
     needs: check-version
-    if: needs: check-version.outputs.version_changed == 'true'
+    if: needs.check-version.outputs.version_changed == 'true'
     runs-on: ubuntu-latest
     container:
       image: devkitpro/devkita64:latest
