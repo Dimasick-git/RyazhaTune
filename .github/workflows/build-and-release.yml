@@ -65,7 +65,7 @@ jobs:
     steps:
       - name: Установка зависимостей (jq)
         run: |
-          apt-get update && apt-get install -y jq zip
+          apt-get update && apt-get install -y jq zip curl
 
       - name: Получение исходного кода
         uses: actions/checkout@v4
@@ -105,11 +105,8 @@ jobs:
           cp overlay/lang/*.json release/config/RyazhTune/lang/
 
           (cd release && zip -r ../RyazhTune.zip atmosphere switch config)
-          zip -sf RyazhTune.zip | grep -q 'config/RyazhTune/lang/ru.json'
-          zip -sf RyazhTune.zip | grep -q 'config/RyazhTune/lang/en.json'
-          zip -sf RyazhTune.zip | grep -q 'config/RyazhTune/lang/zh.json'
 
-      - name: Формирование текста релиза через AI (OpenRouter, опционально)
+      - name: Формирование текста релиза через AI (OpenRouter)
         id: changelog
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -118,21 +115,17 @@ jobs:
           RANGE="HEAD"
           [[ -n "$LATEST_TAG" ]] && RANGE="${LATEST_TAG}..HEAD"
           LOG=$(git log "$RANGE" --pretty=format:"- %s (%h)")
+          
+          echo "История коммитов для анализа:"
+          echo "$LOG"
 
-          if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
-            PROMPT=$(cat <<'EOF'
-          Ты — технический редактор релизов. На входе список коммитов.
-          Сделай человекочитаемое описание релиза на русском языке БЕЗ смайликов.
-          Формат:
-          1) Короткий абзац "В этом релизе..."
-          2) "Основные изменения:" (пункты)
-          3) "Исправления:" (пункты)
-          4) "Важно для пользователей:" (2-4 пункта)
-          Не выдумывай факты, опирайся только на коммиты.
-          EOF
-          )
+          if [[ -n "${OPENROUTER_API_KEY}" ]]; then
+            echo "OPENROUTER_API_KEY обнаружен, отправка запроса..."
+            
+            PROMPT="Ты — технический редактор релизов. На входе список коммитов. Сделай человекочитаемое описание релиза на русском языке БЕЗ смайликов. Формат: 1) Короткий абзац \"В этом релизе...\" 2) \"Основные изменения:\" (пункты) 3) \"Исправления:\" (пункты) 4) \"Важно для пользователей:\" (2-4 пункта) Не выдумывай факты, опирайся только на коммиты."
+            
             PAYLOAD=$(jq -n \
-              --arg model "meta-llama/llama-3.2-3b-instruct:free" \
+              --arg model "google/gemini-2.0-flash-lite-preview-02-05:free" \
               --arg prompt "$PROMPT" \
               --arg log "$LOG" \
               '{
@@ -143,19 +136,29 @@ jobs:
                 ]
               }')
 
-            AI_BODY=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
+            RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
               -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
               -H "Content-Type: application/json" \
-              -d "$PAYLOAD" | jq -r '.choices[0].message.content // empty')
+              -d "$PAYLOAD")
+            
+            AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+            
+            if [[ -z "$AI_BODY" ]]; then
+              echo "Ошибка: AI вернул пустой ответ или произошла ошибка API."
+              echo "Ответ API: $RESPONSE"
+            fi
+          else
+            echo "ПРЕДУПРЕЖДЕНИЕ: OPENROUTER_API_KEY не найден в секретах репозитория."
           fi
 
-          if [[ -n "${AI_BODY:-}" ]]; then
+          if [[ -n "${AI_BODY}" ]]; then
             {
               echo "RELEASE_BODY<<EOF"
               echo "$AI_BODY"
               echo "EOF"
             } >> "$GITHUB_ENV"
           else
+            echo "Использование стандартного шаблона описания..."
             FEATURES=$(printf "%s\n" "$LOG" | grep -Ei "add|feat|new|реализ|добав" || true)
             FIXES=$(printf "%s\n" "$LOG" | grep -Ei "fix|bug|исправ|устран" || true)
             OTHER=$(printf "%s\n" "$LOG" | grep -Eiv "add|feat|new|реализ|добав|fix|bug|исправ|устран" || true)
