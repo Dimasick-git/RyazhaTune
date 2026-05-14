@@ -121,7 +121,7 @@ jobs:
         run: |
           git fetch --tags --force
           CURRENT_VERSION='${{ needs.check-version.outputs.new_version }}'
-          LATEST_TAG=$(git tag -l | grep -v "^v$CURRENT_VERSION$" | sort -V | tail -n 1 || echo "")
+          LATEST_TAG=$(git tag -l | grep -E "^v[0-9]" | sort -V | grep -v "^v$CURRENT_VERSION$" | tail -n 1 || echo "")
           
           if [[ -n "$LATEST_TAG" ]]; then
             RANGE="${LATEST_TAG}..HEAD"
