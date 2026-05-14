@@ -31,44 +31,90 @@ jobs:
       - name: Настройка безопасного Git каталога
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Сформировать инженерный отчёт релиза
+      - name: Сформировать текст релиза (AI + structured fallback)
         id: changelog
         run: |
           CURRENT_TAG='${{ github.event.release.tag_name }}'
           PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null || echo "")
           RANGE="${CURRENT_TAG}"
           [[ -n "$PREV_TAG" ]] && RANGE="${PREV_TAG}..${CURRENT_TAG}"
+          
+          RAW_LOG=$(git log "$RANGE" --no-merges --pretty=format:"%s" | grep -Evi "^merge|update workflow|fix yaml" | head -n 40)
 
-          COMMITS=$(git log "$RANGE" --no-merges --pretty=format:"- %h %s")
-          FILE_STATS=$(git diff --shortstat "$RANGE" || true)
-          CHANGED_FILES=$(git diff --name-only "$RANGE" | sed 's/^/- /')
+          if [[ -n "${OPENROUTER_API_KEY}" && -n "$RAW_LOG" ]]; then
+            PROMPT="Ты — release-manager проекта RyazhTune. Напиши релиз-ноты на русском языке в markdown.
+            Формат и правила:
+            1) Короткое вступление (1-2 предложения).
+            2) Разделы по порядку (добавляй только релевантные):
+               - ## Новое
+               - ## Улучшения
+               - ## Исправления
+               - ## Совместимость и миграция
+            3) Только значимые изменения для пользователей.
+            4) Не копируй коммиты дословно, обобщай по смыслу.
+            5) Не упоминай ИИ/автогенерацию.
+            6) Объём: 120-260 слов.
 
-          [[ -z "$COMMITS" ]] && COMMITS="- Нет пользовательских коммитов в диапазоне релиза."
-          [[ -z "$FILE_STATS" ]] && FILE_STATS="0 files changed, 0 insertions(+), 0 deletions(-)"
-          [[ -z "$CHANGED_FILES" ]] && CHANGED_FILES="- Нет изменённых файлов."
+            Сырые сообщения коммитов (только как контекст):
+            $RAW_LOG"
+            
+            PAYLOAD=$(jq -n \
+              --arg model "openrouter/auto" \
+              --arg prompt "$PROMPT" \
+              '{
+                model: $model,
+                messages: [
+                  {role: "system", content: "Пиши только по-русски, структурно и по делу."},
+                  {role: "user", content: $prompt}
+                ],
+                temperature: 0.5
+              }')
 
-          {
-            echo "RELEASE_BODY<<EOF"
-            echo "## Инженерный отчёт релиза"
-            echo
-            echo "### 1) Диапазон изменений"
-            echo "- Текущий тег: $CURRENT_TAG"
-            echo "- Предыдущий тег: ${PREV_TAG:-<не найден>}"
-            echo "- Диапазон: \`$RANGE\`"
-            echo
-            echo "### 2) Сводка diff"
-            echo "- $FILE_STATS"
-            echo
-            echo "### 3) Коммиты в диапазоне"
-            echo "$COMMITS"
-            echo
-            echo "### 4) Изменённые файлы"
-            echo "$CHANGED_FILES"
-            echo
-            echo "### 5) Артефакты релиза"
-            echo "- Проверить наличие \`RyazhTune.zip\` и \`RyazhTune-Overlay.ovl\` в Assets."
-            echo "EOF"
-          } >> "$GITHUB_ENV"
+            RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
+              -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD")
+            
+            AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+          fi
+
+          if [[ -n "$RAW_LOG" ]]; then
+            CHANGELOG_SECTIONS=$(echo "$RAW_LOG" | awk '
+              BEGIN{new="";impr="";fix=""}
+              {l=tolower($0)}
+              l ~ /(add|feature|нов|support|lang)/ {new=new "- " $0 "\n"; next}
+              l ~ /(fix|bug|crash|error|исправ|почин)/ {fix=fix "- " $0 "\n"; next}
+              {impr=impr "- " $0 "\n"}
+              END{
+                if(new!="") printf "## Новое\n%s\n", new;
+                if(impr!="") printf "## Улучшения\n%s\n", impr;
+                if(fix!="") printf "## Исправления\n%s\n", fix;
+              }')
+          else
+            CHANGELOG_SECTIONS="- Существенных пользовательских изменений в этом теге не обнаружено."
+          fi
+
+          if [[ -n "${AI_BODY}" && "${AI_BODY}" != "null" ]]; then
+            {
+              echo "RELEASE_BODY<<EOF"
+              echo "$AI_BODY"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
+          else
+            {
+              echo "RELEASE_BODY<<EOF"
+              echo "👋 Привет! Готово новое обновление RyazhTune."
+              echo
+              echo "$CHANGELOG_SECTIONS"
+              echo
+              echo "## Технические детали"
+              echo "- Релиз собран и упакован автоматически."
+              echo "- Описание собрано из фактических изменений кода за диапазон релиза."
+              echo
+              echo "Спасибо за использование RyazhTune! 🎧"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
+          fi
 
       - name: Обновить описание релиза
         uses: softprops/action-gh-release@v2
@@ -78,6 +124,6 @@ jobs:
             ${{ env.RELEASE_BODY }}
 
             ---
-            _Сформировано автоматически в формате инженерного отчёта._
+            _Сформировано автоматически на основе реальных изменений в коде._
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
