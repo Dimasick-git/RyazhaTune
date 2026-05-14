@@ -174,22 +174,47 @@ void set_load_path(const char* path) {
 }
 
 void ensure_language_config() {
-    create_hand_config_dir();
+    create_config_dir();
     char language[8]{};
-    ini_gets("config", "language", "", language, sizeof(language), HAND_CONFIG_PATH);
+    ini_gets("config", "language", "", language, sizeof(language), CONFIG_PATH);
+    if (language[0] == '\0') {
+        // Backward compatibility: migrate old language value from ryazhahand.
+        ini_gets("config", "language", "", language, sizeof(language), HAND_CONFIG_PATH);
+    }
+
     if (language[0] == '\0')
-        ini_puts("config", "language", "ru", HAND_CONFIG_PATH);
+        std::snprintf(language, sizeof(language), "%s", "ru");
+
+    // Keep both files in sync: CONFIG_PATH is canonical storage,
+    // HAND_CONFIG_PATH is retained for legacy readers.
+    ini_puts("config", "language", language, CONFIG_PATH);
+    create_hand_config_dir();
+    ini_puts("config", "language", language, HAND_CONFIG_PATH);
 }
 
 auto get_language(char* out, int max_len) -> int {
-    // libryazhahand/libultrahand reads overlay languages from this config.
-    const int len = ini_gets("config", "language", "ru", out, max_len, HAND_CONFIG_PATH);
-    if (len <= 0)
-        ensure_language_config();
-    return len;
+    const int len = ini_gets("config", "language", "", out, max_len, CONFIG_PATH);
+    if (len > 0)
+        return len;
+
+    // Fallback migration path for existing installs.
+    char language[8]{};
+    const int legacy_len = ini_gets("config", "language", "", language, sizeof(language), HAND_CONFIG_PATH);
+    if (legacy_len > 0) {
+        create_config_dir();
+        ini_puts("config", "language", language, CONFIG_PATH);
+        return ini_gets("config", "language", "ru", out, max_len, CONFIG_PATH);
+    }
+
+    ensure_language_config();
+    return ini_gets("config", "language", "ru", out, max_len, CONFIG_PATH);
 }
 
 void set_language(const char* language) {
+    create_config_dir();
+    ini_puts("config", "language", language, CONFIG_PATH);
+
+    // Keep legacy overlay readers functional.
     create_hand_config_dir();
     ini_puts("config", "language", language, HAND_CONFIG_PATH);
 }
