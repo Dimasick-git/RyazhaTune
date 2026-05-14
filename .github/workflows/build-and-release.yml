@@ -83,7 +83,7 @@ jobs:
 
       - name: Проверка целостности сборки
         run: |
-          if [ -f "RyazhTune.nsp" ] && [ -f "overlay/RyazhTune-Overlay.ovl" ]; then
+          if [ -f "RyazhTune/RyazhTune.nsp" ] && [ -f "overlay/RyazhTune-Overlay.ovl" ]; then
             echo "Сборка успешно завершена."
           else
             echo "Ошибка: Файлы сборки не найдены!"
@@ -94,7 +94,7 @@ jobs:
       - name: Подготовка архива RyazhTune.zip
         run: |
           mkdir -p release/switch/RyazhTune
-          cp RyazhTune.nsp release/switch/RyazhTune/
+          cp RyazhTune/RyazhTune.nsp release/switch/RyazhTune/
           cd release && zip -r ../RyazhTune.zip switch/ && cd ..
 
       - name: Формирование текста релиза через AI (OpenRouter)
