@@ -56,7 +56,7 @@ RYAZHAHAND_DIR ?= ${TOPDIR}/lib/libryazhahand
 RYAZHAHAND_MK  := ${RYAZHAHAND_DIR}/ryazhahand.mk
 
 ifeq ($(wildcard $(RYAZHAHAND_MK)),)
-$(error Missing $(RYAZHAHAND_MK). Run `make prepare-overlay-lib` from the repository root to clone libultrahand and install ryazhahand.mk)
+$(error Missing $(RYAZHAHAND_MK). Run `make prepare-overlay-lib` from the repository root to clone libryazhahand and install ryazhahand.mk)
 endif
 
 include $(RYAZHAHAND_MK)

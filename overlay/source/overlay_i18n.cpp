@@ -10,7 +10,7 @@
 #include <tesla.hpp>
 
 #ifndef UI_OVERRIDE_PATH
-#define UI_OVERRIDE_PATH "/config/ultrahand/"
+#define UI_OVERRIDE_PATH "/config/ryazhahand/"
 #endif
 
 #ifndef VERSION

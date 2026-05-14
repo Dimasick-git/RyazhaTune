@@ -566,7 +566,7 @@ namespace tune::impl {
         {
             FsFileSystem sdFs;
             if (R_SUCCEEDED(fsOpenSdCardFileSystem(&sdFs))) {
-                fsFsDeleteFile(&sdFs, "/config/ultrahand/flags/HOME_EVENT.flag");
+                fsFsDeleteFile(&sdFs, "/config/ryazhahand/flags/HOME_EVENT.flag");
                 fsFsClose(&sdFs);
             }
         }
@@ -1045,7 +1045,7 @@ namespace tune::impl {
          * "/" paths correctly — identical to every other file access here. */
         auto readHomeFlagTick = []() -> u64 {
             FsFile f;
-            if (R_FAILED(sdmc::OpenFile(&f, "/config/ultrahand/flags/HOME_EVENT.flag")))
+            if (R_FAILED(sdmc::OpenFile(&f, "/config/ryazhahand/flags/HOME_EVENT.flag")))
                 return 0;
             char buf[17] = {};
             u64  n       = 0;
@@ -1543,7 +1543,7 @@ namespace tune::impl {
              * The was_first_focus decision points only check the flag ONCE, at the
              * moment InFocus fires.  If the user presses HOME AFTER that (i.e. during
              * the 1 s fade or — for ForcePause — the subsequent 3 s silent hold),
-             * Ultrahand updates the flag but nobody reads it.  pdmqry's NAND-write
+             * Ryazhahand updates the flag but nobody reads it.  pdmqry's NAND-write
              * latency means OutOfFocus can arrive long after the transition is
              * complete and the music is in the wrong state with no recovery path.
              *
