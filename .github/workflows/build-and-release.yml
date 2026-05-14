@@ -93,9 +93,25 @@ jobs:
 
       - name: Подготовка архива RyazhTune.zip
         run: |
-          mkdir -p release/switch/RyazhTune
-          cp RyazhTune/RyazhTune.nsp release/switch/RyazhTune/
-          cd release && zip -r ../RyazhTune.zip switch/ && cd ..
+          mkdir -p release/atmosphere/contents/420000000000000E/flags
+          mkdir -p release/config/RyazhTune
+          mkdir -p release/switch/.overlays
+          
+          # 1. Атмосфера (модуль)
+          touch release/atmosphere/contents/420000000000000E/flags/boot2.flag
+          cp RyazhTune/RyazhTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
+          cp RyazhTune/toolbox.json release/atmosphere/contents/420000000000000E/
+          
+          # 2. Конфиги и языки
+          if [ -d "overlay/lang" ]; then
+            cp -r overlay/lang release/config/RyazhTune/
+          fi
+          
+          # 3. Оверлей
+          cp overlay/RyazhTune-Overlay.ovl release/switch/.overlays/
+          
+          # Упаковка
+          cd release && zip -r ../RyazhTune.zip . && cd ..
 
       - name: Формирование текста релиза через AI (OpenRouter)
         id: changelog
