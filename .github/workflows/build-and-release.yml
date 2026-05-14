@@ -107,7 +107,6 @@ jobs:
           if [ -d "overlay/lang" ]; then
             cp -r overlay/lang release/config/RyazhTune/
           fi
-          cp .github/default-config.ini release/config/RyazhTune/config.ini
           
           # 3. Оверлей
           cp overlay/RyazhTune-Overlay.ovl release/switch/.overlays/
@@ -129,9 +128,9 @@ jobs:
             DIFF_RANGE="$(git hash-object -t tree /dev/null)..HEAD"
           fi
 
-          COMMITS=$(git log "$RANGE" --no-merges --pretty=format:"- %h %s")
+          COMMITS=$(git log "$RANGE" --no-merges --pretty=format:"- %h %s" -n 25 || true)
           FILE_STATS=$(git diff --shortstat "$DIFF_RANGE" || true)
-          CHANGED_FILES=$(git diff --name-only "$DIFF_RANGE" | sed 's/^/- /')
+          CHANGED_FILES=$(git diff --name-only "$DIFF_RANGE" | sed -n '1,25s/^/- /p' || true)
 
           [[ -z "$COMMITS" ]] && COMMITS="- Нет пользовательских коммитов в диапазоне релиза."
           [[ -z "$FILE_STATS" ]] && FILE_STATS="0 files changed, 0 insertions(+), 0 deletions(-)"
@@ -151,7 +150,7 @@ jobs:
    ### 4) Изменённые файлы
    ### 5) Сборка и артефакты
 4) Не выдумывай факты. Используй только предоставленные данные.
-5) Сохрани все коммиты и файлы, не сокращай списки.
+5) Используй только предоставленные списки коммитов и файлов, не дополняй их.
 
 Данные:
 - Тег-источник: ${LATEST_TAG:-<нет предыдущего тега>}
@@ -162,7 +161,7 @@ $COMMITS
 - Файлы:
 $CHANGED_FILES
 - Артефакты: RyazhTune.zip, RyazhTune-Overlay.ovl
-- В ZIP: config/RyazhTune/config.ini и config/RyazhTune/lang (при наличии)
+- В ZIP: config/RyazhTune/lang (при наличии)
 EOF
 )
 
@@ -213,7 +212,7 @@ EOF
             echo
             echo "### 5) Сборка и артефакты"
             echo "- Артефакты: \`RyazhTune.zip\`, \`RyazhTune-Overlay.ovl\`."
-            echo "- В ZIP включён \`config/RyazhTune/config.ini\` и каталог \`config/RyazhTune/lang\` (при наличии)."
+            echo "- В ZIP включён каталог \`config/RyazhTune/lang\` (при наличии)."
             echo "EOF"
           } >> "$GITHUB_ENV"
 
