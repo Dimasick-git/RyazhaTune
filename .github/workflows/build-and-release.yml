@@ -42,7 +42,7 @@ jobs:
           CURRENT_VERSION='${{ steps.version.outputs.VERSION }}'
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           LATEST_VERSION=${LATEST_TAG#v}
-          
+
           if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
             echo "CHANGED=true" >> "$GITHUB_OUTPUT"
           else
@@ -98,22 +98,22 @@ jobs:
           mkdir -p release/config/RyazhTune
           mkdir -p release/config/ryazhahand
           mkdir -p release/switch/.overlays
-          
+
           # 1. Атмосфера (модуль)
           touch release/atmosphere/contents/420000000000000E/flags/boot2.flag
           cp RyazhTune/RyazhTune.nsp release/atmosphere/contents/420000000000000E/exefs.nsp
           cp RyazhTune/toolbox.json release/atmosphere/contents/420000000000000E/
-          
+
           # 2. Конфиги и языки
           if [ -d "overlay/lang" ]; then
             cp -r overlay/lang release/config/RyazhTune/
           fi
           cp .github/default-config.ini release/config/RyazhTune/config.ini
           cp .github/default-config.ini release/config/ryazhahand/config.ini
-          
+
           # 3. Оверлей
           cp overlay/RyazhTune-Overlay.ovl release/switch/.overlays/
-          
+
           # Упаковка
           cd release && zip -r ../RyazhTune.zip . && cd ..
 
@@ -139,33 +139,8 @@ jobs:
           [[ -z "$CHANGED_FILES" ]] && CHANGED_FILES="- Нет изменённых файлов."
 
           if [[ -n "${OPENROUTER_API_KEY}" && -n "$RAW_LOG" ]]; then
-            PROMPT=$(cat <<EOF
-Ты пишешь ТОЛЬКО инженерный отчёт релиза RyazhTune на русском языке, в markdown.
-Строгие правила:
-1) Без приветствий, без эмоций, без эмодзи, без маркетингового текста.
-2) Без фраз "сгенерировано ИИ" и без ссылок на модель.
-3) Используй только следующие разделы и порядок:
-   ## Инженерный отчёт релиза
-   ### 1) Диапазон изменений
-   ### 2) Сводка diff
-   ### 3) Коммиты в диапазоне
-   ### 4) Изменённые файлы
-   ### 5) Сборка и артефакты
-4) Не выдумывай факты. Используй только предоставленные данные.
-5) Используй только предоставленные списки коммитов и файлов, не дополняй их.
+            PROMPT="Ты пишешь ТОЛЬКО инженерный отчёт релиза RyazhTune на русском языке, в markdown.\nСтрогие правила:\n1) Без приветствий, без эмоций, без эмодзи, без маркетингового текста.\n2) Без фраз сгенерировано ИИ и без ссылок на модель.\n3) Используй только следующие разделы и порядок: ## Инженерный отчёт релиза, ### 1) Диапазон изменений, ### 2) Сводка diff, ### 3) Коммиты в диапазоне, ### 4) Изменённые файлы, ### 5) Сборка и артефакты.\n4) Не выдумывай факты. Используй только предоставленные данные.\n5) Используй только предоставленные списки коммитов и файлов, не дополняй их.\n\nДанные:\n- Тег-источник: ${LATEST_TAG:-нет предыдущего тега}\n- Диапазон: $RANGE\n- Diff: $FILE_STATS\n- Коммиты:\n$COMMITS\n- Файлы:\n$CHANGED_FILES\n- Артефакты: RyazhTune.zip, RyazhTune-Overlay.ovl\n- В ZIP: config/RyazhTune/lang (при наличии)"
 
-Данные:
-- Тег-источник: ${LATEST_TAG:-<нет предыдущего тега>}
-- Диапазон: $RANGE
-- Diff: $FILE_STATS
-- Коммиты:
-$COMMITS
-- Файлы:
-$CHANGED_FILES
-- Артефакты: RyazhTune.zip, RyazhTune-Overlay.ovl
-- В ZIP: config/RyazhTune/lang (при наличии)
-EOF
-)
             PAYLOAD=$(jq -n \
               --arg model "openrouter/auto" \
               --arg prompt "$PROMPT" \
@@ -211,24 +186,24 @@ EOF
             {
               echo "RELEASE_BODY<<EOF"
               echo "## Инженерный отчёт релиза"
-              echo
+              echo ""
               echo "### 1) Диапазон изменений"
-              echo "- Тег-источник: ${LATEST_TAG:-<нет предыдущего тега>}"
+              echo "- Тег-источник: ${LATEST_TAG:-нет предыдущего тега}"
               echo "- Диапазон: \`$RANGE\`"
-              echo
+              echo ""
               echo "### 2) Сводка diff"
               echo "- $FILE_STATS"
-              echo
+              echo ""
               echo "### 3) Коммиты в диапазоне"
               echo "$COMMITS"
-              echo
+              echo ""
               echo "### 4) Изменённые файлы"
               echo "$CHANGED_FILES"
-              echo
+              echo ""
               echo "### 5) Сборка и артефакты"
               echo "- Артефакты: \`RyazhTune.zip\`, \`RyazhTune-Overlay.ovl\`."
               echo "- В ZIP включён каталог \`config/RyazhTune/lang\` (при наличии)."
-              echo
+              echo ""
               echo "$CHANGELOG_SECTIONS"
               echo "EOF"
             } >> "$GITHUB_ENV"
