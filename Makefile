@@ -5,7 +5,7 @@ export WANT_FLAC 	:= 1
 export WANT_MP3 	:= 1
 export WANT_WAV 	:= 1
 
-LIBULTRAHAND_REPO ?= https://github.com/ppkantorski/libryazhahand.git
+LIBULTRAHAND_REPO ?= https://github.com/ppkantorski/libultrahand.git
 RYAZHAHAND_DIR   ?= overlay/lib/libryazhahand
 LEGACY_HAND_MK  := $(RYAZHAHAND_DIR)/$(subst ryazha,ultra,ryazhahand).mk
 
