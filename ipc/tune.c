@@ -142,6 +142,11 @@ Result tuneGetWaveform(s16 *out_buffer, size_t count) {
                              .buffers = {{out_buffer, count * sizeof(s16)}},
     );
 }
+
+Result tuneApplyTitleFilter() {
+    return serviceDispatch(&g_tune, TuneIpcCmd_ApplyTitleFilter);
+}
+
 Result tuneRemove(u32 index) {
     return serviceDispatchIn(&g_tune, TuneIpcCmd_Remove, index);
 }

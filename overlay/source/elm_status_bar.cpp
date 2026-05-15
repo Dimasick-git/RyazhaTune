@@ -727,39 +727,6 @@ void StatusBar::draw(tsl::gfx::Renderer *renderer) {
     const s32 art_sz  = ArtSize();
     const s32 art_off = ArtOffset();
     const s32 avail_w = this->getWidth() - 30;
-    /* --- Waveform Visualization ---
-     * Drawn between the album art and the song title.
-     * wave_y is placed just below the art block (art_sz + 11 = bottom of art,
-     * then +8 px gap, then centred on a 30-px tall strip). */
-    if (m_playing) {
-        const s32 wave_x = this->getX() + 15;
-        // Place the waveform strip below the album art, above the title text.
-        // title_y = getY() + art_sz + 4 + 20 + 10 + 11  (see title_y calculation below)
-        // We centre the 30-px strip between the bottom of the art and the title.
-        const s32 wave_strip_top = this->getY() + 11 + art_sz + 6;  // 6 px gap below art
-        const s32 wave_h         = 28;  // height of the waveform strip
-        const s32 wave_y         = wave_strip_top + wave_h / 2;  // centre line
-        const s32 wave_w         = avail_w;
-
-        // Find the peak amplitude in this frame for normalisation.
-        s32 peak = 1;
-        for (int i = 0; i < 64; i++) {
-            s32 v = std::abs((s32)m_waveform[i * 4]);
-            if (v > peak) peak = v;
-        }
-        // Clamp peak so very quiet passages still show some movement.
-        if (peak < 512) peak = 512;
-
-        for (int i = 0; i < 64; i++) {
-            s16 sample = m_waveform[i * 4];
-            // Normalise against the local peak so bars fill the strip.
-            s32 bar_h = (std::abs((s32)sample) * wave_h) / peak;
-            if (bar_h < 2) bar_h = 2;
-            renderer->drawRect(wave_x + (i * wave_w / 64), wave_y - bar_h / 2,
-                               (wave_w / 64) - 1, bar_h, a(0x7FFF));
-        }
-    }
-
     /* --- Album art --- */
     if (art_sz > 0) {
         ensureArtScaled(art_sz);
@@ -795,6 +762,51 @@ void StatusBar::draw(tsl::gfx::Renderer *renderer) {
                 const s32 note_y = art_y  + (art_sz + (s32)note_h) / 2 -12;
                 renderer->drawString(NOTE, false, note_x, note_y,
                                      NOTE_FONT, tsl::style::color::ColorText);
+            }
+        }
+    }
+
+    /* --- Reactive audio visualizer ---
+     * Drawn as a compact neon strip over the bottom of the album art instead
+     * of consuming the text gap. This keeps the title/artist readable while
+     * the bars still react immediately to the latest mono waveform snapshot. */
+    if (art_sz > 0) {
+        constexpr int kBars = 32;
+        const s32 art_x  = this->getX() + 15 + (avail_w - art_sz) / 2;
+        const s32 art_y  = this->getY() + 11;
+        const s32 wave_x = art_x + 10;
+        const s32 wave_w = art_sz - 20;
+        const s32 wave_h = 20;
+        const s32 wave_y = art_y + art_sz - 18;
+
+        s32 peak = 256;
+        s32 energy[kBars] = {};
+        for (int bar = 0; bar < kBars; ++bar) {
+            s32 sum = 0;
+            for (int j = 0; j < 8; ++j)
+                sum += std::abs(static_cast<s32>(m_waveform[bar * 8 + j]));
+            energy[bar] = sum / 8;
+            peak = std::max(peak, energy[bar]);
+        }
+
+        renderer->drawRectAdaptive(wave_x - 4, wave_y - wave_h / 2 - 3,
+                                   wave_w + 8, wave_h + 6, a(0x7000));
+
+        for (int bar = 0; bar < kBars; ++bar) {
+            const u8 target = m_playing
+                ? static_cast<u8>(std::clamp((energy[bar] * wave_h) / peak, 0, wave_h))
+                : 0;
+            if (target >= m_eq_bars[bar])
+                m_eq_bars[bar] = target;
+            else
+                m_eq_bars[bar] = static_cast<u8>((m_eq_bars[bar] * 5) / 6);
+
+            const s32 bar_w = std::max<s32>(2, wave_w / kBars - 2);
+            const s32 bar_h = std::max<s32>(m_eq_bars[bar], m_eq_bars[bar] ? 2 : 0);
+            if (bar_h > 0) {
+                const u16 color = (bar & 1) ? 0x9DFF : 0x4CFF;
+                renderer->drawRect(wave_x + (bar * wave_w / kBars),
+                                   wave_y - bar_h / 2, bar_w, bar_h, a(color));
             }
         }
     }

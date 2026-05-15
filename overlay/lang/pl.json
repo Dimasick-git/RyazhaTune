@@ -155,5 +155,11 @@
     "Tip: Settings has playback modes, Home Focus, and language.": "Wskazówka: Ustawienia zawiera tryby odtwarzania, fokus HOME i język.",
     "Added %lld tracks to Playlist.": "Dodano %lld utworów do playlisty.",
     "%u tracks": "%u utworów",
-    "Language changed": "Język zmieniony"
+    "Language changed": "Język zmieniony",
+    "Previous": "Poprzedni",
+    "Next": "Następny",
+    "Repeat": "Powtórz",
+    "Select": "Wybierz",
+    "Back": "Wstecz",
+    "Selected": "Wybrano"
 }

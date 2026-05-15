@@ -474,9 +474,13 @@ void BrowserGui::buildList() {
 
     // ---- Folders -----------------------------------------------------------
     if (!folders.empty()) {
-        m_list->addItem(new tsl::elm::CategoryHeader(
-            m_cwd + " " + ult::DIVIDER_SYMBOL + " \uE0E3 " + std::string(i18n::t(i18n::Str::AddToPlaylistShort)) + " " +
-            ult::DIVIDER_SYMBOL + " \uE0B6 " + i18n::t(i18n::Str::SetAsStartupShort), true));
+        const std::string folder_hint =
+            m_cwd + " " + ult::DIVIDER_SYMBOL +
+            " A " + i18n::t(i18n::Str::Browse) + " " + ult::DIVIDER_SYMBOL +
+            " Y " + i18n::t(i18n::Str::AddToPlaylistShort) + " " + ult::DIVIDER_SYMBOL +
+            " − " + i18n::t(i18n::Str::SetAsStartupShort) + " " + ult::DIVIDER_SYMBOL +
+            " B " + i18n::t(i18n::Str::Back);
+        m_list->addItem(new tsl::elm::CategoryHeader(folder_hint, true));
 
         std::sort(folders.begin(), folders.end(), ListItemTextCompare);
         for (auto *el : folders) {
@@ -493,7 +497,14 @@ void BrowserGui::buildList() {
 
     // ---- Files -------------------------------------------------------------
     if (!file_entries.empty()) {
-        m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::Tracks)));
+        const std::string file_hint =
+            std::string(i18n::t(i18n::Str::Tracks)) + "  " +
+            "A " + i18n::t(i18n::Str::Play) + "  " +
+            "Y " + i18n::t(i18n::Str::AddToPlaylistShort) + "  " +
+            "X " + i18n::t(i18n::Str::AddAll) + "  " +
+            "− " + i18n::t(i18n::Str::SetAsStartupShort) + "  " +
+            "B " + i18n::t(i18n::Str::Back);
+        m_list->addItem(new tsl::elm::CategoryHeader(file_hint, true));
 
         std::sort(file_entries.begin(), file_entries.end(), FileEntryCompare);
 
