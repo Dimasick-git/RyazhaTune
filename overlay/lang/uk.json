@@ -114,7 +114,7 @@
     "Set As Startup": "На автозапуск",
     "Set as Startup": "На автозапуск",
     "Settings": "Опції",
-    "Shuffle": "Випадковий порядок",
+    "Shuffle": "Випадково",
     "Startup File Set": "Файл автозапуску задано",
     "Startup Folder Set": "Папку автозапуску задано",
     "Startup Path Removed": "Шлях видалено",
@@ -155,5 +155,11 @@
     "Tip: Settings has playback modes, Home Focus, and language.": "Підказка: у «Налаштуваннях» — режими, фокус HOME та мова.",
     "Added %lld tracks to Playlist.": "Додано %lld треків до плейлисту.",
     "%u tracks": "%u треків",
-    "Language changed": "Мову змінено"
+    "Language changed": "Мову змінено",
+    "Previous": "Назад",
+    "Next": "Далі",
+    "Repeat": "Повтор",
+    "Select": "Вибрати",
+    "Back": "Назад",
+    "Selected": "Вибрано"
 }

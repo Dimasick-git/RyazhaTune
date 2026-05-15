@@ -17,6 +17,7 @@ namespace tune::impl {
     namespace {
         s16 g_waveform_buffer[512] = {0};
         std::mutex g_waveform_mutex;
+        bool g_filter_paused = false;
     }
 
     namespace {
@@ -475,14 +476,29 @@ namespace tune::impl {
                     }
 
                     const auto nSamples = source->Resample((u8*)buffer->buffer, buffer_size);
-                    {
-                        std::scoped_lock lk(g_waveform_mutex);
-                        size_t copy_count = std::min((size_t)512, (size_t)(nSamples / sizeof(s16)));
-                        std::memcpy(g_waveform_buffer, buffer->buffer, copy_count * sizeof(s16));
-                    }
                     if (nSamples <= 0) {
                         error = true;
                     } else {
+                        /* Keep a compact, always-fresh mono waveform snapshot for
+                         * the overlay visualizer.  Audio is stereo s16, so mix L/R
+                         * and stride across the whole just-rendered audout buffer
+                         * instead of copying only its first samples. */
+                        {
+                            std::scoped_lock lk(g_waveform_mutex);
+                            const size_t sample_count = static_cast<size_t>(nSamples) / sizeof(s16);
+                            const size_t frame_count  = sample_count / 2;
+                            const s16 *samples = static_cast<const s16 *>(buffer->buffer);
+                            if (frame_count == 0) {
+                                std::memset(g_waveform_buffer, 0, sizeof(g_waveform_buffer));
+                            } else {
+                                for (size_t i = 0; i < 512; ++i) {
+                                    const size_t frame = std::min(frame_count - 1, (i * frame_count) / 512);
+                                    const int mixed = (static_cast<int>(samples[frame * 2])
+                                                     + static_cast<int>(samples[frame * 2 + 1])) / 2;
+                                    g_waveform_buffer[i] = static_cast<s16>(mixed);
+                                }
+                            }
+                        }
                         buffer->data_size = nSamples;
                         R_TRY(audoutAppendAudioOutBuffer(buffer));
                     }
@@ -1824,6 +1840,7 @@ namespace tune::impl {
     void Play() {
         g_should_pause       = false;
         g_user_paused        = false;  // clears the pause-veto
+        g_filter_paused      = false;
         g_saved_pause_state  = false;  // keep focus-suspend snapshot in sync
         leventSignal(&g_unpause_event);
     }
@@ -1988,6 +2005,25 @@ namespace tune::impl {
         size_t copy_count = std::min(count, (size_t)512);
         std::memcpy(out_buffer, g_waveform_buffer, copy_count * sizeof(s16));
     }
+
+    void ApplyTitleFilter() {
+        u64 pid{}, tid{};
+        pm::getCurrentPidTid(&pid, &tid);
+
+        if (!config::is_title_allowed(tid)) {
+            g_should_pause  = true;
+            g_filter_paused = true;
+            return;
+        }
+
+        if (!g_user_paused &&
+            (g_filter_paused || config::get_tune_mode() != config::TuneMode::Normal)) {
+            g_should_pause  = false;
+            g_filter_paused = false;
+            leventSignal(&g_unpause_event);
+        }
+    }
+
     void ClearQueue() {
         {
             std::scoped_lock lk(g_mutex);

@@ -1,6 +1,6 @@
 export GITHASH 		:= $(shell git -c safe.directory=$(CURDIR) rev-parse --short HEAD 2>/dev/null || echo unknown)
 export VERSION := 5.0.0
-export API_VERSION 	:= 4
+export API_VERSION 	:= 5
 export WANT_FLAC 	:= 1
 export WANT_MP3 	:= 1
 export WANT_WAV 	:= 1

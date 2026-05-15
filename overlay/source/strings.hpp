@@ -73,6 +73,13 @@ enum class Str : std::uint8_t {
     TrackCountOne,
     /** snprintf format, one arg: unsigned count — used when not Russian */
     TrackCountManyFmt,
+    Shuffle,
+    Previous,
+    Next,
+    Repeat,
+    Select,
+    Back,
+    Selected,
     Count_
 };
 

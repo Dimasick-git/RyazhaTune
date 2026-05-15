@@ -62,7 +62,7 @@
     "ONE_TRACK": "1 首",
     "N_TRACKS": " 首",
     "RyazhTune Settings": "RyazhTune 设置",
-    "Shuffle": "随机播放",
+    "Shuffle": "随机",
     "Repeat Mode": "重复模式",
     "Volume": "音量",
     "Auto-play Startup": "开机启动",
@@ -155,5 +155,11 @@
     "Tip: Settings has playback modes, Home Focus, and language.": "提示：设置中有播放模式、主页焦点和语言。",
     "Added %lld tracks to Playlist.": "已将%lld首歌曲添加到播放列表。",
     "%u tracks": "%u首",
-    "Language changed": "语言已更改"
+    "Language changed": "语言已更改",
+    "Previous": "上一首",
+    "Next": "下一首",
+    "Repeat": "重复",
+    "Select": "选择",
+    "Back": "返回",
+    "Selected": "已选择"
 }
