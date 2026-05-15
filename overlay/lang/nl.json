@@ -140,5 +140,20 @@
     "Français": "French",
     "Español": "Spanish",
     "日本語": "Japanese",
-    "한국어": "Korean"
+    "한국어": "Korean",
+    "Too many entries in folder.": "Te veel items in de map.",
+    "Failed to switch to folder.": "Kon niet wisselen van map.",
+    "Added 1 track to Playlist.": "1 nummer toegevoegd aan afspeellijst.",
+    "Failed to add track.": "Nummer kon niet worden toegevoegd.",
+    "Something went wrong.": "Er is iets misgegaan.",
+    "Unknown Artist": "Onbekende artiest",
+    "Interface updated — no restart needed.": "Interface bijgewerkt — geen herstart nodig.",
+    "Open Browse and add tracks here.": "Open Bladeren en voeg nummers toe.",
+    "Y remove · X clear · − startup": "Y verwijderen · X wissen · − opstarten",
+    "Press + within a few seconds to undo.": "Druk binnen enkele seconden op + om ongedaan te maken.",
+    "Track restored to playlist.": "Nummer hersteld in afspeellijst.",
+    "Tip: Settings has playback modes, Home Focus, and language.": "Tip: Instellingen heeft afspeelmodi, HOME-focus en taal.",
+    "Added %lld tracks to Playlist.": "%lld nummers toegevoegd aan afspeellijst.",
+    "%u tracks": "%u nummers",
+    "Language changed": "Taal gewijzigd"
 }

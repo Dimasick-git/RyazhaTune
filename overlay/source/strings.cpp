@@ -72,7 +72,7 @@ constexpr std::array<Pair, static_cast<std::size_t>(Str::Count_)> kPairs = {{
     {"No startup path set in config.", "Путь не задан"},
     {"Something went wrong.", "Что-то пошло не так."},
     {"Unknown Artist", "Неизвестный исполнитель"},
-    {"Interface updated — no restart needed.", "Интерфейс обновлён — перезапуск не нужен."},
+    {"Language changed", "Язык изменён"},
     {"Open Browse and add tracks here.", "Откройте «Обзор» и добавьте треки сюда."},
     {"Y remove · X clear · − startup", "Y — убрать · X — всё · − автозапуск"},
     {"Press + within a few seconds to undo.", "Нажмите + в течение нескольких секунд для отмены."},
@@ -114,7 +114,16 @@ const char *t(Str id) {
     const auto i = idx(id);
     if (i >= kPairs.size())
         return "";
-    return isRussian() ? kPairs[i].ru : kPairs[i].en;
+    if (isRussian())
+        return kPairs[i].ru;
+    // For non-Russian languages: look up the English key in the loaded JSON
+    // translation cache (populated by reloadRyazhTuneTranslations()).
+    // Fall back to the built-in English string when no translation is found.
+    const char *en_key = kPairs[i].en;
+    const auto it = ult::translationCache.find(en_key);
+    if (it != ult::translationCache.end())
+        return it->second.c_str();
+    return en_key;
 }
 
 const char *trackCountLabel(std::uint32_t count) {

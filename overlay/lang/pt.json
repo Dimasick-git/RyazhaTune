@@ -140,5 +140,20 @@
     "Français": "French",
     "Español": "Spanish",
     "日本語": "Japanese",
-    "한국어": "Korean"
+    "한국어": "Korean",
+    "Too many entries in folder.": "Entradas demais na pasta.",
+    "Failed to switch to folder.": "Falha ao mudar de pasta.",
+    "Added 1 track to Playlist.": "1 faixa adicionada à lista.",
+    "Failed to add track.": "Falha ao adicionar faixa.",
+    "Something went wrong.": "Algo deu errado.",
+    "Unknown Artist": "Artista desconhecido",
+    "Interface updated — no restart needed.": "Interface atualizada — sem necessidade de reiniciar.",
+    "Open Browse and add tracks here.": "Abra Explorar e adicione faixas aqui.",
+    "Y remove · X clear · − startup": "Y remover · X limpar · − inicialização",
+    "Press + within a few seconds to undo.": "Pressione + em poucos segundos para desfazer.",
+    "Track restored to playlist.": "Faixa restaurada na lista.",
+    "Tip: Settings has playback modes, Home Focus, and language.": "Dica: Configurações tem modos de reprodução, Foco HOME e idioma.",
+    "Added %lld tracks to Playlist.": "%lld faixas adicionadas à lista.",
+    "%u tracks": "%u faixas",
+    "Language changed": "Idioma alterado"
 }

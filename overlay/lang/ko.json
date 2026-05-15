@@ -140,5 +140,20 @@
     "Français": "French",
     "Español": "Spanish",
     "日本語": "Japanese",
-    "한국어": "Korean"
+    "한국어": "Korean",
+    "Too many entries in folder.": "폴더에 항목이 너무 많습니다.",
+    "Failed to switch to folder.": "폴더 전환에 실패했습니다.",
+    "Added 1 track to Playlist.": "재생목록에 1곡 추가됨.",
+    "Failed to add track.": "트랙 추가에 실패했습니다.",
+    "Something went wrong.": "문제가 발생했습니다.",
+    "Unknown Artist": "알 수 없는 아티스트",
+    "Interface updated — no restart needed.": "인터페이스 업데이트됨 — 재시작 불필요.",
+    "Open Browse and add tracks here.": "탐색을 열고 트랙을 추가하세요.",
+    "Y remove · X clear · − startup": "Y 제거 · X 지우기 · − 시작",
+    "Press + within a few seconds to undo.": "몇 초 안에 +를 눌러 실행 취소.",
+    "Track restored to playlist.": "트랙이 재생목록에 복원됨.",
+    "Tip: Settings has playback modes, Home Focus, and language.": "팁: 설정에는 재생 모드, HOME 포커스, 언어가 있습니다.",
+    "Added %lld tracks to Playlist.": "재생목록에 %lld곡 추가됨.",
+    "%u tracks": "%u곡",
+    "Language changed": "언어가 변경되었습니다"
 }

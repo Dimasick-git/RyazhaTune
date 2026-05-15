@@ -140,5 +140,20 @@
     "Français": "French",
     "Español": "Spanish",
     "日本語": "Japanese",
-    "한국어": "Korean"
+    "한국어": "Korean",
+    "Too many entries in folder.": "Забагато записів у папці.",
+    "Failed to switch to folder.": "Не вдалося перейти до папки.",
+    "Added 1 track to Playlist.": "1 трек додано до плейлисту.",
+    "Failed to add track.": "Не вдалося додати трек.",
+    "Something went wrong.": "Щось пішло не так.",
+    "Unknown Artist": "Невідомий виконавець",
+    "Interface updated — no restart needed.": "Інтерфейс оновлено — перезапуск не потрібен.",
+    "Open Browse and add tracks here.": "Відкрийте «Огляд» і додайте треки сюди.",
+    "Y remove · X clear · − startup": "Y — видалити · X — очистити · − автозапуск",
+    "Press + within a few seconds to undo.": "Натисніть + протягом кількох секунд для скасування.",
+    "Track restored to playlist.": "Трек повернуто до плейлисту.",
+    "Tip: Settings has playback modes, Home Focus, and language.": "Підказка: у «Налаштуваннях» — режими, фокус HOME та мова.",
+    "Added %lld tracks to Playlist.": "Додано %lld треків до плейлисту.",
+    "%u tracks": "%u треків",
+    "Language changed": "Мову змінено"
 }

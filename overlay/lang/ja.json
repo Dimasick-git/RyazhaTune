@@ -140,5 +140,20 @@
     "Français": "French",
     "Español": "Spanish",
     "日本語": "Japanese",
-    "한국어": "Korean"
+    "한국어": "Korean",
+    "Too many entries in folder.": "フォルダ内のエントリが多すぎます。",
+    "Failed to switch to folder.": "フォルダの切り替えに失敗しました。",
+    "Added 1 track to Playlist.": "プレイリストに1曲追加しました。",
+    "Failed to add track.": "トラックの追加に失敗しました。",
+    "Something went wrong.": "問題が発生しました。",
+    "Unknown Artist": "不明なアーティスト",
+    "Interface updated — no restart needed.": "インターフェースを更新しました — 再起動不要。",
+    "Open Browse and add tracks here.": "ブラウズを開いてトラックを追加してください。",
+    "Y remove · X clear · − startup": "Y 削除 · X クリア · − 起動",
+    "Press + within a few seconds to undo.": "数秒以内に + を押して元に戻す。",
+    "Track restored to playlist.": "トラックをプレイリストに復元しました。",
+    "Tip: Settings has playback modes, Home Focus, and language.": "ヒント: 設定には再生モード、HOMEフォーカス、言語があります。",
+    "Added %lld tracks to Playlist.": "プレイリストに%lld曲追加しました。",
+    "%u tracks": "%u曲",
+    "Language changed": "言語が変更されました"
 }

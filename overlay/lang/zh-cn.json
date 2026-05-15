@@ -140,5 +140,20 @@
     "Français": "French",
     "Español": "Spanish",
     "日本語": "Japanese",
-    "한국어": "Korean"
+    "한국어": "Korean",
+    "Too many entries in folder.": "文件夹中条目过多。",
+    "Failed to switch to folder.": "无法切换文件夹。",
+    "Added 1 track to Playlist.": "已将1首歌曲添加到播放列表。",
+    "Failed to add track.": "添加曲目失败。",
+    "Something went wrong.": "出了点问题。",
+    "Unknown Artist": "未知艺术家",
+    "Interface updated — no restart needed.": "界面已更新 — 无需重启。",
+    "Open Browse and add tracks here.": "打开浏览并在此处添加曲目。",
+    "Y remove · X clear · − startup": "Y 删除 · X 清空 · − 启动",
+    "Press + within a few seconds to undo.": "几秒内按 + 撤销。",
+    "Track restored to playlist.": "曲目已恢复到播放列表。",
+    "Tip: Settings has playback modes, Home Focus, and language.": "提示：设置中有播放模式、主页焦点和语言。",
+    "Added %lld tracks to Playlist.": "已将%lld首歌曲添加到播放列表。",
+    "%u tracks": "%u首",
+    "Language changed": "语言已更改"
 }

@@ -727,17 +727,36 @@ void StatusBar::draw(tsl::gfx::Renderer *renderer) {
     const s32 art_sz  = ArtSize();
     const s32 art_off = ArtOffset();
     const s32 avail_w = this->getWidth() - 30;
-    /* --- Waveform Visualization --- */
+    /* --- Waveform Visualization ---
+     * Drawn between the album art and the song title.
+     * wave_y is placed just below the art block (art_sz + 11 = bottom of art,
+     * then +8 px gap, then centred on a 30-px tall strip). */
     if (m_playing) {
         const s32 wave_x = this->getX() + 15;
-        const s32 wave_y = this->getY() + 11 + art_sz / 2;
-        const s32 wave_w = avail_w;
-        const s32 wave_h = 40;
+        // Place the waveform strip below the album art, above the title text.
+        // title_y = getY() + art_sz + 4 + 20 + 10 + 11  (see title_y calculation below)
+        // We centre the 30-px strip between the bottom of the art and the title.
+        const s32 wave_strip_top = this->getY() + 11 + art_sz + 6;  // 6 px gap below art
+        const s32 wave_h         = 28;  // height of the waveform strip
+        const s32 wave_y         = wave_strip_top + wave_h / 2;  // centre line
+        const s32 wave_w         = avail_w;
+
+        // Find the peak amplitude in this frame for normalisation.
+        s32 peak = 1;
+        for (int i = 0; i < 64; i++) {
+            s32 v = std::abs((s32)m_waveform[i * 4]);
+            if (v > peak) peak = v;
+        }
+        // Clamp peak so very quiet passages still show some movement.
+        if (peak < 512) peak = 512;
+
         for (int i = 0; i < 64; i++) {
             s16 sample = m_waveform[i * 4];
-            s32 bar_h = (std::abs(sample) * wave_h) / 32768;
+            // Normalise against the local peak so bars fill the strip.
+            s32 bar_h = (std::abs((s32)sample) * wave_h) / peak;
             if (bar_h < 2) bar_h = 2;
-            renderer->drawRect(wave_x + (i * wave_w / 64), wave_y - bar_h / 2, (wave_w / 64) - 1, bar_h, a(0x7FFF));
+            renderer->drawRect(wave_x + (i * wave_w / 64), wave_y - bar_h / 2,
+                               (wave_w / 64) - 1, bar_h, a(0x7FFF));
         }
     }
 
