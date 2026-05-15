@@ -114,7 +114,7 @@
     "Set As Startup": "Als Autostart setzen",
     "Set as Startup": "Als Autostart setzen",
     "Settings": "Einstellungen",
-    "Shuffle": "Zufallswiedergabe",
+    "Shuffle": "Zufall",
     "Startup File Set": "Autostart-Datei gesetzt",
     "Startup Folder Set": "Autostart-Ordner gesetzt",
     "Startup Path Removed": "Autostart-Pfad entfernt",
@@ -155,5 +155,11 @@
     "Tip: Settings has playback modes, Home Focus, and language.": "Tipp: Einstellungen enthält Wiedergabemodi, HOME-Fokus und Sprache.",
     "Added %lld tracks to Playlist.": "%lld Titel zur Playlist hinzugefügt.",
     "%u tracks": "%u Titel",
-    "Language changed": "Sprache geändert"
+    "Language changed": "Sprache geändert",
+    "Previous": "Zurück",
+    "Next": "Weiter",
+    "Repeat": "Wiederholen",
+    "Select": "Wählen",
+    "Back": "Zurück",
+    "Selected": "Ausgewählt"
 }

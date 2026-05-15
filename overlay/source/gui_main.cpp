@@ -131,13 +131,6 @@ namespace {
         return 0;
     }
 
-    /** Uses loaded package JSON (`ult::translationCache`) when the key matches the native endonym. */
-    const char *localizedLanguageLabel(const char *native) {
-        const auto it = ult::translationCache.find(native);
-        if (it != ult::translationCache.end())
-            return it->second.c_str();
-        return native;
-    }
 }
 
 // ---------------------------------------------------------------------------
@@ -363,17 +356,22 @@ tsl::elm::Element* LanguageGui::createUI() {
     m_frame = new SysTuneOverlayFrame(/*pageLeft=*/i18n::t(i18n::Str::Settings), /*pageRight=*/"");
     m_list = new tsl::elm::List();
 
-    // Header: show A = select hint
-    m_list->addItem(new tsl::elm::CategoryHeader(std::string(i18n::t(i18n::Str::CategoryLanguage)) + "  \uE0E0"));
+    // Header: explicitly describe the helper buttons instead of showing bare glyphs.
+    const std::string language_hint =
+        std::string(i18n::t(i18n::Str::CategoryLanguage)) + "  " +
+        "\uE0E0 " + i18n::t(i18n::Str::Select) + "  " +
+        "\uE0E1 " + i18n::t(i18n::Str::Back);
+    m_list->addItem(new tsl::elm::CategoryHeader(language_hint));
 
     const size_t selected = currentLanguageIndex();
     for (size_t i = 0; i < std::size(kLanguages); ++i) {
         // Always show the native endonym (e.g. "简体中文", "Deutsch") — never
         // translate it through the cache so the list stays language-neutral.
-        const std::string lang_label = kLanguages[i].label;
         const bool is_selected = (i == selected);
-        // Mark the active language with INPROGRESS_SYMBOL in the value column.
-        auto *item = new tsl::elm::ListItem(lang_label, is_selected ? ult::INPROGRESS_SYMBOL : "");
+        const std::string lang_label = std::string(is_selected ? "● " : "  ") + kLanguages[i].label;
+        // Keep the status in the right column so the list reads as two columns:
+        // language name on the left, selected state on the right.
+        auto *item = new tsl::elm::ListItem(lang_label, is_selected ? i18n::t(i18n::Str::Selected) : "");
 
         item->setClickListener([i](u64 keys) -> bool {
             if (keys & HidNpadButton_A) {
@@ -397,7 +395,7 @@ tsl::elm::Element* LanguageGui::createUI() {
 
     m_frame->setContent(m_list);
     // Jump to the currently selected language row
-    m_list->jumpToItem(kLanguages[selected].label);
+    m_list->jumpToItem(std::string("● ") + kLanguages[selected].label);
     return m_frame;
 }
 
@@ -718,6 +716,7 @@ tsl::elm::Element* SettingsGui::createUI() {
             }
             config::set_tune_mode(next);
             mode_item->setValue(modeLabel());
+            tuneApplyTitleFilter();
             return true;
         });
         m_list->addItem(mode_item);
@@ -728,6 +727,10 @@ tsl::elm::Element* SettingsGui::createUI() {
             i18n::t(i18n::Str::WhitelistToggle), config::is_tid_whitelisted(tid), i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         whitelist_item->setStateChangedListener([tid](bool v) {
             config::set_tid_whitelisted(tid, v);
+            if (v)
+                config::set_tid_blacklisted(tid, false);
+            tuneApplyTitleFilter();
+            requestDeferredSettingsRebuild(i18n::t(i18n::Str::WhitelistToggle));
         });
         m_list->addItem(whitelist_item);
 
@@ -735,6 +738,10 @@ tsl::elm::Element* SettingsGui::createUI() {
             i18n::t(i18n::Str::BlacklistToggle), config::is_tid_blacklisted(tid), i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         blacklist_item->setStateChangedListener([tid](bool v) {
             config::set_tid_blacklisted(tid, v);
+            if (v)
+                config::set_tid_whitelisted(tid, false);
+            tuneApplyTitleFilter();
+            requestDeferredSettingsRebuild(i18n::t(i18n::Str::BlacklistToggle));
         });
         m_list->addItem(blacklist_item);
     }

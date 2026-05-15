@@ -142,6 +142,7 @@ Result tuneEnqueue(const char *path, TuneEnqueueType type);
 
 Result tuneRemove(u32 index);
 Result tuneGetWaveform(s16 *out_buffer, size_t count);
+Result tuneApplyTitleFilter();
 
 Result tuneQuit();
 
