@@ -130,6 +130,14 @@ namespace tune {
                     }
                     break;
 
+                case TuneIpcCmd_GetWaveform:
+                    if (r->hipc.meta.num_recv_buffers >= 1) {
+                        impl::GetWaveform(
+                            (s16 *)hipcGetBufferAddress(r->hipc.data.recv_buffers),
+                            hipcGetBufferSize(r->hipc.data.recv_buffers) / sizeof(s16));
+                        return 0;
+                    }
+                    break;
                 case TuneIpcCmd_Remove:
                     SET_SINGLE(u32, impl::Remove);
 

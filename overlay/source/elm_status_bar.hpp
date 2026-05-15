@@ -70,6 +70,7 @@ class StatusBar final : public tsl::elm::Element {
        libnx IPC sessions are thread-local so tuneSeek must always be
        called from the thread that opened the session. */
     std::atomic<u32> m_pending_seek_frame{UINT32_MAX};
+    s16 m_waveform[256] = {0};
 
     /* 0=Shuffle  1=Prev  2=Play  3=Next  4=Repeat */
     int m_active_btn = 2;

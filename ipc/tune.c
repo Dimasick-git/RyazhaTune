@@ -136,6 +136,12 @@ Result tuneEnqueue(const char *path, TuneEnqueueType type) {
                              .buffers = {{path, path_length}}, );
 }
 
+Result tuneGetWaveform(s16 *out_buffer, size_t count) {
+    return serviceDispatch(&g_tune, TuneIpcCmd_GetWaveform,
+                             .buffer_attrs = {SfBufferAttr_Out | SfBufferAttr_HipcMapAlias},
+                             .buffers = {{out_buffer, count * sizeof(s16)}},
+    );
+}
 Result tuneRemove(u32 index) {
     return serviceDispatchIn(&g_tune, TuneIpcCmd_Remove, index);
 }

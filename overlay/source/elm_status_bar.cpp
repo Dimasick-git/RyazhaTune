@@ -605,6 +605,11 @@ StatusBar::StatusBar() {
         this->m_shuffle = TuneShuffleMode_Off;
 
     if (R_SUCCEEDED(tuneGetCurrentQueueItem(path_buffer, FS_MAX_PATH, &this->m_stats))) {
+        if (this->m_playing) {
+            tuneGetWaveform(this->m_waveform, 256);
+        } else {
+            std::memset(this->m_waveform, 0, sizeof(this->m_waveform));
+        }
         m_last_full_path = path_buffer;
         NullLastDot(path_buffer);
         const char *slash = std::strrchr(path_buffer, '/');
@@ -719,6 +724,22 @@ bool StatusBar::onClick(u64 keys) {
 // draw
 // ---------------------------------------------------------------------------
 void StatusBar::draw(tsl::gfx::Renderer *renderer) {
+    const s32 art_sz  = ArtSize();
+    const s32 art_off = ArtOffset();
+    const s32 avail_w = this->getWidth() - 30;
+    /* --- Waveform Visualization --- */
+    if (m_playing) {
+        const s32 wave_x = this->getX() + 15;
+        const s32 wave_y = this->getY() + 11 + art_sz / 2;
+        const s32 wave_w = avail_w;
+        const s32 wave_h = 40;
+        for (int i = 0; i < 64; i++) {
+            s16 sample = m_waveform[i * 4];
+            s32 bar_h = (std::abs(sample) * wave_h) / 32768;
+            if (bar_h < 2) bar_h = 2;
+            renderer->drawRect(wave_x + (i * wave_w / 64), wave_y - bar_h / 2, (wave_w / 64) - 1, bar_h, a(0x7FFF));
+        }
+    }
     const s32 art_sz  = ArtSize();
     const s32 art_off = ArtOffset();
     const s32 avail_w = this->getWidth() - 30;
@@ -1109,6 +1130,11 @@ void StatusBar::update() {
         this->m_playing = false;
 
     if (R_SUCCEEDED(tuneGetCurrentQueueItem(path_buffer, FS_MAX_PATH, &this->m_stats))) {
+        if (this->m_playing) {
+            tuneGetWaveform(this->m_waveform, 256);
+        } else {
+            std::memset(this->m_waveform, 0, sizeof(this->m_waveform));
+        }
         s_no_song_ticks = 0;  // song present — reset debounce
         const size_t length = std::strlen(path_buffer);
         char fullPath[FS_MAX_PATH];

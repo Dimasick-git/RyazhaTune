@@ -14,6 +14,10 @@
 #include <strings.h>
 
 namespace tune::impl {
+    namespace {
+        s16 g_waveform_buffer[512] = {0};
+        std::mutex g_waveform_mutex;
+    }
 
     namespace {
         constexpr float VOLUME_MAX = 1.f;
@@ -471,6 +475,11 @@ namespace tune::impl {
                     }
 
                     const auto nSamples = source->Resample((u8*)buffer->buffer, buffer_size);
+                    {
+                        std::scoped_lock lk(g_waveform_mutex);
+                        size_t copy_count = std::min((size_t)512, (size_t)(nSamples / sizeof(s16)));
+                        std::memcpy(g_waveform_buffer, buffer->buffer, copy_count * sizeof(s16));
+                    }
                     if (nSamples <= 0) {
                         error = true;
                     } else {
@@ -1974,6 +1983,11 @@ namespace tune::impl {
         return 0;
     }
 
+    void GetWaveform(s16* out_buffer, size_t count) {
+        std::scoped_lock lk(g_waveform_mutex);
+        size_t copy_count = std::min(count, (size_t)512);
+        std::memcpy(out_buffer, g_waveform_buffer, copy_count * sizeof(s16));
+    }
     void ClearQueue() {
         {
             std::scoped_lock lk(g_mutex);
