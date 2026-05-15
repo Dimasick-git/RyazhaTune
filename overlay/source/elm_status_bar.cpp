@@ -740,9 +740,6 @@ void StatusBar::draw(tsl::gfx::Renderer *renderer) {
             renderer->drawRect(wave_x + (i * wave_w / 64), wave_y - bar_h / 2, (wave_w / 64) - 1, bar_h, a(0x7FFF));
         }
     }
-    const s32 art_sz  = ArtSize();
-    const s32 art_off = ArtOffset();
-    const s32 avail_w = this->getWidth() - 30;
 
     /* --- Album art --- */
     if (art_sz > 0) {
