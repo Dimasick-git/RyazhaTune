@@ -41,7 +41,7 @@ APP_TITLE	:=	RyazhTune
 
 # Defaults for standalone `make -C overlay` (root Makefile exports these).
 VERSION		?=	5.0.0
-API_VERSION	?=	4
+API_VERSION	?=	5
 
 TARGET		:=	RyazhTune-Overlay
 BUILD		:=	build
