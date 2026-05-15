@@ -81,6 +81,8 @@ enum class Str : std::uint8_t {
     Select,
     Back,
     Selected,
+    Remove,
+    RemoveAll,
     Count_
 };
 

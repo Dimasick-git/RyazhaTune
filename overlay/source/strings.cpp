@@ -90,6 +90,8 @@ constexpr std::array<Pair, static_cast<std::size_t>(Str::Count_)> kPairs = {{
     {"Select", "Выбрать"},
     {"Back", "Назад"},
     {"Selected", "Выбрано"},
+    {"Remove", "Удалить"},
+    {"Remove All", "Очистить все"},
 }};
 
 
@@ -166,6 +168,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kDe = 
     "Wählen",
     "Zurück",
     "Ausgewählt",
+    "Entfernen",
+    "Alle entfernen",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kEs = {{
@@ -236,6 +240,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kEs = 
     "Seleccionar",
     "Atrás",
     "Seleccionado",
+    "Eliminar",
+    "Eliminar todo",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kFr = {{
@@ -306,6 +312,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kFr = 
     "Sélectionner",
     "Retour",
     "Sélectionné",
+    "Retirer",
+    "Tout retirer",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kIt = {{
@@ -376,6 +384,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kIt = 
     "Seleziona",
     "Indietro",
     "Selezionato",
+    "Rimuovi",
+    "Rimuovi tutto",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kJa = {{
@@ -446,6 +456,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kJa = 
     "選択",
     "戻る",
     "選択済み",
+    "削除",
+    "すべて削除",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kKo = {{
@@ -516,6 +528,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kKo = 
     "선택",
     "뒤로",
     "선택됨",
+    "제거",
+    "모두 제거",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kNl = {{
@@ -586,6 +600,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kNl = 
     "Kiezen",
     "Terug",
     "Geselecteerd",
+    "Verwijderen",
+    "Alles verwijderen",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kPl = {{
@@ -656,6 +672,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kPl = 
     "Wybierz",
     "Wstecz",
     "Wybrano",
+    "Usuń",
+    "Usuń wszystko",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kPt = {{
@@ -726,6 +744,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kPt = 
     "Selecionar",
     "Voltar",
     "Selecionado",
+    "Remover",
+    "Remover tudo",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kUk = {{
@@ -796,6 +816,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kUk = 
     "Вибрати",
     "Назад",
     "Вибрано",
+    "Видалити",
+    "Очистити все",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kZh = {{
@@ -866,6 +888,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kZh = 
     "选择",
     "返回",
     "已选择",
+    "移除",
+    "全部移除",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kZhCn = {{
@@ -936,6 +960,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kZhCn 
     "选择",
     "返回",
     "已选择",
+    "移除",
+    "全部移除",
 }};
 
 constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kZhTw = {{
@@ -1006,6 +1032,8 @@ constexpr std::array<const char *, static_cast<std::size_t>(Str::Count_)> kZhTw 
     "選擇",
     "返回",
     "已選擇",
+    "移除",
+    "全部移除",
 }};
 
 constexpr std::array<LocaleTable, 13> kLocaleTables = {{
