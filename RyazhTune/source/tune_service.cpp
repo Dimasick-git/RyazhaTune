@@ -138,6 +138,11 @@ namespace tune {
                         return 0;
                     }
                     break;
+
+                case TuneIpcCmd_ApplyTitleFilter:
+                    impl::ApplyTitleFilter();
+                    return 0;
+
                 case TuneIpcCmd_Remove:
                     SET_SINGLE(u32, impl::Remove);
 

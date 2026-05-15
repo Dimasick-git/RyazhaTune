@@ -17,6 +17,7 @@ namespace tune::impl {
     namespace {
         s16 g_waveform_buffer[512] = {0};
         std::mutex g_waveform_mutex;
+        bool g_filter_paused = false;
     }
 
     namespace {
@@ -1839,6 +1840,7 @@ namespace tune::impl {
     void Play() {
         g_should_pause       = false;
         g_user_paused        = false;  // clears the pause-veto
+        g_filter_paused      = false;
         g_saved_pause_state  = false;  // keep focus-suspend snapshot in sync
         leventSignal(&g_unpause_event);
     }
@@ -2003,6 +2005,25 @@ namespace tune::impl {
         size_t copy_count = std::min(count, (size_t)512);
         std::memcpy(out_buffer, g_waveform_buffer, copy_count * sizeof(s16));
     }
+
+    void ApplyTitleFilter() {
+        u64 pid{}, tid{};
+        pm::getCurrentPidTid(&pid, &tid);
+
+        if (!config::is_title_allowed(tid)) {
+            g_should_pause  = true;
+            g_filter_paused = true;
+            return;
+        }
+
+        if (!g_user_paused &&
+            (g_filter_paused || config::get_tune_mode() != config::TuneMode::Normal)) {
+            g_should_pause  = false;
+            g_filter_paused = false;
+            leventSignal(&g_unpause_event);
+        }
+    }
+
     void ClearQueue() {
         {
             std::scoped_lock lk(g_mutex);

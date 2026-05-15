@@ -727,36 +727,43 @@ void StatusBar::draw(tsl::gfx::Renderer *renderer) {
     const s32 art_sz  = ArtSize();
     const s32 art_off = ArtOffset();
     const s32 avail_w = this->getWidth() - 30;
-    /* --- Waveform Visualization ---
-     * Drawn between the album art and the song title.
-     * wave_y is placed just below the art block (art_sz + 11 = bottom of art,
-     * then +8 px gap, then centred on a 30-px tall strip). */
-    if (m_playing) {
+    /* --- Reactive audio visualizer ---
+     * A compact smoothed spectrum-style strip.  It averages chunks of the
+     * latest mono waveform snapshot, applies decay, and stays in the narrow
+     * gap between art and title so it reacts to sound without covering text. */
+    {
+        constexpr int kBars = 32;
         const s32 wave_x = this->getX() + 15;
-        // Place the waveform strip below the album art, above the title text.
-        // title_y = getY() + art_sz + 4 + 20 + 10 + 11  (see title_y calculation below)
-        // We centre the 30-px strip between the bottom of the art and the title.
-        const s32 wave_strip_top = this->getY() + 11 + art_sz + 6;  // 6 px gap below art
-        const s32 wave_h         = 28;  // height of the waveform strip
-        const s32 wave_y         = wave_strip_top + wave_h / 2;  // centre line
-        const s32 wave_w         = avail_w;
+        const s32 wave_h = 18;
+        const s32 wave_y = this->getY() + 11 + art_sz + 18;
+        const s32 wave_w = avail_w;
 
-        // Find the peak amplitude in this frame for normalisation.
-        s32 peak = 1;
-        for (int i = 0; i < 64; i++) {
-            s32 v = std::abs((s32)m_waveform[i * 4]);
-            if (v > peak) peak = v;
+        s32 peak = 256;
+        s32 energy[kBars] = {};
+        for (int bar = 0; bar < kBars; ++bar) {
+            s32 sum = 0;
+            for (int j = 0; j < 8; ++j)
+                sum += std::abs(static_cast<s32>(m_waveform[bar * 8 + j]));
+            energy[bar] = sum / 8;
+            peak = std::max(peak, energy[bar]);
         }
-        // Clamp peak so very quiet passages still show some movement.
-        if (peak < 512) peak = 512;
 
-        for (int i = 0; i < 64; i++) {
-            s16 sample = m_waveform[i * 4];
-            // Normalise against the local peak so bars fill the strip.
-            s32 bar_h = (std::abs((s32)sample) * wave_h) / peak;
-            if (bar_h < 2) bar_h = 2;
-            renderer->drawRect(wave_x + (i * wave_w / 64), wave_y - bar_h / 2,
-                               (wave_w / 64) - 1, bar_h, a(0x7FFF));
+        for (int bar = 0; bar < kBars; ++bar) {
+            const u8 target = m_playing
+                ? static_cast<u8>(std::clamp((energy[bar] * wave_h) / peak, 0, wave_h))
+                : 0;
+            if (target >= m_eq_bars[bar])
+                m_eq_bars[bar] = target;
+            else
+                m_eq_bars[bar] = static_cast<u8>((m_eq_bars[bar] * 3) / 4);
+
+            const s32 bar_w = std::max<s32>(2, wave_w / kBars - 2);
+            const s32 bar_h = std::max<s32>(m_eq_bars[bar], m_eq_bars[bar] ? 2 : 0);
+            if (bar_h > 0) {
+                const u16 color = (bar & 1) ? 0x8CFF : 0x5CFF;
+                renderer->drawRect(wave_x + (bar * wave_w / kBars),
+                                   wave_y - bar_h / 2, bar_w, bar_h, a(color));
+            }
         }
     }
 
@@ -1037,24 +1044,6 @@ void StatusBar::draw(tsl::gfx::Renderer *renderer) {
     this->GetPlaybackSymbol().draw(GetPlayStateX() + (this->m_playing ? 0 : 2),
                                    GetPlayStateY(), renderer, tsl::style::color::ColorText);
     symbol::next::symbol.draw  (GetNextX(),     GetNextY(),    renderer, tsl::style::color::ColorText);
-
-    /* Text labels for the helper/player buttons.  The icons stay as the large
-     * touch targets, while these captions make it clear what each button does
-     * after a language change. */
-    auto drawButtonLabel = [&](const char *text, s32 centerX, s32 centerY) {
-        constexpr u32 fontSize = 12;
-        const auto width = renderer->drawString(text, false, 0, 0, fontSize,
-                                                tsl::style::color::ColorTransparent).first;
-        renderer->drawString(text, false, centerX - static_cast<s32>(width) / 2,
-                             centerY + 22, fontSize, tsl::offTextColor);
-    };
-
-    drawButtonLabel(i18n::t(i18n::Str::Shuffle), GetShuffleX(), GetShuffleY());
-    drawButtonLabel(i18n::t(i18n::Str::Previous), GetPrevX(), GetPrevY());
-    drawButtonLabel(this->m_playing ? i18n::t(i18n::Str::Pause) : i18n::t(i18n::Str::Play),
-                    GetPlayStateX(), GetPlayStateY());
-    drawButtonLabel(i18n::t(i18n::Str::Next), GetNextX(), GetNextY());
-    drawButtonLabel(i18n::t(i18n::Str::Repeat), GetRepeatX(), GetRepeatY());
 }
 
 // ---------------------------------------------------------------------------

@@ -189,7 +189,10 @@ auto is_tid_whitelisted(u64 tid) -> bool {
 
 void set_tid_whitelisted(u64 tid, bool value) {
     create_config_dir();
-    ini_putl("whitelist", get_tid_str(tid), value, CONFIG_PATH);
+    if (value)
+        ini_putl("whitelist", get_tid_str(tid), true, CONFIG_PATH);
+    else
+        ini_puts("whitelist", get_tid_str(tid), nullptr, CONFIG_PATH);
 }
 
 auto is_tid_blacklisted(u64 tid) -> bool {
@@ -198,10 +201,20 @@ auto is_tid_blacklisted(u64 tid) -> bool {
 
 void set_tid_blacklisted(u64 tid, bool value) {
     create_config_dir();
-    ini_putl("blacklist", get_tid_str(tid), value, CONFIG_PATH);
+    if (value)
+        ini_putl("blacklist", get_tid_str(tid), true, CONFIG_PATH);
+    else
+        ini_puts("blacklist", get_tid_str(tid), nullptr, CONFIG_PATH);
 }
 
 auto is_title_allowed(u64 tid) -> bool {
+    /* Filter modes are for applications/games. Keep HOME/system fallback TIDs
+     * outside the lists so HOME focus policy and startup behavior do not get
+     * accidentally blocked by an empty whitelist. */
+    constexpr u64 kHomeScreenTid = 0x0100000000001000ULL;
+    if (tid == 0 || tid == kHomeScreenTid)
+        return true;
+
     switch (get_tune_mode()) {
         case TuneMode::Whitelist:
             return is_tid_whitelisted(tid);

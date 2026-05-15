@@ -716,6 +716,7 @@ tsl::elm::Element* SettingsGui::createUI() {
             }
             config::set_tune_mode(next);
             mode_item->setValue(modeLabel());
+            tuneApplyTitleFilter();
             return true;
         });
         m_list->addItem(mode_item);
@@ -726,6 +727,10 @@ tsl::elm::Element* SettingsGui::createUI() {
             i18n::t(i18n::Str::WhitelistToggle), config::is_tid_whitelisted(tid), i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         whitelist_item->setStateChangedListener([tid](bool v) {
             config::set_tid_whitelisted(tid, v);
+            if (v)
+                config::set_tid_blacklisted(tid, false);
+            tuneApplyTitleFilter();
+            requestDeferredSettingsRebuild(i18n::t(i18n::Str::WhitelistToggle));
         });
         m_list->addItem(whitelist_item);
 
@@ -733,6 +738,10 @@ tsl::elm::Element* SettingsGui::createUI() {
             i18n::t(i18n::Str::BlacklistToggle), config::is_tid_blacklisted(tid), i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         blacklist_item->setStateChangedListener([tid](bool v) {
             config::set_tid_blacklisted(tid, v);
+            if (v)
+                config::set_tid_whitelisted(tid, false);
+            tuneApplyTitleFilter();
+            requestDeferredSettingsRebuild(i18n::t(i18n::Str::BlacklistToggle));
         });
         m_list->addItem(blacklist_item);
     }

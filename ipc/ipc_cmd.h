@@ -33,5 +33,6 @@ enum TuneIpcCmd {
     TuneIpcCmd_QuitServer = 50,
 
     TuneIpcCmd_GetWaveform = 60,
+    TuneIpcCmd_ApplyTitleFilter = 61,
     TuneIpcCmd_GetApiVersion = 5000,
 };
