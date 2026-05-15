@@ -156,5 +156,8 @@ Result tuneQuit() {
 }
 
 Result tuneGetApiVersion(u32 *version) {
-    return serviceDispatchOut(&g_tune, TuneIpcCmd_GetApiVersion, *version);
+    u32 tmp = 0;
+    Result rc = serviceDispatchOut(&g_tune, TuneIpcCmd_GetApiVersion, tmp);
+    if (R_SUCCEEDED(rc) && version) *version = tmp;
+    return rc;
 }

@@ -34,6 +34,7 @@ namespace tune {
             switch (r->data.cmdId) {
                 case TuneIpcCmd_GetStatus:
                     GET_SINGLE(bool, impl::GetStatus);
+                    break;
 
                 case TuneIpcCmd_Play:
                     impl::Play();
@@ -53,36 +54,47 @@ namespace tune {
 
                 case TuneIpcCmd_GetVolume:
                     GET_SINGLE(float, impl::GetVolume);
+                    break;
 
                 case TuneIpcCmd_SetVolume:
                     SET_SINGLE(float, impl::SetVolume);
+                    break;
 
                 case TuneIpcCmd_GetTitleVolume:
                     GET_SINGLE(float, impl::GetTitleVolume);
+                    break;
 
                 case TuneIpcCmd_SetTitleVolume:
                     SET_SINGLE(float, impl::SetTitleVolume);
+                    break;
 
                 case TuneIpcCmd_GetDefaultTitleVolume:
                     GET_SINGLE(float, impl::GetDefaultTitleVolume);
+                    break;
 
                 case TuneIpcCmd_SetDefaultTitleVolume:
                     SET_SINGLE(float, impl::SetDefaultTitleVolume);
+                    break;
 
                 case TuneIpcCmd_GetRepeatMode:
                     GET_SINGLE(RepeatMode, impl::GetRepeatMode);
+                    break;
 
                 case TuneIpcCmd_SetRepeatMode:
                     SET_SINGLE(RepeatMode, impl::SetRepeatMode);
+                    break;
 
                 case TuneIpcCmd_GetShuffleMode:
                     GET_SINGLE(ShuffleMode, impl::GetShuffleMode);
+                    break;
 
                 case TuneIpcCmd_SetShuffleMode:
                     SET_SINGLE(ShuffleMode, impl::SetShuffleMode);
+                    break;
 
                 case TuneIpcCmd_GetPlaylistSize:
                     GET_SINGLE(u32, impl::GetPlaylistSize);
+                    break;
 
                 case TuneIpcCmd_GetPlaylistItem:
                     if (r->hipc.meta.num_recv_buffers >= 1 && r->data.size >= sizeof(u32)) {
@@ -117,9 +129,11 @@ namespace tune {
 
                 case TuneIpcCmd_Select:
                     SET_SINGLE(u32, impl::Select);
+                    break;
 
                 case TuneIpcCmd_Seek:
                     SET_SINGLE(u32, impl::Seek);
+                    break;
 
                 case TuneIpcCmd_Enqueue:
                     if (r->hipc.meta.num_send_buffers >= 1 && r->data.size >= sizeof(EnqueueType)) {
@@ -145,6 +159,7 @@ namespace tune {
 
                 case TuneIpcCmd_Remove:
                     SET_SINGLE(u32, impl::Remove);
+                    break;
 
                 case TuneIpcCmd_QuitServer:
                     running = false;
