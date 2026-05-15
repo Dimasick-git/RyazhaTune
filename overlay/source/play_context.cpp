@@ -1,6 +1,7 @@
 #include "play_context.hpp"
 
 #include "tune.h"
+#include "strings.hpp"
 
 #include <tesla.hpp>
 #include <cstdio>
@@ -8,6 +9,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <strings.h>
+#include <string>
 
 // =============================================================================
 // play_ctx implementation
@@ -22,6 +24,8 @@ namespace {
     Source                   g_source      = Source::Playlist;
     std::string              g_folder_path;
     std::vector<std::string> g_saved;
+    u32                      g_active_playlist = 0;
+    static constexpr u32     kMaxPlaylists = 5;
 
     // g_current_path  — last path confirmed by IPC (tuneGetCurrentQueueItem).
     // g_pending_path  — path we intend to be current after a context switch.
@@ -48,8 +52,33 @@ namespace {
 
     constexpr const char* kSavedFile = "/config/RyazhTune/saved_playlist.txt";
     constexpr const char* kStateFile = "/config/RyazhTune/play_source.txt";
+    constexpr const char* kActivePlaylistFile = "/config/RyazhTune/active_playlist.txt";
 
     // ---- Disk helpers --------------------------------------------------
+
+    std::string savedPathFor(u32 idx) {
+        char path[FS_MAX_PATH] = {};
+        std::snprintf(path, sizeof(path), "/config/RyazhTune/saved_playlist_%u.txt",
+                      static_cast<unsigned>(idx + 1));
+        return path;
+    }
+
+    void writeActivePlaylist() {
+        FILE* f = fopen(kActivePlaylistFile, "w");
+        if (!f) return;
+        std::fprintf(f, "%u\n", static_cast<unsigned>(g_active_playlist));
+        fclose(f);
+    }
+
+    void readActivePlaylist() {
+        g_active_playlist = 0;
+        FILE* f = fopen(kActivePlaylistFile, "r");
+        if (!f) return;
+        unsigned idx = 0;
+        if (std::fscanf(f, "%u", &idx) == 1 && idx < kMaxPlaylists)
+            g_active_playlist = idx;
+        fclose(f);
+    }
 
     void writeState() {
         FILE* f = fopen(kStateFile, "w");
@@ -62,11 +91,23 @@ namespace {
     }
 
     void writeSaved() {
-        FILE* f = fopen(kSavedFile, "w");
+        const std::string path = savedPathFor(g_active_playlist);
+        FILE* f = fopen(path.c_str(), "w");
         if (!f) return;
         for (const auto& p : g_saved)
             fprintf(f, "%s\n", p.c_str());
         fclose(f);
+
+        // Keep the historical single-playlist file mirrored for slot 1 so
+        // existing tools/configs still see the default playlist.
+        if (g_active_playlist == 0) {
+            FILE* legacy = fopen(kSavedFile, "w");
+            if (legacy) {
+                for (const auto& p : g_saved)
+                    fprintf(legacy, "%s\n", p.c_str());
+                fclose(legacy);
+            }
+        }
     }
 
     void readState() {
@@ -94,7 +135,10 @@ namespace {
 
     void readSaved() {
         g_saved.clear();
-        FILE* f = fopen(kSavedFile, "r");
+        const std::string slot_path = savedPathFor(g_active_playlist);
+        FILE* f = fopen(slot_path.c_str(), "r");
+        if (!f && g_active_playlist == 0)
+            f = fopen(kSavedFile, "r");
         if (!f) return;
         char buf[FS_MAX_PATH + 2] = {};
         while (fgets(buf, (int)sizeof(buf), f)) {
@@ -167,6 +211,18 @@ Source             source()      { return g_source; }
 const std::string& folderPath()  { return g_folder_path; }
 const std::vector<std::string>& savedPlaylist() { return g_saved; }
 u32  savedPlaylistSize()         { return static_cast<u32>(g_saved.size()); }
+u32  activePlaylistIndex()       { return g_active_playlist; }
+u32  maxPlaylistCount()          { return kMaxPlaylists; }
+
+std::string activePlaylistLabel() {
+    i18n::syncFromConfig();
+    char buf[48];
+    std::snprintf(buf, sizeof(buf), "%s %u/%u",
+                  i18n::t(i18n::Str::PlaylistHeader),
+                  static_cast<unsigned>(g_active_playlist + 1),
+                  static_cast<unsigned>(kMaxPlaylists));
+    return buf;
+}
 
 // Return the pending (intended) path while IPC is still catching up.
 // Once poll() sees the service report this path, pending is cleared and
@@ -200,6 +256,35 @@ void savedRemove(u32 idx) {
 void savedClear() {
     g_saved.clear();
     writeSaved();
+}
+
+bool switchPlaylistSlot(u32 index, bool play_first) {
+    if (index >= kMaxPlaylists)
+        return false;
+
+    if (g_source == Source::Playlist && !g_saved.empty())
+        snapshotIPC();
+
+    g_active_playlist = index;
+    writeActivePlaylist();
+    readSaved();
+
+    if (!play_first)
+        return true;
+
+    if (g_saved.empty()) {
+        tunePause();
+        tuneClearQueue();
+        g_source = Source::Playlist;
+        g_folder_path.clear();
+        g_current_path[0] = '\0';
+        g_pending_path[0] = '\0';
+        g_is_playing = false;
+        writeState();
+        return true;
+    }
+
+    return switchToPlaylist(0);
 }
 
 // ---- Context switches ------------------------------------------------------
@@ -290,12 +375,16 @@ void init() {
     ult::currentHeapSize = ult::getCurrentHeapSize();
     ult::expandedMemory  = ult::currentHeapSize >= ult::OverlayHeapSize::Size_6MB;
 
+    readActivePlaylist();
     readState();
 
-    // Load saved[] from disk (authoritative user playlist).
+    // Load saved[] from disk (authoritative active user playlist).
     // Fall back to snapshotting IPC only if no file exists yet.
     {
-        FILE* probe = fopen(kSavedFile, "r");
+        const std::string slot_path = savedPathFor(g_active_playlist);
+        FILE* probe = fopen(slot_path.c_str(), "r");
+        if (!probe && g_active_playlist == 0)
+            probe = fopen(kSavedFile, "r");
         if (probe) {
             fclose(probe);
             readSaved();

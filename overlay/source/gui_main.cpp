@@ -465,7 +465,7 @@ tsl::elm::Element* SettingsGui::createUI() {
         const std::string queueVal = (init_inPlaylist && init_hasTrack)
             ? ult::INPROGRESS_SYMBOL
             : i18n::trackCountLabel(count);
-        m_queue_button = new tsl::elm::ListItem(i18n::t(i18n::Str::Playlist), queueVal);
+        m_queue_button = new tsl::elm::ListItem(play_ctx::activePlaylistLabel(), queueVal);
     }
 
     m_queue_button->setClickListener([this](u64 keys) -> bool {
@@ -914,7 +914,7 @@ tsl::elm::Element* SettingsGui::createUI() {
     if (!m_jump_to.empty()) {
         m_list->jumpToItem(m_jump_to);
     } else if (init_inPlaylist && init_hasTrack) {
-        m_list->jumpToItem(i18n::t(i18n::Str::Playlist));
+        m_list->jumpToItem(play_ctx::activePlaylistLabel());
     } else if (init_inFolder && init_hasTrack) {
         m_list->jumpToItem(i18n::t(i18n::Str::Browse));
     }

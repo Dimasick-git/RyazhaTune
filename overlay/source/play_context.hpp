@@ -17,7 +17,8 @@
 //              on-disk, untouched by folder playback.
 //
 // Persistence:
-//   /config/RyazhTune/saved_playlist.txt   — one absolute path per line
+//   /config/RyazhTune/saved_playlist_N.txt — one absolute path per line per slot
+//   /config/RyazhTune/active_playlist.txt  — current 0-based slot index
 //   /config/RyazhTune/play_source.txt      — "Playlist" | "Folder:<path>"
 //
 //   These files are updated on every mutation so state survives overlay
@@ -35,9 +36,16 @@ namespace play_ctx {
     Source             source();
     const std::string& folderPath();
 
-    // The user's saved playlist (absolute paths, sorted order preserved).
+    // The active saved playlist (absolute paths, sorted order preserved).
     const std::vector<std::string>& savedPlaylist();
     u32                             savedPlaylistSize();
+
+    // Fixed playlist slots. Names are generated from localized "Playlist" + number
+    // because keyboard input is unavailable in overlay context.
+    u32 activePlaylistIndex();      // 0-based
+    u32 maxPlaylistCount();
+    std::string activePlaylistLabel();
+    bool switchPlaylistSlot(u32 index, bool play_first);
 
     // Currently playing path and play/pause state.
     // Refreshed from IPC by poll(); always safe to call from draw/update.
