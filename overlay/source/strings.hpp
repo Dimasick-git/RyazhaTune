@@ -49,6 +49,7 @@ enum class Str : std::uint8_t {
     PlaylistEmpty,
     CouldNotOpenPrefix,
     AddToPlaylistShort,
+    AddAll,
     SetAsStartupShort,
     ScanStoppedTitle,
     ScanStoppedBody,

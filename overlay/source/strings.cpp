@@ -60,6 +60,7 @@ constexpr std::array<Pair, static_cast<std::size_t>(Str::Count_)> kPairs = {{
     {"Playlist is empty!", "Плейлист пуст!"},
     {"Couldn't open: ", "Не удалось открыть: "},
     {"Add To Playlist", "В плейлист"},
+    {"Add All", "Добавить все"},
     {"Set As Startup", "Автозапуск"},
     {"Stopped Scanning Folder", "Сканирование остановлено"},
     {"Too many entries in folder.", "Слишком много элементов в папке."},

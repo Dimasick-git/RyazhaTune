@@ -806,6 +806,51 @@ void StatusBar::draw(tsl::gfx::Renderer *renderer) {
         }
     }
 
+    /* --- Reactive audio visualizer ---
+     * Drawn as a compact neon strip over the bottom of the album art instead
+     * of consuming the text gap. This keeps the title/artist readable while
+     * the bars still react immediately to the latest mono waveform snapshot. */
+    if (art_sz > 0) {
+        constexpr int kBars = 32;
+        const s32 art_x  = this->getX() + 15 + (avail_w - art_sz) / 2;
+        const s32 art_y  = this->getY() + 11;
+        const s32 wave_x = art_x + 10;
+        const s32 wave_w = art_sz - 20;
+        const s32 wave_h = 20;
+        const s32 wave_y = art_y + art_sz - 18;
+
+        s32 peak = 256;
+        s32 energy[kBars] = {};
+        for (int bar = 0; bar < kBars; ++bar) {
+            s32 sum = 0;
+            for (int j = 0; j < 8; ++j)
+                sum += std::abs(static_cast<s32>(m_waveform[bar * 8 + j]));
+            energy[bar] = sum / 8;
+            peak = std::max(peak, energy[bar]);
+        }
+
+        renderer->drawRectAdaptive(wave_x - 4, wave_y - wave_h / 2 - 3,
+                                   wave_w + 8, wave_h + 6, a(0x7000));
+
+        for (int bar = 0; bar < kBars; ++bar) {
+            const u8 target = m_playing
+                ? static_cast<u8>(std::clamp((energy[bar] * wave_h) / peak, 0, wave_h))
+                : 0;
+            if (target >= m_eq_bars[bar])
+                m_eq_bars[bar] = target;
+            else
+                m_eq_bars[bar] = static_cast<u8>((m_eq_bars[bar] * 5) / 6);
+
+            const s32 bar_w = std::max<s32>(2, wave_w / kBars - 2);
+            const s32 bar_h = std::max<s32>(m_eq_bars[bar], m_eq_bars[bar] ? 2 : 0);
+            if (bar_h > 0) {
+                const u16 color = (bar & 1) ? 0x9DFF : 0x4CFF;
+                renderer->drawRect(wave_x + (bar * wave_w / kBars),
+                                   wave_y - bar_h / 2, bar_w, bar_h, a(color));
+            }
+        }
+    }
+
     /* --- Song title (centered; scrolls when wider than available width) --- */
     if (this->m_text_width == 0) {
         const u32 titleW = renderer->drawString(m_song_title_str.c_str(), false,
