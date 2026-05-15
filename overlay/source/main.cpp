@@ -108,10 +108,80 @@ class SysTuneOverlay final : public tsl::Overlay {
         reloadRyazhTuneTranslations();
         i18n::syncFromConfig();
 
-        u32 api;
+        u32 api = 0;
         if (R_FAILED(tuneGetApiVersion(&api)) || api != TUNE_API_VERSION) {
-            this->msg = "   Unsupported\n"
-                        "RyazhTune version!";
+            /* The running sysmodule has a different API version (e.g. an old
+             * build was loaded at boot).  Gracefully stop it and relaunch the
+             * current version so the overlay can connect to a compatible IPC
+             * endpoint.
+             *
+             * Steps:
+             *  1. Ask the old sysmodule to quit via IPC.
+             *  2. Close our IPC handle.
+             *  3. Poll until the named port disappears (up to 500 ms).
+             *  4. Relaunch via pmshell and poll until the port reappears.
+             *  5. Re-check the API version; show an error only if it still
+             *     doesn't match after the restart. */
+            tuneQuit();
+            tuneExit();
+
+            /* Wait for the old sysmodule to fully terminate. */
+            constexpr u64 kPollIntervalNs = 10'000'000ULL;  // 10 ms
+            constexpr int kWaitAttempts   = 50;             // 500 ms total
+            for (int i = 0; i < kWaitAttempts; ++i) {
+                svcSleepThread(kPollIntervalNs);
+                Result probe = tuneInitialize();
+                if (R_VALUE(probe) == KERNELRESULT(NotFound) ||
+                    R_VALUE(probe) == KERNELRESULT(ConnectionRefused)) {
+                    tuneExit();
+                    break;
+                }
+                tuneExit();
+            }
+
+            /* Relaunch the sysmodule. */
+            u64 pid = 0;
+            const NcmProgramLocation programLocation{
+                .program_id = 0x4200000000000000,
+                .storageID  = NcmStorageId_None,
+            };
+            rc = pmshellInitialize();
+            if (R_SUCCEEDED(rc)) {
+                rc = pmshellLaunchProgram(0, &programLocation, &pid);
+                pmshellExit();
+            }
+            if (R_FAILED(rc) || pid == 0) {
+                this->fail = rc;
+                this->msg  = "  Failed to\n"
+                            "relaunch sysmodule";
+                return;
+            }
+
+            /* Poll until the new sysmodule's IPC port is ready. */
+            constexpr int kRelaunchAttempts = 30;  // 300 ms total
+            rc = KERNELRESULT(NotFound);
+            for (int attempt = 0; attempt < kRelaunchAttempts; ++attempt) {
+                svcSleepThread(kPollIntervalNs);
+                rc = tuneInitialize();
+                if (R_SUCCEEDED(rc))
+                    break;
+                if (R_VALUE(rc) != KERNELRESULT(NotFound) &&
+                    R_VALUE(rc) != KERNELRESULT(ConnectionRefused))
+                    break;
+            }
+
+            if (R_FAILED(rc)) {
+                this->fail = rc;
+                this->msg  = "Something went wrong:";
+                return;
+            }
+
+            /* Final version check after restart. */
+            api = 0;
+            if (R_FAILED(tuneGetApiVersion(&api)) || api != TUNE_API_VERSION) {
+                this->msg = "   Unsupported\n"
+                            "RyazhTune version!";
+            }
         }
     }
 
