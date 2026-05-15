@@ -363,7 +363,7 @@ tsl::elm::Element* LanguageGui::createUI() {
     m_frame = new SysTuneOverlayFrame(/*pageLeft=*/i18n::t(i18n::Str::Settings), /*pageRight=*/"");
     m_list = new tsl::elm::List();
 
-    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::CategoryLanguage)));
+    m_list->addItem(new tsl::elm::CategoryHeader(std::string(i18n::t(i18n::Str::CategoryLanguage)) + "  \uE0E0 \uE0E2"));
 
     const size_t selected = currentLanguageIndex();
     for (size_t i = 0; i < std::size(kLanguages); i += 2) {

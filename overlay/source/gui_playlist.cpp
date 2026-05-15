@@ -259,7 +259,7 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
         return;
     }
 
-    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::PlaylistHeader), true));
+    m_list->addItem(new tsl::elm::CategoryHeader(std::string(i18n::t(i18n::Str::PlaylistHeader)) + "  \uE0E0 \uE0E2 \uE0E3 \uE0A8", true));
 
     m_items.reserve(count);
 

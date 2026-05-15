@@ -121,7 +121,8 @@ public:
             "\uE0E1" + ult::GAP_2 + ult::BACK  + ult::GAP_1 +
             "\uE0E0" + ult::GAP_2 + ult::OK    + ult::GAP_1 +
             (!m_pageLeftName.empty()  ? "\uE0ED" + ult::GAP_2 + m_pageLeftName  + ult::GAP_1 :
-             !m_pageRightName.empty() ? "\uE0EE" + ult::GAP_2 + m_pageRightName + ult::GAP_1 : "");
+             !m_pageRightName.empty() ? "\uE0EE" + ult::GAP_2 + m_pageRightName + ult::GAP_1 :
+             "\uE0E2" + ult::GAP_2 + i18n::t(i18n::Str::Language) + ult::GAP_1);
 
         renderer->drawStringWithColoredSections(currentBottomLine, false, tsl::s_footerSpecialChars,
             buttonStartX, 693, 23, tsl::bottomTextColor, tsl::buttonColor);

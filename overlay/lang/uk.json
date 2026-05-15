@@ -127,6 +127,18 @@
     "Volume": "Гучність",
     "Volume ⊘  Toggle Mute": "Гучність ⊘  Без звуку",
     "Whitelist": "Білий список",
-    "Русский": "Русский",
-    "中文": "中文"
+    "Русский": "Russian",
+    "中文": "中文",
+    "简体中文": "Simplified Chinese",
+    "繁體中文": "Traditional Chinese",
+    "Українська": "Ukrainian",
+    "Polski": "Polish",
+    "Português": "Portuguese",
+    "Italiano": "Italian",
+    "Nederlands": "Dutch",
+    "Deutsch": "German",
+    "Français": "French",
+    "Español": "Spanish",
+    "日本語": "Japanese",
+    "한국어": "Korean"
 }
