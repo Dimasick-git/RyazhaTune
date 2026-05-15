@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tesla.hpp>
+#include "strings.hpp"
 #include <atomic>
 #include <optional>
 #include <string>
