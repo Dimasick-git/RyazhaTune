@@ -475,14 +475,29 @@ namespace tune::impl {
                     }
 
                     const auto nSamples = source->Resample((u8*)buffer->buffer, buffer_size);
-                    {
-                        std::scoped_lock lk(g_waveform_mutex);
-                        size_t copy_count = std::min((size_t)512, (size_t)(nSamples / sizeof(s16)));
-                        std::memcpy(g_waveform_buffer, buffer->buffer, copy_count * sizeof(s16));
-                    }
                     if (nSamples <= 0) {
                         error = true;
                     } else {
+                        /* Keep a compact, always-fresh mono waveform snapshot for
+                         * the overlay visualizer.  Audio is stereo s16, so mix L/R
+                         * and stride across the whole just-rendered audout buffer
+                         * instead of copying only its first samples. */
+                        {
+                            std::scoped_lock lk(g_waveform_mutex);
+                            const size_t sample_count = static_cast<size_t>(nSamples) / sizeof(s16);
+                            const size_t frame_count  = sample_count / 2;
+                            const s16 *samples = static_cast<const s16 *>(buffer->buffer);
+                            if (frame_count == 0) {
+                                std::memset(g_waveform_buffer, 0, sizeof(g_waveform_buffer));
+                            } else {
+                                for (size_t i = 0; i < 512; ++i) {
+                                    const size_t frame = std::min(frame_count - 1, (i * frame_count) / 512);
+                                    const int mixed = (static_cast<int>(samples[frame * 2])
+                                                     + static_cast<int>(samples[frame * 2 + 1])) / 2;
+                                    g_waveform_buffer[i] = static_cast<s16>(mixed);
+                                }
+                            }
+                        }
                         buffer->data_size = nSamples;
                         R_TRY(audoutAppendAudioOutBuffer(buffer));
                     }

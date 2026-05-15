@@ -82,6 +82,13 @@ constexpr std::array<Pair, static_cast<std::size_t>(Str::Count_)> kPairs = {{
     {"Added %lld tracks to Playlist.", "Добавлено %lld треков в плейлист."},
     {"1 track", "1 трек"},
     {"%u tracks", "%u треков"},
+    {"Shuffle", "Случайно"},
+    {"Previous", "Назад"},
+    {"Next", "Далее"},
+    {"Repeat", "Повтор"},
+    {"Select", "Выбрать"},
+    {"Back", "Назад"},
+    {"Selected", "Выбрано"},
 }};
 
 static_assert(kPairs.size() == static_cast<std::size_t>(Str::Count_),

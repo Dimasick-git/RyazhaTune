@@ -155,5 +155,11 @@
     "Tip: Settings has playback modes, Home Focus, and language.": "팁: 설정에는 재생 모드, HOME 포커스, 언어가 있습니다.",
     "Added %lld tracks to Playlist.": "재생목록에 %lld곡 추가됨.",
     "%u tracks": "%u곡",
-    "Language changed": "언어가 변경되었습니다"
+    "Language changed": "언어가 변경되었습니다",
+    "Previous": "이전",
+    "Next": "다음",
+    "Repeat": "반복",
+    "Select": "선택",
+    "Back": "뒤로",
+    "Selected": "선택됨"
 }

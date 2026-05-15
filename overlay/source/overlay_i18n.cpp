@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include <array>
 
 #include <tesla.hpp>
 
@@ -25,14 +26,22 @@ void reloadRyazhTuneTranslations() {
 
     ult::clearTranslationCache();
 
-    std::string base = UI_OVERRIDE_PATH;
-    ult::preprocessPath(base);
-    if (!base.empty() && base.back() != '/')
-        base.push_back('/');
+    const std::array<std::string, 2> langRoots = {
+        std::string("/config/RyazhTune/"),
+        std::string(UI_OVERRIDE_PATH),
+    };
 
-    const std::string pkgLang = base + "lang/" + lang + ".json";
-    if (ult::isFile(pkgLang))
-        ult::loadTranslationsFromJSON(pkgLang);
+    for (std::string base : langRoots) {
+        ult::preprocessPath(base);
+        if (!base.empty() && base.back() != '/')
+            base.push_back('/');
+
+        const std::string pkgLang = base + "lang/" + lang + ".json";
+        if (ult::isFile(pkgLang)) {
+            ult::loadTranslationsFromJSON(pkgLang);
+            break;
+        }
+    }
 
     const std::string ultraLang = ult::LANG_PATH + lang + ".json";
     if (ult::isFile(ultraLang))

@@ -1037,6 +1037,24 @@ void StatusBar::draw(tsl::gfx::Renderer *renderer) {
     this->GetPlaybackSymbol().draw(GetPlayStateX() + (this->m_playing ? 0 : 2),
                                    GetPlayStateY(), renderer, tsl::style::color::ColorText);
     symbol::next::symbol.draw  (GetNextX(),     GetNextY(),    renderer, tsl::style::color::ColorText);
+
+    /* Text labels for the helper/player buttons.  The icons stay as the large
+     * touch targets, while these captions make it clear what each button does
+     * after a language change. */
+    auto drawButtonLabel = [&](const char *text, s32 centerX, s32 centerY) {
+        constexpr u32 fontSize = 12;
+        const auto width = renderer->drawString(text, false, 0, 0, fontSize,
+                                                tsl::style::color::ColorTransparent).first;
+        renderer->drawString(text, false, centerX - static_cast<s32>(width) / 2,
+                             centerY + 22, fontSize, tsl::offTextColor);
+    };
+
+    drawButtonLabel(i18n::t(i18n::Str::Shuffle), GetShuffleX(), GetShuffleY());
+    drawButtonLabel(i18n::t(i18n::Str::Previous), GetPrevX(), GetPrevY());
+    drawButtonLabel(this->m_playing ? i18n::t(i18n::Str::Pause) : i18n::t(i18n::Str::Play),
+                    GetPlayStateX(), GetPlayStateY());
+    drawButtonLabel(i18n::t(i18n::Str::Next), GetNextX(), GetNextY());
+    drawButtonLabel(i18n::t(i18n::Str::Repeat), GetRepeatX(), GetRepeatY());
 }
 
 // ---------------------------------------------------------------------------
