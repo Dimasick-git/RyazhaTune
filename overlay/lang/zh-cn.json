@@ -114,7 +114,7 @@
     "Set As Startup": "设为启动",
     "Set as Startup": "设为启动",
     "Settings": "设置",
-    "Shuffle": "随机播放",
+    "Shuffle": "随机",
     "Startup File Set": "启动文件已设",
     "Startup Folder Set": "启动文件夹已设",
     "Startup Path Removed": "路径已移除",
@@ -155,5 +155,11 @@
     "Tip: Settings has playback modes, Home Focus, and language.": "提示：设置中有播放模式、主页焦点和语言。",
     "Added %lld tracks to Playlist.": "已将%lld首歌曲添加到播放列表。",
     "%u tracks": "%u首",
-    "Language changed": "语言已更改"
+    "Language changed": "语言已更改",
+    "Previous": "上一首",
+    "Next": "下一首",
+    "Repeat": "重复",
+    "Select": "选择",
+    "Back": "返回",
+    "Selected": "已选择"
 }

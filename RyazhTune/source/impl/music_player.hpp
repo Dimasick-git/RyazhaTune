@@ -48,5 +48,6 @@ namespace tune::impl {
     Result Enqueue(const char* buffer, size_t buffer_length, EnqueueType type);
     Result Remove(u32 index);
     void GetWaveform(s16* out_buffer, size_t count);
+    void ApplyTitleFilter();
 
 }

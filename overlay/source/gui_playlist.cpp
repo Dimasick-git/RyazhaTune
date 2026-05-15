@@ -259,7 +259,14 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
         return;
     }
 
-    m_list->addItem(new tsl::elm::CategoryHeader(std::string(i18n::t(i18n::Str::PlaylistHeader)) + "  \uE0E0 \uE0E2 \uE0E3 \uE0A8", true));
+    const std::string playlist_hint =
+        play_ctx::activePlaylistLabel() + "  " +
+        "A " + i18n::t(i18n::Str::Play) + "  " +
+        "Y " + i18n::t(i18n::Str::Remove) + "  " +
+        "X " + i18n::t(i18n::Str::RemoveAll) + "  " +
+        "− " + i18n::t(i18n::Str::SetAsStartupShort) + "  " +
+        "+ " + i18n::t(i18n::Str::Playlist);
+    m_list->addItem(new tsl::elm::CategoryHeader(playlist_hint, true));
 
     m_items.reserve(count);
 
@@ -480,22 +487,30 @@ void PlaylistGui::update() {
 bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
                               HidAnalogStickState joyStickPosLeft,
                               HidAnalogStickState joyStickPosRight) {
-    if (g_playlist_undo.active && g_playlist_undo.ttl > 0 &&
-        (keysDown & KEY_PLUS) && !(keysHeld & ~KEY_PLUS & ALL_KEYS_MASK)) {
+    if ((keysDown & KEY_PLUS) && !(keysHeld & ~KEY_PLUS & ALL_KEYS_MASK)) {
         i18n::syncFromConfig();
-        play_ctx::savedInsert(g_playlist_undo.idx, g_playlist_undo.path);
-        if (g_playlist_undo.playlist_ctx) {
-            const u32 sz = play_ctx::savedPlaylistSize();
-            if (sz > 0) {
-                const u32 pick = std::min(g_playlist_undo.idx, sz - 1u);
-                play_ctx::switchToPlaylist(pick);
+        if (g_playlist_undo.active && g_playlist_undo.ttl > 0) {
+            play_ctx::savedInsert(g_playlist_undo.idx, g_playlist_undo.path);
+            if (g_playlist_undo.playlist_ctx) {
+                const u32 sz = play_ctx::savedPlaylistSize();
+                if (sz > 0) {
+                    const u32 pick = std::min(g_playlist_undo.idx, sz - 1u);
+                    play_ctx::switchToPlaylist(pick);
+                }
             }
+            g_playlist_undo = {};
+            if (tsl::notification)
+                tsl::notification->showNow(i18n::t(i18n::Str::TrackRestoredToast), 24,
+                                             i18n::t(i18n::Str::Playlist), 2200, false);
+            triggerNavigationFeedback();
+        } else {
+            const u32 next = (play_ctx::activePlaylistIndex() + 1) % play_ctx::maxPlaylistCount();
+            play_ctx::switchPlaylistSlot(next, true);
+            if (tsl::notification)
+                tsl::notification->showNow(play_ctx::activePlaylistLabel().c_str(), 24,
+                                           i18n::t(i18n::Str::Playlist), 2200, false);
+            triggerNavigationFeedback();
         }
-        g_playlist_undo = {};
-        if (tsl::notification)
-            tsl::notification->showNow(i18n::t(i18n::Str::TrackRestoredToast), 24,
-                                         i18n::t(i18n::Str::Playlist), 2200, false);
-        triggerNavigationFeedback();
         tsl::changeTo<PlaylistGui>(m_on_count_changed);
         return true;
     }
