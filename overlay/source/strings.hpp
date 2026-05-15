@@ -50,8 +50,6 @@ enum class Str : std::uint8_t {
     CouldNotOpenPrefix,
     AddToPlaylistShort,
     AddAll,
-    Remove,
-    RemoveAll,
     SetAsStartupShort,
     ScanStoppedTitle,
     ScanStoppedBody,
