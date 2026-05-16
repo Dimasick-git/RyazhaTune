@@ -371,7 +371,6 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
                     if ((size_t)tune_index < this->m_items.size())
                         this->m_items.erase(this->m_items.begin() + tune_index);
                 
-                    // ---- NEW: handle empty playlist case -------------------------
                     if (this->m_items.empty()) {
                         this->m_list->clear();
 
@@ -384,7 +383,6 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
                         triggerMoveFeedback();
                         return true;
                     }
-                    // --------------------------------------------------------------
                 
                     // Re-number remaining items
                     for (size_t k = (size_t)tune_index; k < this->m_items.size(); ++k)
@@ -487,7 +485,36 @@ void PlaylistGui::update() {
 bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
                               HidAnalogStickState joyStickPosLeft,
                               HidAnalogStickState joyStickPosRight) {
-    if (((keysDown & KEY_PLUS) || (keysDown & KEY_UP) || (keysDown & KEY_DOWN)) && !(keysHeld & ~(KEY_PLUS | KEY_UP | KEY_DOWN) & ALL_KEYS_MASK)) {
+    // --- Analog stick left/right handling for playlist switching ---
+    static u64 lastStickInputTime = 0;
+    u64 currentTime = svcGetSystemTick();
+    
+    // Check for significant left/right stick movement
+    if (joyStickPosLeft.dx < -0.7f || joyStickPosLeft.dx > 0.7f) {
+        // Debounce: only trigger every 200ms
+        if (currentTime - lastStickInputTime > 200 * 1000 * 1000) {
+            lastStickInputTime = currentTime;
+            if (joyStickPosLeft.dx > 0.7f) {
+                keysDown |= KEY_RIGHT;  // Emulate RIGHT for next playlist
+            } else if (joyStickPosLeft.dx < -0.7f) {
+                keysDown |= KEY_LEFT;   // Emulate LEFT for previous playlist
+            }
+        }
+    }
+
+    // Original KEY_LEFT handling for going back to player
+    const bool goLeft = ult::simulatedNextPage.exchange(false, std::memory_order_acq_rel)
+                     || ((keysDown & KEY_LEFT) && !(keysHeld & ~KEY_LEFT & ~KEY_R & ALL_KEYS_MASK));
+    if (goLeft) {
+        setPlayerRightDest(PlayerRightDest::Playlist);
+        tsl::swapTo<MainGui>(SwapDepth{2});
+        triggerNavigationFeedback();
+        return true;
+    }
+
+    // Handle playlist switching with LEFT/RIGHT keys (including emulated from stick)
+    if (((keysDown & KEY_PLUS) || (keysDown & KEY_LEFT) || (keysDown & KEY_RIGHT)) && 
+        !(keysHeld & ~(KEY_PLUS | KEY_LEFT | KEY_RIGHT) & ALL_KEYS_MASK)) {
         i18n::syncFromConfig();
         if ((keysDown & KEY_PLUS) && g_playlist_undo.active && g_playlist_undo.ttl > 0) {
             play_ctx::savedInsert(g_playlist_undo.idx, g_playlist_undo.path);
@@ -508,10 +535,10 @@ bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &t
             const u32 max     = play_ctx::maxPlaylistCount();
             u32 next = current;
 
-            if (keysDown & KEY_DOWN) {
-                next = (current + 1) % max;
-            } else if (keysDown & KEY_UP) {
-                next = (current > 0) ? (current - 1) : (max - 1);
+            if (keysDown & KEY_RIGHT) {
+                next = (current + 1) % max;  // Next playlist
+            } else if (keysDown & KEY_LEFT) {
+                next = (current > 0) ? (current - 1) : (max - 1);  // Previous playlist
             } else {
                 next = (current + 1) % max;
             }
@@ -526,17 +553,6 @@ bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &t
         return true;
     }
 
-    /* Left footer tap OR KEY_LEFT — swap back to player.
-       Stack before: [SettingsGui, PlaylistGui]
-       SwapDepth{2}: pop×2, push MainGui → [MainGui] → B exits cleanly. */
-    const bool goLeft = ult::simulatedNextPage.exchange(false, std::memory_order_acq_rel)
-                     || ((keysDown & KEY_LEFT) && !(keysHeld & ~KEY_LEFT & ~KEY_R & ALL_KEYS_MASK));
-    if (goLeft) {
-        setPlayerRightDest(PlayerRightDest::Playlist);
-        tsl::swapTo<MainGui>(SwapDepth{2});
-        triggerNavigationFeedback();
-        return true;
-    }
     return SysTuneGui::handleInput(keysDown, keysHeld, touchPos,
                                    joyStickPosLeft, joyStickPosRight);
 }
