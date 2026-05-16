@@ -459,20 +459,14 @@ std::unique_ptr<Source> OpenFile(const char *path) {
 }
 
 SourceType GetSourceType(const char* path) {
+    if (!path) return SourceType::NONE;
     const auto ext = std::strrchr(path, '.');
-    if (!ext) {
-        return SourceType::NONE;
-    }
+    if (!ext) return SourceType::NONE;
 
-    if (!strcasecmp(ext, ".mp3")) {
-        return SourceType::MP3;
-    } else if (!strcasecmp(ext, ".flac")) {
-        return SourceType::FLAC;
-    } else if (!strcasecmp(ext, ".wav") || !strcasecmp(ext, ".wave")) {
-        return SourceType::WAV;
-    } else if (!strcasecmp(ext, ".ogg")) {
-        return SourceType::FLAC; // Ogg/FLAC support via dr_flac
-    }
+    if (strcasecmp(ext, ".mp3") == 0) return SourceType::MP3;
+    if (strcasecmp(ext, ".flac") == 0) return SourceType::FLAC;
+    if (strcasecmp(ext, ".wav") == 0 || strcasecmp(ext, ".wave") == 0) return SourceType::WAV;
+    if (strcasecmp(ext, ".ogg") == 0) return SourceType::FLAC;
 
     return SourceType::NONE;
 }

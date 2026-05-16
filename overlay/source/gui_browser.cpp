@@ -42,6 +42,7 @@ namespace {
     };
 
     bool SupportsType(const char *name) {
+        if (!name) return false;
         for (auto &ext : SupportedTypes)
             if (EndsWith(name, ext))
                 return true;

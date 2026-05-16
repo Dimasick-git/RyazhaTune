@@ -47,7 +47,7 @@ class SysTuneOverlay final : public tsl::Overlay {
         if (R_VALUE(rc) == KERNELRESULT(NotFound) || R_VALUE(rc) == KERNELRESULT(ConnectionRefused)) {
             u64 pid = 0;
             const NcmProgramLocation programLocation{
-                .program_id = 0x4200000000000000,
+                .program_id = 0x420000000000000E,
                 .storageID  = NcmStorageId_None,
             };
             rc = pmshellInitialize();
@@ -142,7 +142,7 @@ class SysTuneOverlay final : public tsl::Overlay {
             /* Relaunch the sysmodule. */
             u64 pid = 0;
             const NcmProgramLocation programLocation{
-                .program_id = 0x4200000000000000,
+                .program_id = 0x420000000000000E,
                 .storageID  = NcmStorageId_None,
             };
             rc = pmshellInitialize();
