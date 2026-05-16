@@ -384,7 +384,7 @@ void BrowserGui::buildList() {
         }
         if (ent->d_name[0] == '.') continue;  // skip hidden and . / ..
 
-        if (ent->d_type == DT_DIR) {
+                if (ent->d_type == DT_DIR) {
             const std::string sub_path  = m_cwd + ent->d_name + "/";
             const std::string root_copy = m_root;
 
@@ -411,8 +411,8 @@ void BrowserGui::buildList() {
                 return false;
             });
             folders.push_back(item);
-
-        } else if (ent->d_type == DT_REG && SupportsType(ent->d_name)) {
+        } else if (SupportsType(ent->d_name)) {
+            // Treat as file if it matches supported extensions, even if d_type is DT_UNKNOWN.
             TitleArtist ta = readTitleArtist((m_cwd + ent->d_name).c_str());
             file_entries.push_back({
                 std::string(ent->d_name),
@@ -743,7 +743,7 @@ void BrowserGui::addAllToPlaylist(const std::string &path) {
 
     struct dirent *ent;
     while ((ent = readdir(d.get())) != nullptr && file_list.size() < kAddAllMax) {
-        if (ent->d_type == DT_REG && SupportsType(ent->d_name))
+        if (ent->d_type != DT_DIR && SupportsType(ent->d_name))
             file_list.emplace_back(ent->d_name);
     }
 
