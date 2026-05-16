@@ -265,7 +265,7 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
         "Y " + i18n::t(i18n::Str::Remove) + "  " +
         "X " + i18n::t(i18n::Str::RemoveAll) + "  " +
         "− " + i18n::t(i18n::Str::SetAsStartupShort) + "  " +
-        "+ " + i18n::t(i18n::Str::Playlist);
+        "\uE0EB\uE0EC " + i18n::t(i18n::Str::Playlist);
     m_list->addItem(new tsl::elm::CategoryHeader(playlist_hint, true));
 
     m_items.reserve(count);
@@ -522,7 +522,7 @@ bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &t
                                            i18n::t(i18n::Str::Playlist), 2200, false);
             triggerNavigationFeedback();
         }
-        tsl::changeTo<PlaylistGui>(m_on_count_changed);
+        tsl::swapTo<PlaylistGui>(m_on_count_changed);
         return true;
     }
 
