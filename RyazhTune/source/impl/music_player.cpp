@@ -620,7 +620,7 @@ namespace tune::impl {
                     if (type == FsDirEntryType_File) {
                         // path is a file, load single entry.
                         if (GetSourceType(load_path) != SourceType::NONE) {
-                            Enqueue(load_path, std::strlen(load_path), EnqueueType::Back);
+                                Enqueue(load_path, std::strlen(load_path) + 1, EnqueueType::Back);
                         }
                     } else {
                         // path is a folder, load all entries sorted case-insensitively
@@ -658,7 +658,7 @@ namespace tune::impl {
                                 if (full_path.size() >= PATH_SIZE_MAX)
                                     continue;
 
-                                const Result rc = Enqueue(full_path.c_str(), full_path.size(), EnqueueType::Back);
+                                const Result rc = Enqueue(full_path.c_str(), full_path.size() + 1, EnqueueType::Back);
                                 if (rc == tune::OutOfMemory)
                                     break;
                             }

@@ -38,6 +38,8 @@ namespace {
         ".flac",
         ".wav",
         ".wave",
+        ".ogg",
+        ".m4a",
     };
 
     bool SupportsType(const char *name) {
@@ -53,7 +55,6 @@ namespace {
     static std::string buildFileLabel(u32 num,
                                       const std::string &title,
                                       const std::string &artist) {
-        i18n::syncFromConfig();
         const char *sep = i18n::t(i18n::Str::ByArtist);
         // Reserve upfront to avoid reallocations from 4 concatenations.
         std::string s;

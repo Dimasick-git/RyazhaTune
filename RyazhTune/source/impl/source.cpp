@@ -471,6 +471,8 @@ SourceType GetSourceType(const char* path) {
         return SourceType::FLAC;
     } else if (!strcasecmp(ext, ".wav") || !strcasecmp(ext, ".wave")) {
         return SourceType::WAV;
+    } else if (!strcasecmp(ext, ".ogg") || !strcasecmp(ext, ".m4a")) {
+        return SourceType::MP3; // Fallback or placeholder for now
     }
 
     return SourceType::NONE;
