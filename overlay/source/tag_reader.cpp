@@ -225,16 +225,16 @@ static TitleArtist ta_readWAV(FILE *f) {
 TitleArtist readTitleArtist(const char *path) {
     TitleArtist ta;
     FILE *f = fopen(path, "rb");
-    if (!f) return ta;
+    if (f) {
+        u8 magic[4] = {};
+        fread(magic, 1, 4, f);
 
-    u8 magic[4] = {};
-    fread(magic, 1, 4, f);
+        if      (memcmp(magic, "ID3",  3) == 0) ta = ta_readID3(f);
+        else if (memcmp(magic, "fLaC", 4) == 0) ta = ta_readFLAC(f);
+        else if (memcmp(magic, "RIFF", 4) == 0) ta = ta_readWAV(f);
 
-    if      (memcmp(magic, "ID3",  3) == 0) ta = ta_readID3(f);
-    else if (memcmp(magic, "fLaC", 4) == 0) ta = ta_readFLAC(f);
-    else if (memcmp(magic, "RIFF", 4) == 0) ta = ta_readWAV(f);
-
-    fclose(f);
+        fclose(f);
+    }
 
     if (ta.title.empty()) {
         const char *slash = std::strrchr(path, '/');

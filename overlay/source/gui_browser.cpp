@@ -359,13 +359,27 @@ bool BrowserGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &to
 
 void BrowserGui::buildList() {
     i18n::syncFromConfig();
-    // Use POSIX opendir/readdir — no FsFileSystem handle needed.
-    std::unique_ptr<DIR, ult::DirCloser> d(opendir(m_cwd.c_str()));
-    if (!d) {
+    // Use libnx directory scanning like sys-tune.  POSIX readdir() can report
+    // unreliable d_type values on the Switch SD filesystem, which caused files
+    // such as MP3/FLAC to be skipped in some folders.
+    FsFileSystem fs;
+    Result fs_rc = fsOpenSdCardFileSystem(&fs);
+    if (R_FAILED(fs_rc)) {
         m_list->addItem(new tsl::elm::ListItem(
             std::string(i18n::t(i18n::Str::CouldNotOpenPrefix)) + m_cwd));
         return;
     }
+    tsl::hlp::ScopeGuard fsGuard([&] { fsFsClose(&fs); });
+
+    FsDir dir;
+    Result dir_rc = fsFsOpenDirectory(&fs, m_cwd.c_str(),
+        FsDirOpenMode_ReadDirs | FsDirOpenMode_ReadFiles | FsDirOpenMode_NoFileSize, &dir);
+    if (R_FAILED(dir_rc)) {
+        m_list->addItem(new tsl::elm::ListItem(
+            std::string(i18n::t(i18n::Str::CouldNotOpenPrefix)) + m_cwd));
+        return;
+    }
+    tsl::hlp::ScopeGuard dirGuard([&] { fsDirClose(&dir); });
 
     std::vector<tsl::elm::ListItem *> folders;
     std::vector<FileEntry>            file_entries;
@@ -375,52 +389,58 @@ void BrowserGui::buildList() {
 
     constexpr u32 kScanMax = 2048;
     bool hit_max = false;
+    s64 count = 0;
+    std::vector<FsDirectoryEntry> entries(64);
 
-    struct dirent *ent;
-    while ((ent = readdir(d.get())) != nullptr) {
-        if (folders.size() + file_entries.size() >= kScanMax) {
-            hit_max = true;
-            break;
+    while (R_SUCCEEDED(fsDirRead(&dir, &count, entries.size(), entries.data())) && count) {
+        for (s64 i = 0; i < count; ++i) {
+            if (folders.size() + file_entries.size() >= kScanMax) {
+                hit_max = true;
+                break;
+            }
+
+            const auto &entry = entries[i];
+            if (entry.name[0] == '.') continue;  // skip hidden and . / ..
+
+            if (entry.type == FsDirEntryType_Dir) {
+                const std::string sub_path  = m_cwd + entry.name + "/";
+                const std::string root_copy = m_root;
+
+                auto *item = new BrowserFolderItem(entry.name, sub_path);
+                item->setClickListener([this, item, sub_path, root_copy](u64 down) -> bool {
+                    if (down & HidNpadButton_A) {
+                        //tsl::shiftItemFocus(item);
+                        // swapTo keeps the stack at constant depth [SettingsGui, BrowserGui].
+                        // focus_name="" — we're entering, not returning, so no item to focus.
+                        tsl::swapTo<BrowserGui>(sub_path, "", root_copy, m_on_count_changed);
+                        return true;
+                    }
+                    if (down & HidNpadButton_Y) {
+                        addAllToPlaylist(sub_path);
+                        return true;
+                    }
+                    if (down & KEY_MINUS) {
+                        const std::string no_slash = sub_path.substr(0, sub_path.size() - 1);
+                        config::set_load_path(no_slash.c_str());
+                        if (tsl::notification)
+                            tsl::notification->showNow(item->getText(), 26, i18n::t(i18n::Str::StartupFolderSet), 2500, false);
+                        return true;
+                    }
+                    return false;
+                });
+                folders.push_back(item);
+            } else if (entry.type == FsDirEntryType_File && SupportsType(entry.name)) {
+                TitleArtist ta = readTitleArtist((m_cwd + entry.name).c_str());
+                file_entries.push_back({
+                    std::string(entry.name),
+                    m_cwd + entry.name,
+                    std::move(ta.title),
+                    std::move(ta.artist)
+                });
+            }
         }
-        if (ent->d_name[0] == '.') continue;  // skip hidden and . / ..
 
-                if (ent->d_type == DT_DIR) {
-            const std::string sub_path  = m_cwd + ent->d_name + "/";
-            const std::string root_copy = m_root;
-
-            auto *item = new BrowserFolderItem(ent->d_name, sub_path);
-            item->setClickListener([this, item, sub_path, root_copy](u64 down) -> bool {
-                if (down & HidNpadButton_A) {
-                    //tsl::shiftItemFocus(item);
-                    // swapTo keeps the stack at constant depth [SettingsGui, BrowserGui].
-                    // focus_name="" — we're entering, not returning, so no item to focus.
-                    tsl::swapTo<BrowserGui>(sub_path, "", root_copy, m_on_count_changed);
-                    return true;
-                }
-                if (down & HidNpadButton_Y) {
-                    addAllToPlaylist(sub_path);
-                    return true;
-                }
-                if (down & KEY_MINUS) {
-                    const std::string no_slash = sub_path.substr(0, sub_path.size() - 1);
-                    config::set_load_path(no_slash.c_str());
-                    if (tsl::notification)
-                        tsl::notification->showNow(item->getText(), 26, i18n::t(i18n::Str::StartupFolderSet), 2500, false);
-                    return true;
-                }
-                return false;
-            });
-            folders.push_back(item);
-        } else if (SupportsType(ent->d_name)) {
-            // Treat as file if it matches supported extensions, even if d_type is DT_UNKNOWN.
-            TitleArtist ta = readTitleArtist((m_cwd + ent->d_name).c_str());
-            file_entries.push_back({
-                std::string(ent->d_name),
-                m_cwd + ent->d_name,
-                std::move(ta.title),
-                std::move(ta.artist)
-            });
-        }
+        if (hit_max) break;
     }
 
     if (hit_max) {
@@ -731,20 +751,34 @@ std::string BrowserGui::currentDirName() const {
 // ---------------------------------------------------------------------------
 
 void BrowserGui::addAllToPlaylist(const std::string &path) {
-    std::unique_ptr<DIR, ult::DirCloser> d(opendir(path.c_str()));
-    if (!d) {
+    FsFileSystem fs;
+    Result fs_rc = fsOpenSdCardFileSystem(&fs);
+    if (R_FAILED(fs_rc)) {
         if (tsl::notification) tsl::notification->show(i18n::t(i18n::Str::GenericError));
         return;
     }
+    tsl::hlp::ScopeGuard fsGuard([&] { fsFsClose(&fs); });
+
+    FsDir dir;
+    Result dir_rc = fsFsOpenDirectory(&fs, path.c_str(), FsDirOpenMode_ReadFiles | FsDirOpenMode_NoFileSize, &dir);
+    if (R_FAILED(dir_rc)) {
+        if (tsl::notification) tsl::notification->show(i18n::t(i18n::Str::GenericError));
+        return;
+    }
+    tsl::hlp::ScopeGuard dirGuard([&] { fsDirClose(&dir); });
 
     std::vector<std::string> file_list;
     file_list.reserve(64);
     constexpr u32 kAddAllMax = 300;
 
-    struct dirent *ent;
-    while ((ent = readdir(d.get())) != nullptr && file_list.size() < kAddAllMax) {
-        if (ent->d_type != DT_DIR && SupportsType(ent->d_name))
-            file_list.emplace_back(ent->d_name);
+    s64 count = 0;
+    std::vector<FsDirectoryEntry> entries(64);
+    while (R_SUCCEEDED(fsDirRead(&dir, &count, entries.size(), entries.data())) && count) {
+        for (s64 i = 0; i < count && file_list.size() < kAddAllMax; ++i) {
+            const auto &entry = entries[i];
+            if (entry.type == FsDirEntryType_File && SupportsType(entry.name))
+                file_list.emplace_back(entry.name);
+        }
     }
 
     std::sort(file_list.begin(), file_list.end(), StringTextCompare);

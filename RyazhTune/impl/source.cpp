@@ -328,8 +328,8 @@ class FlacFile final : public Source {
 class Mp3File final : public Source {
   private:
     drmp3 m_mp3;
-    bool initialized;
-    u64 m_total_frame_count;
+    bool initialized = false;
+    u64 m_total_frame_count = 0;
 
   public:
     Mp3File(FsFile &&file) : Source(std::move(file)) {
@@ -379,8 +379,8 @@ class Mp3File final : public Source {
 class WavFile final : public Source {
   private:
     drwav m_wav;
-    bool initialized;
-    s32 m_bytes_per_pcm;
+    bool initialized = false;
+    s32 m_bytes_per_pcm = 0;
 
   public:
     WavFile(FsFile &&file) : Source(std::move(file)) {
