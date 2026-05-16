@@ -39,7 +39,6 @@ namespace {
         ".wav",
         ".wave",
         ".ogg",
-        ".m4a",
     };
 
     bool SupportsType(const char *name) {

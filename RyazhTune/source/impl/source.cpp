@@ -7,7 +7,6 @@
 // NOTE: when updating dr_libs, check for TUNE-FIX comment for patches.
 #ifdef WANT_FLAC
 #define DR_FLAC_IMPLEMENTATION
-#define DR_FLAC_NO_OGG
 #define DR_FLAC_NO_STDIO
 #include "dr_flac.h"
 #endif
@@ -471,8 +470,8 @@ SourceType GetSourceType(const char* path) {
         return SourceType::FLAC;
     } else if (!strcasecmp(ext, ".wav") || !strcasecmp(ext, ".wave")) {
         return SourceType::WAV;
-    } else if (!strcasecmp(ext, ".ogg") || !strcasecmp(ext, ".m4a")) {
-        return SourceType::MP3; // Fallback or placeholder for now
+    } else if (!strcasecmp(ext, ".ogg")) {
+        return SourceType::FLAC; // Ogg/FLAC support via dr_flac
     }
 
     return SourceType::NONE;
