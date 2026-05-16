@@ -490,13 +490,13 @@ bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &t
     u64 currentTime = svcGetSystemTick();
     
     // Check for significant left/right stick movement
-    if (joyStickPosLeft.dx < -0.7f || joyStickPosLeft.dx > 0.7f) {
+    if (joyStickPosLeft.x < -0.7f || joyStickPosLeft.x > 0.7f) {
         // Debounce: only trigger every 200ms
         if (currentTime - lastStickInputTime > 200 * 1000 * 1000) {
             lastStickInputTime = currentTime;
-            if (joyStickPosLeft.dx > 0.7f) {
+            if (joyStickPosLeft.x > 0.7f) {
                 keysDown |= KEY_RIGHT;  // Emulate RIGHT for next playlist
-            } else if (joyStickPosLeft.dx < -0.7f) {
+            } else if (joyStickPosLeft.x < -0.7f) {
                 keysDown |= KEY_LEFT;   // Emulate LEFT for previous playlist
             }
         }
