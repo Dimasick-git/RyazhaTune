@@ -487,9 +487,9 @@ void PlaylistGui::update() {
 bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
                               HidAnalogStickState joyStickPosLeft,
                               HidAnalogStickState joyStickPosRight) {
-    if ((keysDown & KEY_PLUS) && !(keysHeld & ~KEY_PLUS & ALL_KEYS_MASK)) {
+    if (((keysDown & KEY_PLUS) || (keysDown & KEY_UP) || (keysDown & KEY_DOWN)) && !(keysHeld & ~(KEY_PLUS | KEY_UP | KEY_DOWN) & ALL_KEYS_MASK)) {
         i18n::syncFromConfig();
-        if (g_playlist_undo.active && g_playlist_undo.ttl > 0) {
+        if ((keysDown & KEY_PLUS) && g_playlist_undo.active && g_playlist_undo.ttl > 0) {
             play_ctx::savedInsert(g_playlist_undo.idx, g_playlist_undo.path);
             if (g_playlist_undo.playlist_ctx) {
                 const u32 sz = play_ctx::savedPlaylistSize();
@@ -504,7 +504,18 @@ bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &t
                                              i18n::t(i18n::Str::Playlist), 2200, false);
             triggerNavigationFeedback();
         } else {
-            const u32 next = (play_ctx::activePlaylistIndex() + 1) % play_ctx::maxPlaylistCount();
+            const u32 current = play_ctx::activePlaylistIndex();
+            const u32 max     = play_ctx::maxPlaylistCount();
+            u32 next = current;
+
+            if (keysDown & KEY_DOWN) {
+                next = (current + 1) % max;
+            } else if (keysDown & KEY_UP) {
+                next = (current > 0) ? (current - 1) : (max - 1);
+            } else {
+                next = (current + 1) % max;
+            }
+
             play_ctx::switchPlaylistSlot(next, true);
             if (tsl::notification)
                 tsl::notification->showNow(play_ctx::activePlaylistLabel().c_str(), 24,

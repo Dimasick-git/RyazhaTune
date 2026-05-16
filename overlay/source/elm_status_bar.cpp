@@ -727,45 +727,7 @@ void StatusBar::draw(tsl::gfx::Renderer *renderer) {
     const s32 art_sz  = ArtSize();
     const s32 art_off = ArtOffset();
     const s32 avail_w = this->getWidth() - 30;
-    /* --- Reactive audio visualizer ---
-     * A compact smoothed spectrum-style strip.  It averages chunks of the
-     * latest mono waveform snapshot, applies decay, and stays in the narrow
-     * gap between art and title so it reacts to sound without covering text. */
-    {
-        constexpr int kBars = 32;
-        const s32 wave_x = this->getX() + 15;
-        const s32 wave_h = 18;
-        const s32 wave_y = this->getY() + 11 + art_sz + 18;
-        const s32 wave_w = avail_w;
 
-        s32 peak = 256;
-        s32 energy[kBars] = {};
-        for (int bar = 0; bar < kBars; ++bar) {
-            s32 sum = 0;
-            for (int j = 0; j < 8; ++j)
-                sum += std::abs(static_cast<s32>(m_waveform[bar * 8 + j]));
-            energy[bar] = sum / 8;
-            peak = std::max(peak, energy[bar]);
-        }
-
-        for (int bar = 0; bar < kBars; ++bar) {
-            const u8 target = m_playing
-                ? static_cast<u8>(std::clamp((energy[bar] * wave_h) / peak, 0, wave_h))
-                : 0;
-            if (target >= m_eq_bars[bar])
-                m_eq_bars[bar] = target;
-            else
-                m_eq_bars[bar] = static_cast<u8>((m_eq_bars[bar] * 3) / 4);
-
-            const s32 bar_w = std::max<s32>(2, wave_w / kBars - 2);
-            const s32 bar_h = std::max<s32>(m_eq_bars[bar], m_eq_bars[bar] ? 2 : 0);
-            if (bar_h > 0) {
-                const u16 color = (bar & 1) ? 0x8CFF : 0x5CFF;
-                renderer->drawRect(wave_x + (bar * wave_w / kBars),
-                                   wave_y - bar_h / 2, bar_w, bar_h, a(color));
-            }
-        }
-    }
 
     /* --- Album art --- */
     if (art_sz > 0) {
