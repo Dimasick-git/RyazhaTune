@@ -5,9 +5,14 @@ export WANT_FLAC 	:= 1
 export WANT_MP3 	:= 1
 export WANT_WAV 	:= 1
 
-LIBULTRAHAND_REPO ?= https://github.com/ppkantorski/libultrahand.git
-RYAZHAHAND_DIR   ?= overlay/lib/libryazhahand
-LEGACY_HAND_MK  := $(RYAZHAHAND_DIR)/$(subst ryazha,ultra,ryazhahand).mk
+# Используем наш форк libultrahand: ryazhahand.mk там уже лежит,
+# никакой compat-обёртки подкладывать не надо. Pin на 9a7d930 -- это
+# та же ревизия, на которой собирается RCU и Ryazha-Status-Monitor под
+# GCC 15 в devkitpro-контейнере; новый upstream 9e76f39+ временно
+# не годится из-за регрессии tesla.hpp.
+LIBRYAZHAHAND_REPO ?= https://github.com/Dimanchikgshehsbshene/libryazhahand.git
+LIBRYAZHAHAND_PIN  ?= 9a7d9300541e1d41a95a5bb285ecdc2ce88f3cc4
+RYAZHAHAND_DIR     ?= overlay/lib/libryazhahand
 
 all: overlay nxExt module
 
@@ -23,16 +28,14 @@ prepare-overlay-lib:
 		echo "Cloning libryazhahand into $(RYAZHAHAND_DIR)..."; \
 		rm -rf "$(RYAZHAHAND_DIR)"; \
 		mkdir -p "$(dir $(RYAZHAHAND_DIR))"; \
-		git clone --depth 1 "$(LIBULTRAHAND_REPO)" "$(RYAZHAHAND_DIR)"; \
+		git clone "$(LIBRYAZHAHAND_REPO)" "$(RYAZHAHAND_DIR)"; \
 	fi
+	@cd "$(RYAZHAHAND_DIR)" && \
+		git fetch --quiet origin "$(LIBRYAZHAHAND_PIN)" 2>/dev/null || true; \
+		git checkout --quiet "$(LIBRYAZHAHAND_PIN)"
 	@if [ ! -f "$(RYAZHAHAND_DIR)/ryazhahand.mk" ]; then \
-		if [ -f "$(LEGACY_HAND_MK)" ]; then \
-			echo "Installing ryazhahand.mk compatibility makefile..."; \
-			cp "$(LEGACY_HAND_MK)" "$(RYAZHAHAND_DIR)/ryazhahand.mk"; \
-		else \
-			echo "Missing $(RYAZHAHAND_DIR)/ryazhahand.mk" >&2; \
-			exit 1; \
-		fi; \
+		echo "Missing $(RYAZHAHAND_DIR)/ryazhahand.mk -- bad clone?" >&2; \
+		exit 1; \
 	fi
 
 overlay: prepare-overlay-lib
