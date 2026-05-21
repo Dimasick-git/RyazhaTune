@@ -6,12 +6,12 @@ export WANT_MP3 	:= 1
 export WANT_WAV 	:= 1
 
 # Используем наш форк libultrahand: ryazhahand.mk там уже лежит,
-# никакой compat-обёртки подкладывать не надо. Pin на 9a7d930 -- это
-# та же ревизия, на которой собирается RCU и Ryazha-Status-Monitor под
-# GCC 15 в devkitpro-контейнере; новый upstream 9e76f39+ временно
-# не годится из-за регрессии tesla.hpp.
+# никакой compat-обёртки подкладывать не надо. Pin на 915e92e -- этот
+# снапшот включает do/while(0)-rewrite макроса TSL_R_TRY в libtesla,
+# который GCC 15 в devkitpro-контейнере парсит без претензий. RCU и
+# Ryazha-Status-Monitor пинятся на тот же SHA.
 LIBRYAZHAHAND_REPO ?= https://github.com/Dimanchikgshehsbshene/libryazhahand.git
-LIBRYAZHAHAND_PIN  ?= 9a7d9300541e1d41a95a5bb285ecdc2ce88f3cc4
+LIBRYAZHAHAND_PIN  ?= 915e92e8f7308624583610822cd2fd92be1695af
 RYAZHAHAND_DIR     ?= overlay/lib/libryazhahand
 
 all: overlay nxExt module
