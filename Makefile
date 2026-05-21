@@ -11,7 +11,7 @@ export WANT_WAV 	:= 1
 # который GCC 15 в devkitpro-контейнере парсит без претензий. RCU и
 # Ryazha-Status-Monitor пинятся на тот же SHA.
 LIBRYAZHAHAND_REPO ?= https://github.com/Dimanchikgshehsbshene/libryazhahand.git
-LIBRYAZHAHAND_PIN  ?= 915e92e8f7308624583610822cd2fd92be1695af
+LIBRYAZHAHAND_PIN  ?= 67f4486
 RYAZHAHAND_DIR     ?= overlay/lib/libryazhahand
 
 all: overlay nxExt module
