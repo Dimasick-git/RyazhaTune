@@ -51,11 +51,11 @@ dist: all
 	rm -rf dist
 	mkdir -p dist/switch/.overlays
 		mkdir -p dist/atmosphere/contents/420000000000000E/flags
-		mkdir -p dist/config/ryazhahand/lang
-		touch dist/atmosphere/contents/420000000000000E/flags/boot2.flag
-		cp RyazhTune/RyazhTune.nsp dist/atmosphere/contents/420000000000000E/exefs.nsp
-		cp overlay/RyazhTune-Overlay.ovl dist/switch/.overlays/
-		cp overlay/lang/*.json dist/config/ryazhahand/lang/
+			mkdir -p dist/config/RyazhTune/lang
+			touch dist/atmosphere/contents/420000000000000E/flags/boot2.flag
+			cp RyazhTune/RyazhTune.nsp dist/atmosphere/contents/420000000000000E/exefs.nsp
+			cp overlay/RyazhTune-Overlay.ovl dist/switch/.overlays/
+			cp overlay/lang/*.json dist/config/RyazhTune/lang/
 		cp RyazhTune/toolbox.json dist/atmosphere/contents/420000000000000E/
 	cd dist; zip -r RyazhTune-$(VERSION)-$(GITHASH).zip ./**/; cd ../;
 	-hactool -t nso RyazhTune/RyazhTune.nso
