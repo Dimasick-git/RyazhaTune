@@ -1,7 +1,9 @@
 #include "config.hpp"
 #include "sdmc/sdmc.hpp"
 #include "minIni/minIni.h"
+#include <atomic>
 #include <cstdio>
+#include <mutex>
 
 namespace config {
 
@@ -10,6 +12,36 @@ namespace {
 const char CONFIG_DIR[]{"/config/RyazhTune"};
 const char CONFIG_PATH[]{"/config/RyazhTune/config.ini"};
 const char HAND_CONFIG_DIR[]{"/config/ryazhahand"};
+
+// In-memory cache for hot scalar config values read on the IPC critical path.
+// Loaded lazily on first access; updated synchronously on every set call.
+struct ScalarCache {
+    std::atomic<bool>  loaded{false};
+    std::mutex         mu;
+
+    bool  shuffle{false};
+    int   repeat{1};
+    float volume{1.f};
+    bool  auto_play_startup{true};
+    bool  play_on_title{false};
+    bool  pause_on_title{false};
+    float global_volume{1.f};
+    int   tune_mode{0};
+
+    void load() {
+        std::lock_guard<std::mutex> lk(mu);
+        if (loaded.load(std::memory_order_relaxed)) return;
+        shuffle          = ini_getbool("config", "shuffle",          false, CONFIG_PATH);
+        repeat           = (int)ini_getl("config", "repeat",         1,     CONFIG_PATH);
+        volume           = ini_getf("config", "volume",              1.f,   CONFIG_PATH);
+        auto_play_startup= ini_getbool("config", "auto_play_startup",true,  CONFIG_PATH);
+        play_on_title    = ini_getbool("config", "play_on_title",    false, CONFIG_PATH);
+        pause_on_title   = ini_getbool("config", "pause_on_title",   false, CONFIG_PATH);
+        global_volume    = ini_getf("config", "global_volume",       1.f,   CONFIG_PATH);
+        tune_mode        = (int)ini_getl("config", "tune_mode",      0,     CONFIG_PATH);
+        loaded.store(true, std::memory_order_release);
+    }
+} g_cache;
 
 void create_config_dir() {
     /* Creating directory on every set call looks sus, but the user may delete the dir */
@@ -30,30 +62,39 @@ auto get_tid_str(u64 tid) -> const char* {
 }
 
 auto get_shuffle() -> bool {
-    return ini_getbool("config", "shuffle", false, CONFIG_PATH);
+    g_cache.load();
+    return g_cache.shuffle;
 }
 
 void set_shuffle(bool value) {
     create_config_dir();
     ini_putl("config", "shuffle", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.shuffle = value;
 }
 
 auto get_repeat() -> int {
-    return ini_getl("config", "repeat", 1, CONFIG_PATH);
+    g_cache.load();
+    return g_cache.repeat;
 }
 
 void set_repeat(int value) {
     create_config_dir();
     ini_putl("config", "repeat", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.repeat = value;
 }
 
 auto get_volume() -> float {
-    return ini_getf("config", "volume", 1.f, CONFIG_PATH);
+    g_cache.load();
+    return g_cache.volume;
 }
 
 void set_volume(float value) {
     create_config_dir();
     ini_putf("config", "volume", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.volume = value;
 }
 
 auto has_title_enabled(u64 tid) -> bool {
@@ -103,30 +144,39 @@ void set_title_enabled_default(bool value) {
 }
 
 auto get_auto_play_startup() -> bool {
-    return ini_getbool("config", "auto_play_startup", true, CONFIG_PATH);
+    g_cache.load();
+    return g_cache.auto_play_startup;
 }
 
 void set_auto_play_startup(bool value) {
     create_config_dir();
     ini_putl("config", "auto_play_startup", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.auto_play_startup = value;
 }
 
 auto get_play_on_title() -> bool {
-    return ini_getbool("config", "play_on_title", false, CONFIG_PATH);
+    g_cache.load();
+    return g_cache.play_on_title;
 }
 
 void set_play_on_title(bool value) {
     create_config_dir();
     ini_putl("config", "play_on_title", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.play_on_title = value;
 }
 
 auto get_pause_on_title() -> bool {
-    return ini_getbool("config", "pause_on_title", false, CONFIG_PATH);
+    g_cache.load();
+    return g_cache.pause_on_title;
 }
 
 void set_pause_on_title(bool value) {
     create_config_dir();
     ini_putl("config", "pause_on_title", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.pause_on_title = value;
 }
 
 auto get_default_on_start(u64 tid) -> bool {
@@ -152,12 +202,15 @@ void set_title_volume(u64 tid, float value) {
 }
 
 auto get_default_title_volume() -> float {
-    return ini_getf("config", "global_volume", 1.f, CONFIG_PATH);
+    g_cache.load();
+    return g_cache.global_volume;
 }
 
 void set_default_title_volume(float value) {
     create_config_dir();
     ini_putf("config", "global_volume", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.global_volume = value;
 }
 
 auto get_load_path(char* out, int max_len) -> int {
@@ -170,7 +223,8 @@ void set_load_path(const char* path) {
 }
 
 auto get_tune_mode() -> TuneMode {
-    const int mode = static_cast<int>(ini_getl("config", "tune_mode", 0, CONFIG_PATH));
+    g_cache.load();
+    const int mode = g_cache.tune_mode;
     if (mode == static_cast<int>(TuneMode::Whitelist))
         return TuneMode::Whitelist;
     if (mode == static_cast<int>(TuneMode::Blacklist))
@@ -181,6 +235,8 @@ auto get_tune_mode() -> TuneMode {
 void set_tune_mode(TuneMode mode) {
     create_config_dir();
     ini_putl("config", "tune_mode", static_cast<long>(mode), CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.tune_mode = static_cast<int>(mode);
 }
 
 auto is_tid_whitelisted(u64 tid) -> bool {
