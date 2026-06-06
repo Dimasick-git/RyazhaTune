@@ -104,13 +104,14 @@ namespace tune::impl {
 
             void Shuffle() {
                 const auto size = m_shuffle_playlist.size();
-                if (!size) {
+                if (size < 2) {
                     return;
                 }
 
-                for (auto& e : m_shuffle_playlist) {
-                    const auto index = randomGet64() % size;
-                    std::swap(e, m_shuffle_playlist[index]);
+                // Correct Fisher-Yates: pick from [0, i] for each position i
+                for (u32 i = size - 1; i > 0; i--) {
+                    const auto j = static_cast<u32>(randomGet64() % (i + 1));
+                    std::swap(m_shuffle_playlist[i], m_shuffle_playlist[j]);
                 }
             }
 
