@@ -11,9 +11,11 @@ export WANT_WAV 	:= 1
 # compat/gc-legacy-67f4486: снапшот 67f4486 (do/while TSL_R_TRY, GCC 15 ok,
 # старый API — на нём этот оверлей собирается) + однострочный GC-фикс
 # padConfigureInput|NpadGc (issue #33). Прямой бамп на новый main (856ddbd+)
-# ломает сборку — апгрейд API оверлея трекается отдельным issue.
+# ломает сборку — апгрейд API оверлея трекается в issue #36.
+# 1b3bcc0 = ПОЛНЫЙ снапшот 67f4486 (включая ultra.hpp, в main переименованный
+# в ryz.hpp) + GC-фикс; недоделанное компат-дерево fe699fd роняло make.
 LIBRYAZHAHAND_REPO ?= https://github.com/Dimasick-git/libryazhahand.git
-LIBRYAZHAHAND_PIN  ?= fe699fd18728b078f1a234bd3c977484bea53051
+LIBRYAZHAHAND_PIN  ?= 1b3bcc0e30a90c878a7a274fd32e5d9bc6a9cec1
 RYAZHAHAND_DIR     ?= overlay/lib/libryazhahand
 
 all: overlay nxExt module
