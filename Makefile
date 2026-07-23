@@ -6,12 +6,14 @@ export WANT_MP3 	:= 1
 export WANT_WAV 	:= 1
 
 # Используем наш форк libultrahand: ryazhahand.mk там уже лежит,
-# никакой compat-обёртки подкладывать не надо. Pin на 915e92e -- этот
-# снапшот включает do/while(0)-rewrite макроса TSL_R_TRY в libtesla,
-# который GCC 15 в devkitpro-контейнере парсит без претензий. RCU и
-# Ryazha-Status-Monitor пинятся на тот же SHA.
-LIBRYAZHAHAND_REPO ?= https://github.com/Dimanchikgshehsbshene/libryazhahand.git
-LIBRYAZHAHAND_PIN  ?= 67f44860547100fb992e11eae296970b76016919
+# никакой compat-обёртки подкладывать не надо. URL обновлён на канонический
+# Dimasick-git (старый аккаунт Dimanchikgshehsbshene -- зеркало, его README
+# сам указывает на Dimasick-git/libryazhahand). Pin на e46045a -- включает
+# do/while(0)-rewrite TSL_R_TRY (GCC 15 ok), upstream-синк 856ddbd и
+# поддержку GameCube-контроллера (NpadGc, issue #33). RCU и
+# Ryazha-Status-Monitor стоит перепинить на тот же SHA.
+LIBRYAZHAHAND_REPO ?= https://github.com/Dimasick-git/libryazhahand.git
+LIBRYAZHAHAND_PIN  ?= e46045ad2a26548b3edf69f479ba472435e07afa
 RYAZHAHAND_DIR     ?= overlay/lib/libryazhahand
 
 all: overlay nxExt module
