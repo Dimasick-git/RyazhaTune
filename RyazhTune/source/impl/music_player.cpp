@@ -10,6 +10,7 @@
 #include "resamplers/SDL_audioEX.h"
 
 #include <cstring>
+#include <atomic>
 #include <nxExt.h>
 #include <strings.h>
 
@@ -272,8 +273,10 @@ namespace tune::impl {
         alignas(0x1000) s16 AudioMemoryPool[AUDIO_BUFFER_COUNT][(AUDIO_BUFFER_SIZE + 0xFFF) & ~0xFFF];
         static_assert((sizeof(AudioMemoryPool[0]) % 0x2000) == 0, "Audio Memory pool needs to be page aligned!");
 
-        bool g_should_pause      = false;
-        bool g_should_run        = true;
+        // These flags are written by IPC/policy/GPIO threads and read by the
+        // decoder thread. Atomic storage is required for live policy changes.
+        std::atomic<bool> g_should_pause{false};
+        std::atomic<bool> g_should_run{true};
 
         /* Event-based wake-ups — replace sleep-polling in two hot paths:
          *
@@ -325,8 +328,8 @@ namespace tune::impl {
          * actions performed during a HOME visit must update it so that
          * returning to the game restores the user's LATEST intent, not
          * a stale pre-HOME value. */
-        bool g_user_paused       = false;
-        bool g_saved_pause_state = false;
+        std::atomic<bool> g_user_paused{false};
+        std::atomic<bool> g_saved_pause_state{false};
 
         /* --------------------------------------------------------------
          * pdmqry-based focus detection.
@@ -349,6 +352,53 @@ namespace tune::impl {
          * NAND can hold thousands of historical entries; pulling only
          * the tail keeps this bounded. */
         bool g_pdmqry_available = false;
+
+        /* ----------------------------------------------------------------
+         * Issue #38 — contexts where startup music should stay quiet.
+         *
+         * Three separate complaints, three separate mechanisms:
+         *
+         *   BOOT LOGO  — boot2 starts this sysmodule before the home menu
+         *                is drawn, so Auto-play Startup begins during the
+         *                Nintendo Switch logo.  "Wait For Home" holds that
+         *                first playback until qlaunch is observed running.
+         *
+         *   KEYBOARD   — the software keyboard is a library applet.  It is
+         *                observed through the pdm play-event log rather
+         *                than an applet session (this process has none).
+         *
+         *   LOCKSCREEN — drawn by qlaunch under the SAME title id as the
+         *                home menu, so it cannot be distinguished by title.
+         *                Inferred from the sleep/wake cycle instead: the
+         *                lock screen is what greets the user after waking.
+         *
+         * Each gate snapshots the pause state it interrupted and restores
+         * it afterwards, so none of them can resume music the user had
+         * deliberately paused.
+         * ---------------------------------------------------------------- */
+
+        /* Boot gate: true while startup auto-play is being held back
+         * waiting for the home menu to come up.  Set in Initialize(),
+         * cleared by PmdmntThreadFunc once qlaunch is seen (or once the
+         * safety timeout expires). */
+        bool g_awaiting_home     = false;
+
+        /* Library-applet and lockscreen gates. All three contexts share one
+         * snapshot: nested or back-to-back system UI must never restore stale
+         * playback while another context still requires silence. */
+        bool g_kbd_open              = false; // swkbd currently believed open
+        bool g_controller_sync_open  = false; // ControllerSupport applet open
+        bool g_locked                = false; // on lock screen after a wake
+        bool g_context_pause_active  = false; // at least one issue #38 gate is active
+        bool g_context_saved_pause   = false; // state before the first active gate
+
+        struct AppletQueryCache {
+            s32    last_total_entries{-1};
+            bool   last_is_open{false};
+            Result last_rc{1};
+        };
+        AppletQueryCache g_keyboard_query_cache;
+        AppletQueryCache g_controller_query_cache;
 
         /* Query whether a given application TID is currently out of focus.
          *
@@ -422,6 +472,150 @@ namespace tune::impl {
             *outOfFocus   = isOut;
             s_last_is_out = isOut;
             s_last_rc     = 0;
+            return 0;
+        }
+
+        /* Query whether a library applet is currently on screen (issue #38).
+         *
+         * Both the software keyboard and the ControllerSupport popup are
+         * library applets in the pdm play-event log. Launch/InFocus means the
+         * popup came up; Exit/OutOfFocus means it went away. Each applet gets
+         * an independent cache because their event streams can advance at the
+         * same time.
+         *
+         * On its first observation the query intentionally reports no
+         * opinion: an old Launch event without its matching Exit may still be
+         * in the short log tail, and must not pause music merely because the
+         * user enabled a setting mid-session. */
+        Result isLibraryAppletOpen(AppletId applet_id, AppletQueryCache& cache,
+                                   bool* isOpen) {
+            s32 total_entries = 0, start_entry_index = 0, end_entry_index = 0;
+            Result rc = pdmqryGetAvailablePlayEventRange(
+                &total_entries, &start_entry_index, &end_entry_index);
+            if (R_FAILED(rc)) return rc;
+
+            if (total_entries == cache.last_total_entries) {
+                if (R_SUCCEEDED(cache.last_rc))
+                    *isOpen = cache.last_is_open;
+                return cache.last_rc;
+            }
+
+            const bool first_call = (cache.last_total_entries < 0);
+            cache.last_total_entries = total_entries;
+            if (first_call) { cache.last_rc = 1; return 1; }
+
+            constexpr s32 EVENT_COUNT = 16;
+            PdmPlayEvent events[EVENT_COUNT];
+            s32 out = 0;
+            s32 start = end_entry_index - (EVENT_COUNT - 1);
+            if (start < 0) start = 0;
+
+            rc = pdmqryQueryPlayEvent(start, events, EVENT_COUNT, &out);
+            if (R_FAILED(rc)) { cache.last_rc = rc; return rc; }
+            if (out == 0)     { cache.last_rc = 1; return 1; }
+
+            int itr = -1;
+            for (int i = out - 1; i >= 0; --i) {
+                const PdmPlayEvent* event = &events[i];
+                if (event->play_event_type != PdmPlayEventType_Applet)
+                    continue;
+                if (event->event_data.applet.applet_id != applet_id)
+                    continue;
+                itr = i;
+                break;
+            }
+            if (itr == -1) { cache.last_rc = 1; return 1; }
+
+            const auto event_type = events[itr].event_data.applet.event_type;
+            const bool open = (event_type == PdmAppletEventType_Launch)
+                           || (event_type == PdmAppletEventType_InFocus);
+
+            *isOpen             = open;
+            cache.last_is_open  = open;
+            cache.last_rc       = 0;
+            return 0;
+        }
+
+        /* Watch the play-event log for power transitions and for applet
+         * focus events (issue #38, lockscreen support).
+         *
+         * WHY NOT psc: the obvious way to hear about sleep is to register
+         * a psc:m module and handle its state requests.  But a registered
+         * module that fails to acknowledge a ReadySleep request can stall
+         * the console's suspend path, and this sysmodule must never be
+         * able to wedge sleep.  The pdm log already carries
+         * PdmPlayEventType_PowerStateChange entries, costs us nothing
+         * extra (we poll the same counter), and cannot block anything.
+         *
+         * Deliberately does NOT try to tell sleep from wake: the `value`
+         * byte's meaning is undocumented in libnx, and we don't need it.
+         * Pausing on either edge is harmless — while the console is
+         * asleep nobody is listening, and after the wake the lock screen
+         * is exactly where we want silence.  What matters is spotting the
+         * unlock, which shows up as the next applet focus event.
+         *
+         * Reports the final lock-screen state implied by new events in their
+         * recorded order: a power transition enters the locked state and the
+         * next non-keyboard applet Launch/InFocus leaves it. This preserves a
+         * correct result even when both edges arrive in one polling window.
+         * Returns non-zero only if pdmqry itself failed. */
+        Result pollLockscreenState(bool* state_changed, bool* is_locked) {
+            static s32 s_last_total_entries = -1;
+
+            *state_changed = false;
+            *is_locked = false;
+
+            s32 total_entries = 0, start_entry_index = 0, end_entry_index = 0;
+            Result rc = pdmqryGetAvailablePlayEventRange(
+                &total_entries, &start_entry_index, &end_entry_index);
+            if (R_FAILED(rc)) return rc;
+
+            /* Nothing new since last tick. */
+            if (total_entries == s_last_total_entries) return 0;
+
+            const bool first_call = (s_last_total_entries < 0);
+            s_last_total_entries  = total_entries;
+
+            /* On the very first call we only latch the counter: entries
+             * already in the log predate this session's interest and must
+             * not be replayed as if they just happened. */
+            if (first_call) return 0;
+
+            constexpr s32 EVENT_COUNT = 16;
+            PdmPlayEvent events[EVENT_COUNT];
+            s32 out = 0;
+            s32 start = end_entry_index - (EVENT_COUNT - 1);
+            if (start < 0) start = 0;
+
+            rc = pdmqryQueryPlayEvent(start, events, EVENT_COUNT, &out);
+            if (R_FAILED(rc)) return rc;
+
+            for (int i = 0; i < out; ++i) {
+                const PdmPlayEvent* event = &events[i];
+
+                if (event->play_event_type == PdmPlayEventType_PowerStateChange) {
+                    *state_changed = true;
+                    *is_locked = true;
+                    continue;
+                }
+
+                if (event->play_event_type != PdmPlayEventType_Applet)
+                    continue;
+
+                /* The software keyboard has its own handler; a keyboard
+                 * opening must not read as "the user unlocked". */
+                if (event->event_data.applet.applet_id == AppletId_LibraryAppletSwkbd
+                    || event->event_data.applet.applet_id == AppletId_LibraryAppletController)
+                    continue;
+
+                const auto event_type = event->event_data.applet.event_type;
+                if (event_type == PdmAppletEventType_Launch
+                    || event_type == PdmAppletEventType_InFocus) {
+                    *state_changed = true;
+                    *is_locked = false;
+                }
+            }
+
             return 0;
         }
 
@@ -575,7 +769,29 @@ namespace tune::impl {
          * before Initialize() is called (evidenced by get_volume() working
          * in the same function).
          * -------------------------------------------------------------- */
-        g_should_pause = !config::get_auto_play_startup();
+        const auto startup_policy = config::get_startup_policy();
+        g_should_pause = !startup_policy.auto_play_startup;
+
+        /* --------------------------------------------------------------
+         * Boot gate (issue #38): hold startup auto-play until the home
+         * menu is up.
+         *
+         * boot2 spawns this sysmodule well before qlaunch has drawn
+         * anything, so with Auto-play Startup ON the music starts during
+         * the Nintendo Switch boot logo.  When "Wait For Home" is set we
+         * force the initial state to paused and let PmdmntThreadFunc lift
+         * it once qlaunch is observed running.
+         *
+         * Only meaningful when auto-play is ON: with it OFF playback is
+         * already held and there is nothing to gate.  g_user_paused is
+         * deliberately NOT set — this is a policy pause, not a user one,
+         * so pressing Play in the overlay during the boot logo still
+         * works and simply cancels the wait.
+         * -------------------------------------------------------------- */
+        if (!g_should_pause && startup_policy.wait_for_home) {
+            g_should_pause  = true;
+            g_awaiting_home = true;
+        }
 
         /* Delete any HOME flag left from a previous session.
          *
@@ -672,6 +888,7 @@ namespace tune::impl {
         /* Run as long as we aren't stopped and no error has been encountered. */
         while (g_should_run) {
             g_current.Reset();
+            char current_path[PATH_SIZE_MAX]{};
             {
                 std::scoped_lock lk(g_mutex);
 
@@ -683,20 +900,24 @@ namespace tune::impl {
                     continue;
                 } else {
                     g_current = g_playlist.Get(g_queue_position, g_shuffle);
+                    const char* path = g_playlist.GetPath(g_current);
+                    if (path)
+                        std::snprintf(current_path, sizeof(current_path), "%s", path);
                 }
             }
 
             /* Block until Enqueue() adds something — no reason to wake
              * periodically when the queue is genuinely empty. */
-            if (!g_current.IsValid()) {
+            if (!g_current.IsValid() || current_path[0] == '\0') {
                 leventWait(&g_queue_changed_event, 500'000'000ULL);
                 leventClear(&g_queue_changed_event);
                 continue;
             }
 
             g_status = PlayerStatus::Playing;
-            /* Only play if playing and we have a track queued. */
-            Result rc = PlayTrack(g_playlist.GetPath(g_current));
+            /* Decode a stable path snapshot; queue edits may happen while
+             * PlayTrack is running and must not invalidate a string pointer. */
+            Result rc = PlayTrack(current_path);
 
             /* Log error. */
             if (R_FAILED(rc)) {
@@ -838,6 +1059,26 @@ namespace tune::impl {
             g_should_pause = should_pause;
             if (!should_pause)
                 leventSignal(&g_unpause_event); // wake PlayTrack's pause wait
+        };
+
+        /* Issue #38 contexts can overlap: for example, a keyboard may appear
+         * while controller pairing is open, or a controller popup can follow
+         * a wake. Snapshot once when the first gate becomes active and restore
+         * only after the final gate closes. */
+        auto refreshContextPause = [&]() {
+            const bool context_open = g_kbd_open || g_controller_sync_open || g_locked;
+            if (context_open) {
+                if (!g_context_pause_active) {
+                    g_context_saved_pause  = g_should_pause;
+                    g_context_pause_active = true;
+                }
+                // Reassert on every tick: title/focus policy must not resume
+                // music while a system popup remains visible.
+                policyWrite(true);
+            } else if (g_context_pause_active) {
+                g_context_pause_active = false;
+                policyWrite(g_context_saved_pause);
+            }
         };
 
         /* ---------------------------------------------------------------
@@ -1110,7 +1351,106 @@ namespace tune::impl {
             }
         };
 
+        /* Boot gate bookkeeping (issue #38).
+         *
+         * kHomeWaitTimeoutTicks is a safety net, not the normal exit: if
+         * qlaunch never shows up (a title booted directly from a card, a
+         * pmdmnt hiccup) we release the gate anyway rather than leave the
+         * user with permanently silent startup music.  30 s is far longer
+         * than a cold boot to the home menu and short enough not to feel
+         * broken.
+         *
+         * The tick counter resets on reboot and we only ever compare
+         * against a value read in this same session, so no cross-boot
+         * skew is possible here. */
+        const u64 home_wait_start_tick  = armGetSystemTick();
+        const u64 kHomeWaitTimeoutTicks = armNsToTicks(30'000'000'000ULL); // 30 s
+
         while (g_should_run) {
+            /* ---- (0) Boot gate: release startup auto-play once the
+             *          home menu is up (issue #38, "Wait For Home") ---- */
+            if (g_awaiting_home) {
+                /* A runtime toggle must not leave an old boot gate behind.
+                 * Disabling Wait For Home restores normal auto-play on the
+                 * next policy tick; manual Pause still wins in policyWrite. */
+                if (!config::get_auto_play_startup()) {
+                    g_awaiting_home = false;
+                    policyWrite(true);
+                } else if (!config::get_wait_for_home()) {
+                    g_awaiting_home = false;
+                    policyWrite(false);
+                /* The user (or any other actor) pressed Play while we were
+                 * holding the gate — their intent wins, drop the gate and
+                 * leave the state alone. */
+                } else if (!g_should_pause) {
+                    g_awaiting_home = false;
+                } else {
+                    u64 qlaunch_pid = 0;
+                    const bool home_up =
+                        R_SUCCEEDED(pmdmntGetProcessId(&qlaunch_pid, kHomeScreenTid))
+                        && qlaunch_pid != 0;
+
+                    const bool timed_out =
+                        (armGetSystemTick() - home_wait_start_tick) > kHomeWaitTimeoutTicks;
+
+                    if (home_up || timed_out) {
+                        g_awaiting_home = false;
+                        /* Route through policyWrite so a user Pause issued
+                         * during the wait still outranks us. */
+                        policyWrite(false);
+                    }
+                }
+            }
+
+            /* ---- (0.5) Library-applet gates (issue #38) -----------------
+             *
+             * swkbd and ControllerSupport are separate library applets. Each
+             * may be enabled independently, but their pauses are composed by
+             * refreshContextPause() so one popup cannot resume music while the
+             * other remains on screen. These checks are skipped during the
+             * boot gate because there is no meaningful user playback state yet. */
+            if (g_pdmqry_available && !g_awaiting_home) {
+                const bool pause_keyboard = config::get_pause_on_keyboard();
+                const bool pause_controller = config::get_pause_on_controller_sync();
+
+                if (pause_keyboard) {
+                    bool kbd_now = false;
+                    if (R_SUCCEEDED(isLibraryAppletOpen(AppletId_LibraryAppletSwkbd,
+                                                        g_keyboard_query_cache, &kbd_now)))
+                        g_kbd_open = kbd_now;
+                } else {
+                    g_kbd_open = false;
+                }
+
+                if (pause_controller) {
+                    bool controller_now = false;
+                    if (R_SUCCEEDED(isLibraryAppletOpen(AppletId_LibraryAppletController,
+                                                        g_controller_query_cache, &controller_now)))
+                        g_controller_sync_open = controller_now;
+                } else {
+                    g_controller_sync_open = false;
+                }
+
+                /* The lock screen shares qlaunch's title id. Infer it from a
+                 * power transition and clear it only after the next real
+                 * non-keyboard applet focus event. Poll continuously so stale
+                 * history is never replayed when the toggle is enabled. */
+                const bool pause_lockscreen = config::get_pause_on_lockscreen();
+                if (!pause_lockscreen) {
+                    // Clear unconditionally: an unavailable/stale pdmqry must
+                    // never keep a disabled option latched in the paused state.
+                    g_locked = false;
+                } else {
+                    bool lock_state_changed = false;
+                    bool lock_now = false;
+                    if (R_SUCCEEDED(pollLockscreenState(&lock_state_changed, &lock_now))
+                        && lock_state_changed)
+                        g_locked = lock_now;
+                }
+
+                refreshContextPause();
+            }
+
             /* ---- (1) Tid-change edge: update current_tid + volume ---- */
             {
                 u64 new_pid{}, new_tid{};
@@ -1263,7 +1603,7 @@ namespace tune::impl {
                                      * pressed during loading" and skips the re-entry
                                      * fade — leaving music audible through the game. */
                                     last_consumed_home_tick = readHomeFlagTick();
-                                    g_saved_pause_state = g_should_pause;
+                                    g_saved_pause_state.store(g_should_pause.load());
                                     const auto action = resolvePerTitlePolicy(kHomeScreenTid);
                                     if (action == StartAction::ForcePause) {
                                         if (fade_dir == FadeDir::Out) {
@@ -1368,7 +1708,7 @@ namespace tune::impl {
                              * position — no blocking, no hidsys.  The fade was
                              * non-blocking so section (2) ran freely, caught the
                              * OutOfFocus event, and is redirecting the ramp here. */
-                            g_saved_pause_state = g_should_pause;
+                            g_saved_pause_state.store(g_should_pause.load());
                             /* Mark the current HOME flag tick as consumed.
                              * pdmqry delivered OutOfFocus so this HOME press
                              * is handled; prevent the was_first_focus check on
@@ -1606,7 +1946,7 @@ namespace tune::impl {
                         /* HOME was pressed during the fade/hold. */
                         fade_is_first_focus_out = false;
                         last_consumed_home_tick = home_tick;  // consumed — don't re-use on next launch
-                        g_saved_pause_state  = g_should_pause;
+                        g_saved_pause_state.store(g_should_pause.load());
                         const auto action    = resolvePerTitlePolicy(kHomeScreenTid);
                         if (action == StartAction::ForcePause) {
                             /* HOME also wants to pause: let the fade/hold finish
@@ -2023,6 +2363,27 @@ namespace tune::impl {
             g_filter_paused = false;
             leventSignal(&g_unpause_event);
         }
+    }
+
+    void SetStartupPolicy(const TuneStartupPolicy& raw_policy) {
+        const config::StartupPolicy policy{
+            .auto_play_startup = raw_policy.auto_play_startup != 0,
+            .wait_for_home = raw_policy.wait_for_home != 0,
+            .pause_on_keyboard = raw_policy.pause_on_keyboard != 0,
+            .pause_on_controller_sync = raw_policy.pause_on_controller_sync != 0,
+            .pause_on_lockscreen = raw_policy.pause_on_lockscreen != 0,
+        };
+        config::set_startup_policy(policy);
+
+        /* Disabling a gate must take effect even if pdmqry has no fresh event
+         * yet. PmdmntThreadFunc will restore the saved playback state on its
+         * next tick through refreshContextPause(). */
+        if (!policy.pause_on_keyboard)
+            g_kbd_open = false;
+        if (!policy.pause_on_controller_sync)
+            g_controller_sync_open = false;
+        if (!policy.pause_on_lockscreen)
+            g_locked = false;
     }
 
     void ClearQueue() {

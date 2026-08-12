@@ -131,6 +131,28 @@ namespace {
         return 0;
     }
 
+    TuneStartupPolicy toIpcStartupPolicy(const config::StartupPolicy& policy) {
+        return {
+            .auto_play_startup = static_cast<u8>(policy.auto_play_startup),
+            .wait_for_home = static_cast<u8>(policy.wait_for_home),
+            .pause_on_keyboard = static_cast<u8>(policy.pause_on_keyboard),
+            .pause_on_controller_sync = static_cast<u8>(policy.pause_on_controller_sync),
+            .pause_on_lockscreen = static_cast<u8>(policy.pause_on_lockscreen),
+            .reserved = {0, 0, 0},
+        };
+    }
+
+    void applyStartupPolicy(const config::StartupPolicy& policy) {
+        // Save in the overlay process first, then give the identical snapshot
+        // to the already-running sysmodule. This avoids the old stale-cache
+        // behaviour where a visible toggle did not change active playback.
+        config::set_startup_policy(policy);
+        const TuneStartupPolicy wire = toIpcStartupPolicy(policy);
+        if (R_FAILED(tuneSetStartupPolicy(&wire)) && tsl::notification) {
+            tsl::notification->showNow(i18n::t(i18n::Str::GenericError));
+        }
+    }
+
 }
 
 // ---------------------------------------------------------------------------
@@ -415,6 +437,109 @@ bool LanguageGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &t
 }
 
 // =============================================================================
+// StartupSettingsGui
+// =============================================================================
+
+StartupSettingsGui::~StartupSettingsGui() {
+    delete m_list;
+}
+
+tsl::elm::Element* StartupSettingsGui::createUI() {
+    i18n::syncFromConfig();
+    m_frame = new SysTuneOverlayFrame(i18n::t(i18n::Str::Settings),
+                                      i18n::t(i18n::Str::StartupSettings));
+    m_list = new tsl::elm::List();
+    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::StartupSettings)));
+
+    const config::StartupPolicy initial = config::get_startup_policy();
+
+    auto *auto_play = new tsl::elm::ToggleListItem(
+        i18n::t(i18n::Str::AutoPlayStartup), initial.auto_play_startup,
+        i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
+    auto_play->setStateChangedListener([](bool value) {
+        auto policy = config::get_startup_policy();
+        policy.auto_play_startup = value;
+        applyStartupPolicy(policy);
+    });
+    m_list->addItem(auto_play);
+
+    auto *wait_home = new tsl::elm::ToggleListItem(
+        i18n::t(i18n::Str::WaitForHome), initial.wait_for_home,
+        i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
+    wait_home->setStateChangedListener([](bool value) {
+        auto policy = config::get_startup_policy();
+        policy.wait_for_home = value;
+        applyStartupPolicy(policy);
+    });
+    m_list->addItem(wait_home);
+
+    auto *keyboard = new tsl::elm::ToggleListItem(
+        i18n::t(i18n::Str::PauseOnKeyboard), initial.pause_on_keyboard,
+        i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
+    keyboard->setStateChangedListener([](bool value) {
+        auto policy = config::get_startup_policy();
+        policy.pause_on_keyboard = value;
+        applyStartupPolicy(policy);
+    });
+    m_list->addItem(keyboard);
+
+    auto *controller_sync = new tsl::elm::ToggleListItem(
+        i18n::t(i18n::Str::PauseOnControllerSync), initial.pause_on_controller_sync,
+        i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
+    controller_sync->setStateChangedListener([](bool value) {
+        auto policy = config::get_startup_policy();
+        policy.pause_on_controller_sync = value;
+        applyStartupPolicy(policy);
+    });
+    m_list->addItem(controller_sync);
+
+    auto *lockscreen = new tsl::elm::ToggleListItem(
+        i18n::t(i18n::Str::PauseOnLockscreen), initial.pause_on_lockscreen,
+        i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
+    lockscreen->setStateChangedListener([](bool value) {
+        auto policy = config::get_startup_policy();
+        policy.pause_on_lockscreen = value;
+        applyStartupPolicy(policy);
+    });
+    m_list->addItem(lockscreen);
+
+    auto *remove_startup = new tsl::elm::ListItem(i18n::t(i18n::Str::RemoveStartup));
+    remove_startup->setClickListener([](u64 keys) -> bool {
+        if (!(keys & HidNpadButton_A))
+            return false;
+        char path[512]{};
+        if (config::get_load_path(path, sizeof(path))) {
+            config::set_load_path("");
+            const char *name = path;
+            if (const char *separator = std::strrchr(path, '/'))
+                name = separator + 1;
+            if (tsl::notification)
+                tsl::notification->showNow(name, 26, i18n::t(i18n::Str::StartupPathRemoved), 2500, false);
+        } else if (tsl::notification) {
+            tsl::notification->showNow(i18n::t(i18n::Str::NoStartupPath));
+        }
+        return true;
+    });
+    m_list->addItem(remove_startup);
+
+    m_frame->setContent(m_list);
+    return m_frame;
+}
+
+bool StartupSettingsGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
+                                     HidAnalogStickState joyStickPosLeft,
+                                     HidAnalogStickState joyStickPosRight) {
+    if (SysTuneGui::handleInput(keysDown, keysHeld, touchPos, joyStickPosLeft, joyStickPosRight))
+        return true;
+    if (keysDown & KEY_LEFT) {
+        tsl::goBack();
+        triggerNavigationFeedback();
+        return true;
+    }
+    return false;
+}
+
+// =============================================================================
 
 SettingsGui::~SettingsGui() {
     delete m_list;
@@ -593,16 +718,18 @@ tsl::elm::Element* SettingsGui::createUI() {
         default_title_volume_slider->setValueChangedListener([this](u8 value) {
             m_game_default_vol = value;
             const float fv = float(value) / 100.f;
+            // Preset Volume is the global fallback for titles without an override.
+            // Do not write the current title's per-title exception here: that would
+            // make the preset slider silently stop being a preset for this title.
             tuneSetDefaultTitleVolume(fv);
-            if (m_tid) config::set_title_volume(m_tid, fv);
         });
         m_game_default_slider = default_title_volume_slider;
         default_title_volume_slider->setIconTapCallback(makeMuteTap(
             &m_game_default_slider, &m_game_default_vol, &m_game_default_vol_backup,
             [this](u8 v) {
                 const float fv = float(v) / 100.f;
+                // Keep this action global as well; it changes the fallback only.
                 tuneSetDefaultTitleVolume(fv);
-                if (m_tid) config::set_title_volume(m_tid, fv);
             }));
         m_list->addItem(default_title_volume_slider);
 
@@ -862,37 +989,19 @@ tsl::elm::Element* SettingsGui::createUI() {
         m_list->addItem(home_focus);
     }
 
-    // Auto-play Startup — applies to the sysmodule itself, not any
-    // individual title. When ON, music begins playing as soon as the
-    // sysmodule starts up (assuming a startup playlist is set),
-    // regardless of which title is in foreground at boot time.
-    auto auto_play_startup = new tsl::elm::ToggleListItem(
-        i18n::t(i18n::Str::AutoPlayStartup),
-        config::get_auto_play_startup(),
-        i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
-    auto_play_startup->setStateChangedListener([](bool v) {
-        config::set_auto_play_startup(v);
-    });
-    m_list->addItem(auto_play_startup);
-
-    auto startup_button = new tsl::elm::ListItem(i18n::t(i18n::Str::RemoveStartup));
-    startup_button->setClickListener([this, startup_button](u64 keys) -> bool {
+    // Keep all boot and system-UI playback policies behind one deliberate
+    // entry point. The child GUI applies each toggle to the running sysmodule
+    // through IPC instead of only changing this overlay process's cache.
+    auto *startup_settings = new tsl::elm::ListItem(
+        i18n::t(i18n::Str::StartupSettings), ult::DROPDOWN_SYMBOL);
+    startup_settings->setClickListener([](u64 keys) -> bool {
         if (keys & HidNpadButton_A) {
-            //tsl::shiftItemFocus(startup_button);
-            char path[512];
-            if (config::get_load_path(path, sizeof(path))) {
-                config::set_load_path("");
-                const char *p = path;
-                if (const char *ext = std::strrchr(path, '/')) p = ext + 1;
-                if (tsl::notification) tsl::notification->showNow(p, 26, i18n::t(i18n::Str::StartupPathRemoved), 2500, false);
-            } else {
-                if (tsl::notification) tsl::notification->showNow(i18n::t(i18n::Str::NoStartupPath));
-            }
+            tsl::changeTo<StartupSettingsGui>();
             return true;
         }
         return false;
     });
-    m_list->addItem(startup_button);
+    m_list->addItem(startup_settings);
 
     auto exit_button = new tsl::elm::SilentListItem(i18n::t(i18n::Str::StopRyazhTune));
     exit_button->setValue("\uE071", true);

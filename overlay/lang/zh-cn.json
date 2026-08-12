@@ -161,5 +161,15 @@
     "Repeat": "重复",
     "Select": "选择",
     "Back": "返回",
-    "Selected": "已选择"
+    "Selected": "已选择",
+    "WAIT_FOR_HOME": "等待 HOME",
+    "Wait For Home": "等待 HOME",
+    "PAUSE_ON_KEYBOARD": "键盘时暂停",
+    "Pause On Keyboard": "键盘时暂停",
+    "PAUSE_ON_LOCKSCREEN": "锁屏时暂停",
+    "Pause On Lockscreen": "锁屏时暂停",
+    "PAUSE_ON_CONTROLLER_SYNC": "控制器同步时暂停",
+    "Pause On Controller Sync": "控制器同步时暂停",
+    "STARTUP_SETTINGS": "启动设置",
+    "Startup Settings": "启动设置"
 }

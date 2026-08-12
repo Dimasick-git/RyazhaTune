@@ -68,6 +68,23 @@ private:
 };
 
 // ---------------------------------------------------------------------------
+// Startup playback and system-context settings
+// ---------------------------------------------------------------------------
+class StartupSettingsGui final : public SysTuneGui {
+public:
+    ~StartupSettingsGui();
+
+    tsl::elm::Element *createUI() final;
+    bool handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
+                     HidAnalogStickState joyStickPosLeft,
+                     HidAnalogStickState joyStickPosRight) override;
+
+private:
+    tsl::elm::List      *m_list  = nullptr;
+    SysTuneOverlayFrame *m_frame = nullptr;
+};
+
+// ---------------------------------------------------------------------------
 // Page 1 — Settings
 // ---------------------------------------------------------------------------
 class SettingsGui final : public SysTuneGui {

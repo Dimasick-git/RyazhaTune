@@ -34,5 +34,6 @@ enum TuneIpcCmd {
 
     TuneIpcCmd_GetWaveform = 60,
     TuneIpcCmd_ApplyTitleFilter = 61,
+    TuneIpcCmd_SetStartupPolicy = 62,
     TuneIpcCmd_GetApiVersion = 5000,
 };

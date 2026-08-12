@@ -1,19 +1,30 @@
 name: "Автоматическая сборка и релиз RyazhTune"
 
+
+
+
 on:
   push:
     branches:
       - main
     paths:
       - 'Makefile'
-      - 'RyazhaTune/**'
+      - 'RyazhTune/**'
       - 'common/**'
       - 'ipc/**'
       - 'overlay/**'
+      - 'scripts/verify-localizations.mjs'
+      - 'scripts/verify-issue-38.mjs'
       - '.github/workflows/build-and-release.yml'
+
+
+
 
 permissions:
   contents: write
+
+
+
 
 jobs:
   check-version:
@@ -27,14 +38,35 @@ jobs:
         with:
           fetch-depth: 0
 
+
+
+
       - name: Настройка безопасного Git каталога
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+
+
+
+      - name: Проверка согласованности локализаций
+        run: node scripts/verify-localizations.mjs
+
+
+
+
+      - name: Проверка реализации issue №38
+        run: node scripts/verify-issue-38.mjs
+
+
+
 
       - name: Извлечение текущей версии из Makefile
         id: version
         run: |
           VERSION=$(grep "export VERSION" Makefile | sed 's/.*:= *//' | xargs)
           echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+
+
 
       - name: Проверка изменения версии
         id: check
@@ -44,11 +76,17 @@ jobs:
           LATEST_TAG=$(git tag -l | grep -v "^v$CURRENT_VERSION$" | sort -V | tail -n 1 || echo "v0.0.0")
           LATEST_VERSION=${LATEST_TAG#v}
 
+
+
+
           if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
             echo "CHANGED=true" >> "$GITHUB_OUTPUT"
           else
             echo "CHANGED=false" >> "$GITHUB_OUTPUT"
           fi
+
+
+
 
   build:
     needs: check-version
@@ -60,13 +98,22 @@ jobs:
       - name: Установка зависимостей (jq)
         run: apt-get update && apt-get install -y jq curl git
 
+
+
+
       - name: Получение исходного кода
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
+
+
+
       - name: Настройка безопасного Git каталога
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+
+
 
       - name: Проверка языковых файлов
         run: |
@@ -77,11 +124,20 @@ jobs:
             exit 1
           fi
 
+
+
+
       - name: Подготовка библиотек
         run: make prepare-overlay-lib
 
+
+
+
       - name: Сборка проекта
         run: make clean && make -j$(nproc)
+
+
+
 
       - name: Проверка целостности сборки
         run: |

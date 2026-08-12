@@ -161,5 +161,15 @@
     "Repeat": "Repeat",
     "Select": "Select",
     "Back": "Back",
-    "Selected": "Selected"
+    "Selected": "Selected",
+    "WAIT_FOR_HOME": "Wait For Home",
+    "Wait For Home": "Wait For Home",
+    "PAUSE_ON_KEYBOARD": "Pause On Keyboard",
+    "Pause On Keyboard": "Pause On Keyboard",
+    "PAUSE_ON_LOCKSCREEN": "Pause On Lockscreen",
+    "Pause On Lockscreen": "Pause On Lockscreen",
+    "PAUSE_ON_CONTROLLER_SYNC": "Pause On Controller Sync",
+    "Pause On Controller Sync": "Pause On Controller Sync",
+    "STARTUP_SETTINGS": "Startup Settings",
+    "Startup Settings": "Startup Settings"
 }

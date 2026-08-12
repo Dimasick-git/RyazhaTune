@@ -1,21 +1,16 @@
 export GITHASH 		:= $(shell git -c safe.directory=$(CURDIR) rev-parse --short HEAD 2>/dev/null || echo unknown)
-export VERSION := 5.0.1
-export API_VERSION 	:= 5
+export VERSION := 5.5.0
+export API_VERSION 	:= 6
 export WANT_FLAC 	:= 1
 export WANT_MP3 	:= 1
 export WANT_WAV 	:= 1
 
-# Используем наш форк libultrahand: ryazhahand.mk там уже лежит,
-# никакой compat-обёртки подкладывать не надо. URL канонический Dimasick-git
-# (старый аккаунт Dimanchikgshehsbshene -- зеркало). Pin на fe699fd = ветка
-# compat/gc-legacy-67f4486: снапшот 67f4486 (do/while TSL_R_TRY, GCC 15 ok,
-# старый API — на нём этот оверлей собирается) + однострочный GC-фикс
-# padConfigureInput|NpadGc (issue #33). Прямой бамп на новый main (856ddbd+)
-# ломает сборку — апгрейд API оверлея трекается в issue #36.
-# 1b3bcc0 = ПОЛНЫЙ снапшот 67f4486 (включая ultra.hpp, в main переименованный
-# в ryz.hpp) + GC-фикс; недоделанное компат-дерево fe699fd роняло make.
+# Используем закреплённую ревизию открытого libryazhahand владельца.
+# Этот pin содержит Switch 2 style renderer (ult::useSwitch2Style), который
+# используется оверлеем как штатная библиотечная возможность. Изменять pin
+# можно только вместе с полной devkitA64-проверкой CI.
 LIBRYAZHAHAND_REPO ?= https://github.com/Dimasick-git/libryazhahand.git
-LIBRYAZHAHAND_PIN  ?= 1b3bcc0e30a90c878a7a274fd32e5d9bc6a9cec1
+LIBRYAZHAHAND_PIN  ?= 0332d63e1526f90f52559cfc729cbb1510a78940
 RYAZHAHAND_DIR     ?= overlay/lib/libryazhahand
 
 all: overlay nxExt module

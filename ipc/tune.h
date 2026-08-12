@@ -34,6 +34,20 @@ typedef struct {
     u32 total_frames;
 } TuneCurrentStats;
 
+/**
+ * Runtime policy for startup playback and system UI contexts.
+ * Each field is 0 (disabled) or 1 (enabled). This packed snapshot is sent
+ * atomically to the sysmodule, avoiding stale per-process config caches.
+ */
+typedef struct {
+    u8 auto_play_startup;
+    u8 wait_for_home;
+    u8 pause_on_keyboard;
+    u8 pause_on_controller_sync;
+    u8 pause_on_lockscreen;
+    u8 reserved[3];
+} TuneStartupPolicy;
+
 Result tuneInitialize();
 
 void tuneExit();
@@ -143,6 +157,9 @@ Result tuneEnqueue(const char *path, TuneEnqueueType type);
 Result tuneRemove(u32 index);
 Result tuneGetWaveform(s16 *out_buffer, size_t count);
 Result tuneApplyTitleFilter();
+
+/** Apply all startup/system-context switches to the running sysmodule. */
+Result tuneSetStartupPolicy(const TuneStartupPolicy *policy);
 
 Result tuneQuit();
 

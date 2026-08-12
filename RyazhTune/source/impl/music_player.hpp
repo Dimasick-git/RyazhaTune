@@ -49,5 +49,6 @@ namespace tune::impl {
     Result Remove(u32 index);
     void GetWaveform(s16* out_buffer, size_t count);
     void ApplyTitleFilter();
+    void SetStartupPolicy(const TuneStartupPolicy& policy);
 
 }

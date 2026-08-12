@@ -161,5 +161,15 @@
     "Repeat": "Repetir",
     "Select": "Seleccionar",
     "Back": "Atrás",
-    "Selected": "Seleccionado"
+    "Selected": "Seleccionado",
+    "WAIT_FOR_HOME": "Esperar a HOME",
+    "Wait For Home": "Esperar a HOME",
+    "PAUSE_ON_KEYBOARD": "Pausar con el teclado",
+    "Pause On Keyboard": "Pausar con el teclado",
+    "PAUSE_ON_LOCKSCREEN": "Pausar en pantalla de bloqueo",
+    "Pause On Lockscreen": "Pausar en pantalla de bloqueo",
+    "PAUSE_ON_CONTROLLER_SYNC": "Pausar durante la sincronización del mando",
+    "Pause On Controller Sync": "Pausar durante la sincronización del mando",
+    "STARTUP_SETTINGS": "Ajustes de inicio",
+    "Startup Settings": "Ajustes de inicio"
 }

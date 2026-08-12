@@ -161,5 +161,15 @@
     "Repeat": "リピート",
     "Select": "選択",
     "Back": "戻る",
-    "Selected": "選択済み"
+    "Selected": "選択済み",
+    "WAIT_FOR_HOME": "HOMEまで待機",
+    "Wait For Home": "HOMEまで待機",
+    "PAUSE_ON_KEYBOARD": "キーボードで一時停止",
+    "Pause On Keyboard": "キーボードで一時停止",
+    "PAUSE_ON_LOCKSCREEN": "ロック画面で一時停止",
+    "Pause On Lockscreen": "ロック画面で一時停止",
+    "PAUSE_ON_CONTROLLER_SYNC": "コントローラー同期中に一時停止",
+    "Pause On Controller Sync": "コントローラー同期中に一時停止",
+    "STARTUP_SETTINGS": "起動設定",
+    "Startup Settings": "起動設定"
 }

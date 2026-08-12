@@ -11,7 +11,6 @@ namespace {
 
 const char CONFIG_DIR[]{"/config/RyazhTune"};
 const char CONFIG_PATH[]{"/config/RyazhTune/config.ini"};
-const char HAND_CONFIG_DIR[]{"/config/ryazhahand"};
 
 // In-memory cache for hot scalar config values read on the IPC critical path.
 // Loaded lazily on first access; updated synchronously on every set call.
@@ -22,7 +21,11 @@ struct ScalarCache {
     bool  shuffle{false};
     int   repeat{1};
     float volume{1.f};
-    bool  auto_play_startup{true};
+    bool  auto_play_startup{false};
+    bool  wait_for_home{false};
+    bool  pause_on_keyboard{false};
+    bool  pause_on_controller_sync{false};
+    bool  pause_on_lockscreen{false};
     bool  play_on_title{false};
     bool  pause_on_title{false};
     float global_volume{1.f};
@@ -34,7 +37,13 @@ struct ScalarCache {
         shuffle          = ini_getbool("config", "shuffle",          false, CONFIG_PATH);
         repeat           = (int)ini_getl("config", "repeat",         1,     CONFIG_PATH);
         volume           = ini_getf("config", "volume",              1.f,   CONFIG_PATH);
-        auto_play_startup= ini_getbool("config", "auto_play_startup",true,  CONFIG_PATH);
+        auto_play_startup= ini_getbool("config", "auto_play_startup",false, CONFIG_PATH);
+        wait_for_home    = ini_getbool("config", "wait_for_home",    false, CONFIG_PATH);
+        pause_on_keyboard= ini_getbool("config", "pause_on_keyboard",false, CONFIG_PATH);
+        pause_on_controller_sync
+                         = ini_getbool("config", "pause_on_controller_sync", false, CONFIG_PATH);
+        pause_on_lockscreen
+                         = ini_getbool("config", "pause_on_lockscreen", false, CONFIG_PATH);
         play_on_title    = ini_getbool("config", "play_on_title",    false, CONFIG_PATH);
         pause_on_title   = ini_getbool("config", "pause_on_title",   false, CONFIG_PATH);
         global_volume    = ini_getf("config", "global_volume",       1.f,   CONFIG_PATH);
@@ -49,8 +58,6 @@ void create_config_dir() {
     /* is lost, which sucks. */
     sdmc::CreateFolder("/config");
     sdmc::CreateFolder(CONFIG_DIR);
-    /* libryazhahand / overlay UI overrides and HOME flag live under HAND_CONFIG_DIR. */
-    sdmc::CreateFolder(HAND_CONFIG_DIR);
 }
 
 auto get_tid_str(u64 tid) -> const char* {
@@ -143,6 +150,40 @@ void set_title_enabled_default(bool value) {
     ini_putl("title", "default", value, CONFIG_PATH);
 }
 
+StartupPolicy get_startup_policy() {
+    g_cache.load();
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    return {
+        .auto_play_startup = g_cache.auto_play_startup,
+        .wait_for_home = g_cache.wait_for_home,
+        .pause_on_keyboard = g_cache.pause_on_keyboard,
+        .pause_on_controller_sync = g_cache.pause_on_controller_sync,
+        .pause_on_lockscreen = g_cache.pause_on_lockscreen,
+    };
+}
+
+void set_startup_policy(const StartupPolicy& policy) {
+    // Publish the complete new state before filesystem writes. The sysmodule
+    // policy loop therefore observes one coherent snapshot on its next tick;
+    // the INI writes are persistence only, not its transport mechanism.
+    g_cache.load();
+    {
+        std::lock_guard<std::mutex> lk(g_cache.mu);
+        g_cache.auto_play_startup = policy.auto_play_startup;
+        g_cache.wait_for_home = policy.wait_for_home;
+        g_cache.pause_on_keyboard = policy.pause_on_keyboard;
+        g_cache.pause_on_controller_sync = policy.pause_on_controller_sync;
+        g_cache.pause_on_lockscreen = policy.pause_on_lockscreen;
+    }
+
+    create_config_dir();
+    ini_putl("config", "auto_play_startup", policy.auto_play_startup, CONFIG_PATH);
+    ini_putl("config", "wait_for_home", policy.wait_for_home, CONFIG_PATH);
+    ini_putl("config", "pause_on_keyboard", policy.pause_on_keyboard, CONFIG_PATH);
+    ini_putl("config", "pause_on_controller_sync", policy.pause_on_controller_sync, CONFIG_PATH);
+    ini_putl("config", "pause_on_lockscreen", policy.pause_on_lockscreen, CONFIG_PATH);
+}
+
 auto get_auto_play_startup() -> bool {
     g_cache.load();
     return g_cache.auto_play_startup;
@@ -153,6 +194,54 @@ void set_auto_play_startup(bool value) {
     ini_putl("config", "auto_play_startup", value, CONFIG_PATH);
     std::lock_guard<std::mutex> lk(g_cache.mu);
     g_cache.auto_play_startup = value;
+}
+
+auto get_wait_for_home() -> bool {
+    g_cache.load();
+    return g_cache.wait_for_home;
+}
+
+void set_wait_for_home(bool value) {
+    create_config_dir();
+    ini_putl("config", "wait_for_home", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.wait_for_home = value;
+}
+
+auto get_pause_on_keyboard() -> bool {
+    g_cache.load();
+    return g_cache.pause_on_keyboard;
+}
+
+void set_pause_on_keyboard(bool value) {
+    create_config_dir();
+    ini_putl("config", "pause_on_keyboard", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.pause_on_keyboard = value;
+}
+
+auto get_pause_on_controller_sync() -> bool {
+    g_cache.load();
+    return g_cache.pause_on_controller_sync;
+}
+
+void set_pause_on_controller_sync(bool value) {
+    create_config_dir();
+    ini_putl("config", "pause_on_controller_sync", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.pause_on_controller_sync = value;
+}
+
+auto get_pause_on_lockscreen() -> bool {
+    g_cache.load();
+    return g_cache.pause_on_lockscreen;
+}
+
+void set_pause_on_lockscreen(bool value) {
+    create_config_dir();
+    ini_putl("config", "pause_on_lockscreen", value, CONFIG_PATH);
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    g_cache.pause_on_lockscreen = value;
 }
 
 auto get_play_on_title() -> bool {

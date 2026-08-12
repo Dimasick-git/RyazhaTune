@@ -117,7 +117,9 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=c++26
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	+=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS := -lcurl -lz -lmbedtls -lmbedx509 -lmbedcrypto -lnx
+# libryazhahand Switch 2 renderer loads PNG-backed visual resources.
+# Keep libpng before zlib for static link resolution.
+LIBS := -lcurl -lpng -lz -lmbedtls -lmbedx509 -lmbedcrypto -lnx
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

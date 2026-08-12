@@ -147,6 +147,12 @@ Result tuneApplyTitleFilter() {
     return serviceDispatch(&g_tune, TuneIpcCmd_ApplyTitleFilter);
 }
 
+Result tuneSetStartupPolicy(const TuneStartupPolicy *policy) {
+    if (!policy)
+        return MAKERESULT(Module_Libnx, LibnxError_BadInput);
+    return serviceDispatchIn(&g_tune, TuneIpcCmd_SetStartupPolicy, *policy);
+}
+
 Result tuneRemove(u32 index) {
     return serviceDispatchIn(&g_tune, TuneIpcCmd_Remove, index);
 }

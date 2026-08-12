@@ -157,6 +157,13 @@ namespace tune {
                     impl::ApplyTitleFilter();
                     return 0;
 
+                case TuneIpcCmd_SetStartupPolicy:
+                    if (r->data.size >= sizeof(TuneStartupPolicy)) {
+                        impl::SetStartupPolicy(*(const TuneStartupPolicy *)r->data.ptr);
+                        return 0;
+                    }
+                    break;
+
                 case TuneIpcCmd_Remove:
                     SET_SINGLE(u32, impl::Remove);
                     break;

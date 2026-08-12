@@ -161,5 +161,15 @@
     "Repeat": "Herhalen",
     "Select": "Kiezen",
     "Back": "Terug",
-    "Selected": "Geselecteerd"
+    "Selected": "Geselecteerd",
+    "WAIT_FOR_HOME": "Wachten op HOME",
+    "Wait For Home": "Wachten op HOME",
+    "PAUSE_ON_KEYBOARD": "Pauzeren bij toetsenbord",
+    "Pause On Keyboard": "Pauzeren bij toetsenbord",
+    "PAUSE_ON_LOCKSCREEN": "Pauzeren op vergrendelscherm",
+    "Pause On Lockscreen": "Pauzeren op vergrendelscherm",
+    "PAUSE_ON_CONTROLLER_SYNC": "Pauzeren bij controllersynchronisatie",
+    "Pause On Controller Sync": "Pauzeren bij controllersynchronisatie",
+    "STARTUP_SETTINGS": "Opstartinstellingen",
+    "Startup Settings": "Opstartinstellingen"
 }

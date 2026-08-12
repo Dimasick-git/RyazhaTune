@@ -161,5 +161,15 @@
     "Repeat": "Powtórz",
     "Select": "Wybierz",
     "Back": "Wstecz",
-    "Selected": "Wybrano"
+    "Selected": "Wybrano",
+    "WAIT_FOR_HOME": "Czekaj na HOME",
+    "Wait For Home": "Czekaj na HOME",
+    "PAUSE_ON_KEYBOARD": "Wstrzymaj przy klawiaturze",
+    "Pause On Keyboard": "Wstrzymaj przy klawiaturze",
+    "PAUSE_ON_LOCKSCREEN": "Wstrzymaj na ekranie blokady",
+    "Pause On Lockscreen": "Wstrzymaj na ekranie blokady",
+    "PAUSE_ON_CONTROLLER_SYNC": "Wstrzymaj podczas synchronizacji kontrolera",
+    "Pause On Controller Sync": "Wstrzymaj podczas synchronizacji kontrolera",
+    "STARTUP_SETTINGS": "Ustawienia uruchamiania",
+    "Startup Settings": "Ustawienia uruchamiania"
 }

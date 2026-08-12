@@ -161,5 +161,15 @@
     "Repeat": "Повтор",
     "Select": "Выбрать",
     "Back": "Назад",
-    "Selected": "Выбрано"
+    "Selected": "Выбрано",
+    "WAIT_FOR_HOME": "Ждать HOME",
+    "Wait For Home": "Ждать HOME",
+    "PAUSE_ON_KEYBOARD": "Пауза на клавиатуре",
+    "Pause On Keyboard": "Пауза на клавиатуре",
+    "PAUSE_ON_LOCKSCREEN": "Пауза на локскрине",
+    "Pause On Lockscreen": "Пауза на локскрине",
+    "PAUSE_ON_CONTROLLER_SYNC": "Пауза при синхронизации контроллера",
+    "Pause On Controller Sync": "Пауза при синхронизации контроллера",
+    "STARTUP_SETTINGS": "Настройки запуска",
+    "Startup Settings": "Настройки запуска"
 }

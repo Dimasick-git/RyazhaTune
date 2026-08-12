@@ -161,5 +161,15 @@
     "Repeat": "Повтор",
     "Select": "Вибрати",
     "Back": "Назад",
-    "Selected": "Вибрано"
+    "Selected": "Вибрано",
+    "WAIT_FOR_HOME": "Чекати HOME",
+    "Wait For Home": "Чекати HOME",
+    "PAUSE_ON_KEYBOARD": "Пауза на клавіатурі",
+    "Pause On Keyboard": "Пауза на клавіатурі",
+    "PAUSE_ON_LOCKSCREEN": "Пауза на екрані блокування",
+    "Pause On Lockscreen": "Пауза на екрані блокування",
+    "PAUSE_ON_CONTROLLER_SYNC": "Пауза під час синхронізації контролера",
+    "Pause On Controller Sync": "Пауза під час синхронізації контролера",
+    "STARTUP_SETTINGS": "Налаштування запуску",
+    "Startup Settings": "Налаштування запуску"
 }

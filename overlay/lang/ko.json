@@ -161,5 +161,15 @@
     "Repeat": "반복",
     "Select": "선택",
     "Back": "뒤로",
-    "Selected": "선택됨"
+    "Selected": "선택됨",
+    "WAIT_FOR_HOME": "HOME까지 대기",
+    "Wait For Home": "HOME까지 대기",
+    "PAUSE_ON_KEYBOARD": "키보드에서 일시 정지",
+    "Pause On Keyboard": "키보드에서 일시 정지",
+    "PAUSE_ON_LOCKSCREEN": "잠금 화면에서 일시 정지",
+    "Pause On Lockscreen": "잠금 화면에서 일시 정지",
+    "PAUSE_ON_CONTROLLER_SYNC": "컨트롤러 동기화 중 일시 정지",
+    "Pause On Controller Sync": "컨트롤러 동기화 중 일시 정지",
+    "STARTUP_SETTINGS": "시작 설정",
+    "Startup Settings": "시작 설정"
 }
