@@ -23,7 +23,7 @@ jobs:
       new_version: ${{ steps.version.outputs.VERSION }}
     steps:
       - name: Получение исходного кода
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -61,7 +61,7 @@ jobs:
         run: apt-get update && apt-get install -y jq curl git
 
       - name: Получение исходного кода
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -116,10 +116,10 @@ jobs:
           # Упаковка
           cd release && zip -r ../RyazhTune.zip . && cd ..
 
-      - name: Формирование текста релиза (AI + structured fallback)
+      - name: Формирование текста релиза
         id: changelog
         run: |
-          git fetch --tags --force
+          git fetch --tags
           CURRENT_VERSION='${{ needs.check-version.outputs.new_version }}'
           LATEST_TAG=$(git tag -l | grep -E "^v[0-9]" | sort -V | grep -v "^v$CURRENT_VERSION$" | tail -n 2 | head -n 1 || echo "")
           
@@ -140,28 +140,6 @@ jobs:
           [[ -z "$FILE_STATS" ]] && FILE_STATS="Изменений в файлах не зафиксировано."
           [[ -z "$CHANGED_FILES" ]] && CHANGED_FILES="- Список файлов пуст."
 
-          if [[ -n "${OPENROUTER_API_KEY}" && -n "$RAW_LOG" ]]; then
-            PROMPT="Ты — release-manager проекта RyazhTune. Напиши краткие и профессиональные релиз-ноты на русском языке в markdown.\n\nСтрогие правила:\n1) Без приветствий, без эмоций, без эмодзи.\n2) Без фраз про ИИ.\n3) Используй разделы:\n   ## Список изменений\n   ## Улучшения\n   ## Исправления\n4) Группируй изменения по смыслу.\n\nДанные:\n$RAW_LOG"
-
-            PAYLOAD=$(jq -n \
-              --arg model "openrouter/auto" \
-              --arg prompt "$PROMPT" \
-              '{
-                model: $model,
-                messages: [
-                  {role: "system", content: "Пиши строго технический и лаконичный отчет в markdown."},
-                  {role: "user", content: $prompt}
-                ],
-                temperature: 0.1
-              }')
-
-            RESPONSE=$(curl -sS https://openrouter.ai/api/v1/chat/completions \
-              -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
-              -H "Content-Type: application/json" \
-              -d "$PAYLOAD")
-            AI_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
-          fi
-
           if [[ -n "$RAW_LOG" ]]; then
             CHANGELOG_SECTIONS=$(echo "$RAW_LOG" | awk '
               BEGIN{new="";impr="";fix=""}
@@ -178,29 +156,21 @@ jobs:
             CHANGELOG_SECTIONS="- Внутренние технические изменения."
           fi
 
-          if [[ -n "${AI_BODY}" && "${AI_BODY}" != "null" && "${AI_BODY}" != "" ]]; then
-            {
-              echo "RELEASE_BODY<<EOF"
-              echo "$AI_BODY"
-              echo "EOF"
-            } >> "$GITHUB_ENV"
-          else
-            {
-              echo "RELEASE_BODY<<EOF"
-              echo "## Список изменений"
-              echo ""
-              echo "$CHANGELOG_SECTIONS"
-              echo ""
-              echo "### Технические детали"
-              echo "- Версия: $CURRENT_VERSION"
-              echo "- Диапазон: \`$RANGE\`"
-              echo "- Статистика: $FILE_STATS"
-              echo "EOF"
-            } >> "$GITHUB_ENV"
-          fi
+          {
+            echo "RELEASE_BODY<<EOF"
+            echo "## Список изменений"
+            echo ""
+            echo "$CHANGELOG_SECTIONS"
+            echo ""
+            echo "### Технические детали"
+            echo "- Версия: $CURRENT_VERSION"
+            echo "- Диапазон: \`$RANGE\`"
+            echo "- Статистика: $FILE_STATS"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
 
       - name: Создание тега и релиза
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ needs.check-version.outputs.new_version }}
           name: RyazhTune v${{ needs.check-version.outputs.new_version }}
@@ -211,6 +181,6 @@ jobs:
             ${{ env.RELEASE_BODY }}
 
             ---
-            _Сформировано автоматически на основе реальных изменений в коде._
+            _Сформировано автоматически из истории изменений Git._
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
