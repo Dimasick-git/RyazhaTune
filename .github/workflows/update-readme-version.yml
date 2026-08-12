@@ -4,9 +4,18 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      version:
+        description: Optional release version without the v prefix. Leave empty to use the latest release.
+        required: false
+        type: string
 
 permissions:
   contents: write
+
+concurrency:
+  group: update-readme-version-main
+  cancel-in-progress: false
 
 defaults:
   run:
@@ -17,44 +26,80 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' || !github.event.release.draft }}
     steps:
-      - name: Checkout code
+      - name: Checkout main
         uses: actions/checkout@v7
         with:
           ref: main
           fetch-depth: 0
 
-      - name: Настройка безопасного Git каталога
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-      - name: Get latest release version
-        id: get_version
+      - name: Resolve released version
+        id: version
         env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          REQUESTED_VERSION: ${{ inputs.version }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=$(curl --fail --silent --show-error \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
-          if [[ -z "$VERSION" || "$VERSION" == "null" ]]; then
-            echo "Не удалось получить последнюю версию релиза" >&2
+          set -euo pipefail
+
+          if [[ -n "$REQUESTED_VERSION" ]]; then
+            VERSION="${REQUESTED_VERSION#v}"
+          elif [[ "$EVENT_NAME" == "release" && -n "$RELEASE_TAG" ]]; then
+            VERSION="${RELEASE_TAG#v}"
+          else
+            VERSION=$(curl --fail --silent --show-error \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/releases/latest" \
+              | jq -r '.tag_name')
+            VERSION="${VERSION#v}"
+          fi
+
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid release version: $VERSION" >&2
             exit 1
           fi
-          VERSION_CLEAN=${VERSION#v}
-          echo "VERSION=$VERSION_CLEAN" >> "$GITHUB_OUTPUT"
 
-      - name: Update README.md
-        run: |
-          VERSION='${{ steps.get_version.outputs.VERSION }}'
-          sed -i "s/- \*\*Текущая версия:\*\* .*/- **Текущая версия:** $VERSION/" README.md
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Commit and push changes
+      - name: Update the README version marker
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          const path = 'README.md';
+          const readme = fs.readFileSync(path, 'utf8');
+          const marker = /<!-- CURRENT_VERSION_START -->[^<\r\n]*<!-- CURRENT_VERSION_END -->/g;
+          const matches = readme.match(marker) ?? [];
+
+          if (matches.length !== 1) {
+            throw new Error(`Expected exactly one README version marker, found ${matches.length}.`);
+          }
+
+          const next = `<!-- CURRENT_VERSION_START -->${process.env.VERSION}<!-- CURRENT_VERSION_END -->`;
+          fs.writeFileSync(path, readme.replace(marker, next));
+          NODE
+
+      - name: Verify README automation contract
+        run: node scripts/verify-readme-automation.mjs
+
+      - name: Commit and push only when needed
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          set -euo pipefail
+          git config --local user.name "Dimasick-git"
+          git config --local user.email "dimaorynchukk@gmail.com"
           git add README.md
+
           if git diff --cached --quiet; then
-            echo "README.md already contains the latest version."
-          else
-            git commit -m "docs: update current version in README to ${{ steps.get_version.outputs.VERSION }}"
-            git push origin main
+            echo "README.md already contains v${VERSION}."
+            exit 0
           fi
+
+          git commit -m "docs: sync README version to v${VERSION}"
+          git pull --rebase origin main
+          git push origin HEAD:main
