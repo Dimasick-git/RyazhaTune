@@ -72,17 +72,10 @@ jobs:
         id: check
         run: |
           CURRENT_VERSION='${{ steps.version.outputs.VERSION }}'
-          # Ищем последний тег, исключая текущую версию, если она уже существует как тег
-          LATEST_TAG=$(git tag -l | grep -v "^v$CURRENT_VERSION$" | sort -V | tail -n 1 || echo "v0.0.0")
-          LATEST_VERSION=${LATEST_TAG#v}
-
-
-
-
-          if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
-            echo "CHANGED=true" >> "$GITHUB_OUTPUT"
-          else
+          if git rev-parse --verify --quiet "refs/tags/v$CURRENT_VERSION" >/dev/null; then
             echo "CHANGED=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "CHANGED=true" >> "$GITHUB_OUTPUT"
           fi
 
 
@@ -225,15 +218,18 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_ENV"
 
-      - name: Применение подготовленного описания релиза
+      - name: Подготовка итогового описания релиза
         run: |
           NOTES_FILE=".github/releases/v${{ needs.check-version.outputs.new_version }}.md"
           if [[ -f "$NOTES_FILE" ]]; then
+            cp "$NOTES_FILE" .release-body.md
+          else
             {
-              echo "RELEASE_BODY<<EOF"
-              cat "$NOTES_FILE"
-              echo "EOF"
-            } >> "$GITHUB_ENV"
+              printf '%s\n' "$RELEASE_BODY"
+              echo
+              echo '---'
+              echo '_Описание подготовлено по фактическим изменениям релиза._'
+            } > .release-body.md
           fi
 
       - name: Создание тега и релиза
@@ -244,10 +240,33 @@ jobs:
           files: |
             RyazhTune.zip
             overlay/RyazhTune-Overlay.ovl
-          body: |
-            ${{ env.RELEASE_BODY }}
+          body_path: .release-body.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            ---
-            _Описание подготовлено по фактическим изменениям релиза._
+  sync-release-notes:
+    needs: check-version
+    if: needs.check-version.outputs.version_changed == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получение исходного кода
+        uses: actions/checkout@v7
+
+      - name: Проверка подготовленного описания
+        id: notes
+        run: |
+          NOTES_FILE=".github/releases/v${{ needs.check-version.outputs.new_version }}.md"
+          if [[ -f "$NOTES_FILE" ]]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Обновление описания существующего релиза
+        if: steps.notes.outputs.exists == 'true'
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ needs.check-version.outputs.new_version }}
+          body_path: .github/releases/v${{ needs.check-version.outputs.new_version }}.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
