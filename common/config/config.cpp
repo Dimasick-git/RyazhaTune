@@ -1,6 +1,7 @@
 #include "config.hpp"
 #include "sdmc/sdmc.hpp"
 #include "minIni/minIni.h"
+#include <algorithm>
 #include <atomic>
 #include <cstdio>
 #include <mutex>
@@ -11,6 +12,9 @@ namespace {
 
 const char CONFIG_DIR[]{"/config/RyazhTune"};
 const char CONFIG_PATH[]{"/config/RyazhTune/config.ini"};
+constexpr const char* EQ_GAIN_KEYS[TUNE_EQUALIZER_BAND_COUNT] = {
+    "gain_80_hz", "gain_250_hz", "gain_1_khz", "gain_4_khz", "gain_12_khz",
+};
 
 // In-memory cache for hot scalar config values read on the IPC critical path.
 // Loaded lazily on first access; updated synchronously on every set call.
@@ -30,6 +34,9 @@ struct ScalarCache {
     bool  pause_on_title{false};
     float global_volume{1.f};
     int   tune_mode{0};
+    bool  equalizer_enabled{false};
+    u8    equalizer_target{TUNE_EQUALIZER_TARGET_MUSIC};
+    s8    equalizer_gains[TUNE_EQUALIZER_BAND_COUNT]{};
 
     void load() {
         std::lock_guard<std::mutex> lk(mu);
@@ -48,6 +55,17 @@ struct ScalarCache {
         pause_on_title   = ini_getbool("config", "pause_on_title",   false, CONFIG_PATH);
         global_volume    = ini_getf("config", "global_volume",       1.f,   CONFIG_PATH);
         tune_mode        = (int)ini_getl("config", "tune_mode",      0,     CONFIG_PATH);
+        equalizer_enabled = ini_getbool("equalizer", "enabled", false, CONFIG_PATH);
+        equalizer_target = static_cast<u8>(std::clamp(
+            ini_getl("equalizer", "target", TUNE_EQUALIZER_TARGET_MUSIC, CONFIG_PATH),
+            static_cast<long>(TUNE_EQUALIZER_TARGET_MUSIC),
+            static_cast<long>(TUNE_EQUALIZER_TARGET_SYSTEM)));
+        for (size_t i = 0; i < TUNE_EQUALIZER_BAND_COUNT; ++i) {
+            const long gain = ini_getl("equalizer", EQ_GAIN_KEYS[i], 0, CONFIG_PATH);
+            equalizer_gains[i] = static_cast<s8>(std::clamp(
+                gain, static_cast<long>(TUNE_EQUALIZER_MIN_GAIN_DB),
+                static_cast<long>(TUNE_EQUALIZER_MAX_GAIN_DB)));
+        }
         loaded.store(true, std::memory_order_release);
     }
 } g_cache;
@@ -394,6 +412,49 @@ auto get_language(char* out, int max_len) -> int {
 void set_language(const char* language) {
     create_config_dir();
     ini_puts("config", "language", language, CONFIG_PATH);
+}
+
+TuneEqualizerSettings get_equalizer_settings() {
+    g_cache.load();
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+
+    TuneEqualizerSettings settings{};
+    settings.enabled = g_cache.equalizer_enabled ? 1 : 0;
+    settings.target = g_cache.equalizer_target;
+    for (size_t i = 0; i < TUNE_EQUALIZER_BAND_COUNT; ++i)
+        settings.gains_db[i] = g_cache.equalizer_gains[i];
+    return settings;
+}
+
+void set_equalizer_settings(const TuneEqualizerSettings& raw) {
+    g_cache.load();
+    create_config_dir();
+
+    TuneEqualizerSettings settings{};
+    settings.enabled = raw.enabled ? 1 : 0;
+    settings.target = raw.target == TUNE_EQUALIZER_TARGET_SYSTEM
+        ? TUNE_EQUALIZER_TARGET_SYSTEM : TUNE_EQUALIZER_TARGET_MUSIC;
+    for (size_t i = 0; i < TUNE_EQUALIZER_BAND_COUNT; ++i) {
+        settings.gains_db[i] = static_cast<s8>(std::clamp(
+            static_cast<int>(raw.gains_db[i]), TUNE_EQUALIZER_MIN_GAIN_DB,
+            TUNE_EQUALIZER_MAX_GAIN_DB));
+    }
+
+    std::lock_guard<std::mutex> lk(g_cache.mu);
+    if (g_cache.equalizer_enabled != (settings.enabled != 0)) {
+        ini_putl("equalizer", "enabled", settings.enabled, CONFIG_PATH);
+        g_cache.equalizer_enabled = settings.enabled != 0;
+    }
+    if (g_cache.equalizer_target != settings.target) {
+        ini_putl("equalizer", "target", settings.target, CONFIG_PATH);
+        g_cache.equalizer_target = settings.target;
+    }
+    for (size_t i = 0; i < TUNE_EQUALIZER_BAND_COUNT; ++i) {
+        if (g_cache.equalizer_gains[i] == settings.gains_db[i])
+            continue;
+        ini_putl("equalizer", EQ_GAIN_KEYS[i], settings.gains_db[i], CONFIG_PATH);
+        g_cache.equalizer_gains[i] = settings.gains_db[i];
+    }
 }
 
 }

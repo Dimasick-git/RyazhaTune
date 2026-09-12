@@ -225,6 +225,17 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_ENV"
 
+      - name: Применение подготовленного описания релиза
+        run: |
+          NOTES_FILE=".github/releases/v${{ needs.check-version.outputs.new_version }}.md"
+          if [[ -f "$NOTES_FILE" ]]; then
+            {
+              echo "RELEASE_BODY<<EOF"
+              cat "$NOTES_FILE"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
+          fi
+
       - name: Создание тега и релиза
         uses: softprops/action-gh-release@v3
         with:
@@ -237,6 +248,6 @@ jobs:
             ${{ env.RELEASE_BODY }}
 
             ---
-            _Сформировано автоматически из истории изменений Git._
+            _Описание подготовлено по фактическим изменениям релиза._
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

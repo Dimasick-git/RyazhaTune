@@ -6,11 +6,15 @@
 #include "pm/pm.hpp"
 #include "aud_wrapper.h"
 #include "config/config.hpp"
+#include "codec_equalizer.hpp"
+#include "equalizer.hpp"
 #include "source.hpp"
 #include "resamplers/SDL_audioEX.h"
 
 #include <cstring>
 #include <atomic>
+#include <memory>
+#include <new>
 #include <nxExt.h>
 #include <strings.h>
 
@@ -19,11 +23,14 @@ namespace tune::impl {
         s16 g_waveform_buffer[512] = {0};
         std::mutex g_waveform_mutex;
         bool g_filter_paused = false;
+        FiveBandEqualizer g_equalizer;
+        TuneEqualizerSettings g_equalizer_settings{};
+        std::mutex g_equalizer_control_mutex;
     }
 
     namespace {
         constexpr float VOLUME_MAX = 1.f;
-        constexpr auto PLAYLIST_ENTRY_MAX = 300; // 75k
+        constexpr auto PLAYLIST_ENTRY_MAX = 300;
         constexpr auto PATH_SIZE_MAX = 256;
 
         struct PlaylistID {
@@ -185,36 +192,43 @@ namespace tune::impl {
         private:
             struct PlayListNameEntry {
             public:
-                // in most cases, the path will not exceed 256 bytes,
-                // so this is a reasonable max rather than 0x301.
+                // Store only the bytes used by this path. The former fixed
+                // char[256] in every one of the 300 slots permanently occupied
+                // 75 KiB even when the queue was empty.
                 bool Add(const char* path) {
                     if (!IsEmpty()) {
                         return false;
                     }
 
-                    if (std::strlen(path) >= sizeof(m_path)) {
+                    const size_t length = std::strlen(path);
+                    if (length >= PATH_SIZE_MAX) {
                         return false;
                     }
 
-                    std::strcpy(m_path, path);
+                    std::unique_ptr<char[]> copy(new (std::nothrow) char[length + 1]);
+                    if (!copy) {
+                        return false;
+                    }
+                    std::memcpy(copy.get(), path, length + 1);
+                    m_path = std::move(copy);
                     return true;
                 }
 
                 bool Remove() {
-                    m_path[0] = '\0';
+                    m_path.reset();
                     return true;
                 }
 
                 bool IsEmpty() const {
-                    return m_path[0] == '\0';
+                    return !m_path;
                 }
 
                 const char* GetPath() const {
-                    return m_path;
+                    return m_path.get();
                 }
 
             private:
-                char m_path[PATH_SIZE_MAX]{};
+                std::unique_ptr<char[]> m_path;
             };
 
         private:
@@ -674,14 +688,16 @@ namespace tune::impl {
                     if (nSamples <= 0) {
                         error = true;
                     } else {
+                        const size_t sample_count = static_cast<size_t>(nSamples) / sizeof(s16);
+                        const size_t frame_count = sample_count / AUDIO_CHANNEL_COUNT;
+                        g_equalizer.Process(static_cast<s16 *>(buffer->buffer), frame_count);
+
                         /* Keep a compact, always-fresh mono waveform snapshot for
                          * the overlay visualizer.  Audio is stereo s16, so mix L/R
                          * and stride across the whole just-rendered audout buffer
                          * instead of copying only its first samples. */
                         {
                             std::scoped_lock lk(g_waveform_mutex);
-                            const size_t sample_count = static_cast<size_t>(nSamples) / sizeof(s16);
-                            const size_t frame_count  = sample_count / 2;
                             const s16 *samples = static_cast<const s16 *>(buffer->buffer);
                             if (frame_count == 0) {
                                 std::memset(g_waveform_buffer, 0, sizeof(g_waveform_buffer));
@@ -722,6 +738,8 @@ namespace tune::impl {
 
         R_TRY(audoutInitialize());
         SetVolume(config::get_volume());
+
+        (void)SetEqualizerSettings(config::get_equalizer_settings());
 
         /* Fetch values from config, sanitize the return value */
         if (auto c = config::get_repeat(); c <= 2 && c >= 0) {
@@ -818,6 +836,18 @@ namespace tune::impl {
     }
 
     void Exit() {
+        {
+            std::lock_guard<std::mutex> lock(g_equalizer_control_mutex);
+            if (g_equalizer_settings.enabled
+                && g_equalizer_settings.target == TUNE_EQUALIZER_TARGET_SYSTEM) {
+                std::array<s8, codec_equalizer::BandCount> gains{};
+                for (size_t i = 0; i < gains.size(); ++i)
+                    gains[i] = g_equalizer_settings.gains_db[i];
+                (void)codec_equalizer::Apply(false, gains);
+            }
+        }
+        codec_equalizer::Exit();
+
         if (g_pdmqry_available) {
             pdmqryExit();
             g_pdmqry_available = false;
@@ -2384,6 +2414,49 @@ namespace tune::impl {
             g_controller_sync_open = false;
         if (!policy.pause_on_lockscreen)
             g_locked = false;
+    }
+
+    TuneEqualizerSettings GetEqualizerSettings() {
+        std::lock_guard<std::mutex> lock(g_equalizer_control_mutex);
+        return g_equalizer_settings;
+    }
+
+    Result SetEqualizerSettings(const TuneEqualizerSettings& raw) {
+        TuneEqualizerSettings sanitized{};
+        sanitized.enabled = raw.enabled ? 1 : 0;
+        sanitized.target = raw.target == TUNE_EQUALIZER_TARGET_SYSTEM
+            ? TUNE_EQUALIZER_TARGET_SYSTEM : TUNE_EQUALIZER_TARGET_MUSIC;
+        for (size_t i = 0; i < TUNE_EQUALIZER_BAND_COUNT; ++i) {
+            sanitized.gains_db[i] = static_cast<s8>(std::clamp(
+                static_cast<int>(raw.gains_db[i]), TUNE_EQUALIZER_MIN_GAIN_DB,
+                TUNE_EQUALIZER_MAX_GAIN_DB));
+        }
+
+        std::lock_guard<std::mutex> lock(g_equalizer_control_mutex);
+
+        std::array<s8, codec_equalizer::BandCount> hardware_gains{};
+        for (size_t i = 0; i < hardware_gains.size(); ++i)
+            hardware_gains[i] = sanitized.gains_db[i];
+
+        const bool system_enabled = sanitized.enabled
+            && sanitized.target == TUNE_EQUALIZER_TARGET_SYSTEM;
+        const bool system_was_enabled = g_equalizer_settings.enabled
+            && g_equalizer_settings.target == TUNE_EQUALIZER_TARGET_SYSTEM;
+        if (system_enabled || system_was_enabled) {
+            const Result hardware_rc = codec_equalizer::Apply(system_enabled, hardware_gains);
+            if (system_enabled && R_FAILED(hardware_rc))
+                return hardware_rc;
+        }
+
+        EqualizerSettings software{};
+        software.enabled = sanitized.enabled
+            && sanitized.target == TUNE_EQUALIZER_TARGET_MUSIC;
+        for (size_t i = 0; i < TUNE_EQUALIZER_BAND_COUNT; ++i)
+            software.gains_db[i] = sanitized.gains_db[i];
+        g_equalizer.SetSettings(software);
+        g_equalizer_settings = sanitized;
+        config::set_equalizer_settings(sanitized);
+        return 0;
     }
 
     void ClearQueue() {

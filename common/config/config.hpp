@@ -1,6 +1,7 @@
 #pragma once
 
 #include <switch.h>
+#include "tune.h"
 
 namespace config {
 
@@ -145,5 +146,9 @@ auto is_title_allowed(u64 tid) -> bool;
 void ensure_language_config();
 auto get_language(char* out, int max_len) -> int;
 void set_language(const char* language);
+
+// Five-band equalizer for RyazhTune music or system/game output.
+TuneEqualizerSettings get_equalizer_settings();
+void set_equalizer_settings(const TuneEqualizerSettings& settings);
 
 }

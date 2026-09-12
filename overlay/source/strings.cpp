@@ -1196,6 +1196,13 @@ const char *t(Str id) {
     return en_key;
 }
 
+const char *text(const char *englishKey) {
+    if (!englishKey)
+        return "";
+    const auto it = ult::translationCache.find(englishKey);
+    return it != ult::translationCache.end() ? it->second.c_str() : englishKey;
+}
+
 const char *trackCountLabel(std::uint32_t count) {
     static char buf[48];
     if (count == 1u) {

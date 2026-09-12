@@ -35,6 +35,16 @@ jobs:
         id: changelog
         run: |
           CURRENT_TAG='${{ github.event.release.tag_name }}'
+          NOTES_FILE=".github/releases/${CURRENT_TAG}.md"
+          if [[ -f "$NOTES_FILE" ]]; then
+            {
+              echo "RELEASE_BODY<<EOF"
+              cat "$NOTES_FILE"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
+            exit 0
+          fi
+
           PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null || echo "")
           RANGE="${CURRENT_TAG}"
           [[ -n "$PREV_TAG" ]] && RANGE="${PREV_TAG}..${CURRENT_TAG}"
@@ -124,6 +134,6 @@ jobs:
             ${{ env.RELEASE_BODY }}
 
             ---
-            _Сформировано автоматически на основе реальных изменений в коде._
+            _Описание подготовлено по фактическим изменениям релиза._
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -38,7 +38,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
 TARGET		:=	RyazhTune
-API_VERSION	?=	5
+API_VERSION	?=	8
 BUILD		:=	build
 SOURCES		:=	source source/impl ../common/minIni ../common/sdmc ../common/config ../common/pm ../common/aud source/impl/resamplers
 DATA		:=	data

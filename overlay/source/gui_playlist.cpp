@@ -116,6 +116,8 @@ namespace {
 
         const std::string &getFullPath() const { return m_full_path; }
 
+        void drawSeparators(tsl::gfx::Renderer*) override {}
+
         std::string getLabel() const {
             return buildLabel(m_entry_num, m_song_name, m_artist_name);
         }
@@ -164,17 +166,17 @@ namespace {
                 m_maxWidth = static_cast<u16>(
                     static_cast<s32>(getWidth()) - kSymMargin - scaledW - kSymMargin - 55);
                 const u16 textW = static_cast<u16>(
-                    renderer->getTextDimensions(m_text_clean, false, 23).first);
+                    renderer->getTextDimensions(m_text_clean, false, 19).first);
                 m_flags.m_truncated = (textW > textMaxW);
                 if (m_flags.m_truncated) {
                     m_scrollText.clear();
                     m_scrollText.reserve(m_text_clean.size() * 2 + 8);
                     m_scrollText.append(m_text_clean).append("        ");
                     m_textWidth = static_cast<u16>(
-                        renderer->getTextDimensions(m_scrollText, false, 23).first);
+                        renderer->getTextDimensions(m_scrollText, false, 19).first);
                     m_scrollText.append(m_text_clean);
                     m_ellipsisText = renderer->limitStringLength(
-                        m_text_clean, false, 23, textMaxW);
+                        m_text_clean, false, 19, textMaxW);
                 } else {
                     m_textWidth = static_cast<u16>(textW);
                 }
@@ -266,7 +268,7 @@ PlaylistGui::PlaylistGui(std::function<void(u32)> on_count_changed)
         "X " + i18n::t(i18n::Str::RemoveAll) + "  " +
         "− " + i18n::t(i18n::Str::SetAsStartupShort) + "  " +
         "\uE0EB\uE0EC " + i18n::t(i18n::Str::Playlist);
-    m_list->addItem(new tsl::elm::CategoryHeader(playlist_hint, true));
+    m_list->addItem(new tsl::elm::CompactCategoryHeader(playlist_hint, true));
 
     m_items.reserve(count);
 
@@ -502,13 +504,19 @@ bool PlaylistGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &t
         }
     }
 
-    // Original KEY_LEFT handling for going back to player
-    const bool goLeft = ult::simulatedNextPage.exchange(false, std::memory_order_acq_rel)
-                     || ((keysDown & KEY_LEFT) && !(keysHeld & ~KEY_LEFT & ~KEY_R & ALL_KEYS_MASK));
+    // The footer returns to the player; D-pad LEFT/RIGHT exclusively switches
+    // playlist slots and can no longer be mistaken for page navigation.
+    const bool goLeft = ult::simulatedNextPage.exchange(false, std::memory_order_acq_rel);
     if (goLeft) {
         setPlayerRightDest(PlayerRightDest::Playlist);
         tsl::swapTo<MainGui>(SwapDepth{2});
         triggerNavigationFeedback();
+        return true;
+    }
+
+    if (keysDown & HidNpadButton_B) {
+        tsl::goBack();
+        triggerExitFeedback();
         return true;
     }
 

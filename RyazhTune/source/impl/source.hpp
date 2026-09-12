@@ -41,8 +41,9 @@ class Source {
   protected:
     // increasing the size of this buffer also increases the memory used by the resampler.
     static inline std::array<s16, 1024 * 4> m_resample_buffer;
-    // increasing this reduces io calls.
-    static inline BufferedFileData<1024 * 64> m_buffered;
+    // 32 KiB keeps SD reads sequential while avoiding a permanent 64 KiB cache
+    // in the sysmodule. Decoder reads are much smaller than this window.
+    static inline BufferedFileData<1024 * 32> m_buffered;
     LockableMutex m_mutex;
 
   private:

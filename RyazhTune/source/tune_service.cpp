@@ -164,6 +164,16 @@ namespace tune {
                     }
                     break;
 
+                case TuneIpcCmd_GetEqualizerSettings:
+                    GET_SINGLE(TuneEqualizerSettings, impl::GetEqualizerSettings);
+                    break;
+
+                case TuneIpcCmd_SetEqualizerSettings:
+                    if (r->data.size >= sizeof(TuneEqualizerSettings))
+                        return impl::SetEqualizerSettings(
+                            *(const TuneEqualizerSettings *)r->data.ptr);
+                    break;
+
                 case TuneIpcCmd_Remove:
                     SET_SINGLE(u32, impl::Remove);
                     break;

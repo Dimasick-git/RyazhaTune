@@ -1,6 +1,7 @@
 #include "gui_main.hpp"
 
 #include "elm_overlayframe.hpp"
+#include "elm_equalizer.hpp"
 #include "elm_volume.hpp"
 #include "gui_browser.hpp"
 #include "gui_playlist.hpp"
@@ -13,6 +14,7 @@
 #include <tsl_utils.hpp>
 
 #include <algorithm>
+#include <array>
 #include <cstdio>
 #include <cstring>
 #include <functional>
@@ -153,6 +155,50 @@ namespace {
         }
     }
 
+    std::string sectionTitle(const char* title, const char* description) {
+        return std::string(i18n::text(title)) + "  " + ult::DIVIDER_SYMBOL + "  "
+             + i18n::text(description);
+    }
+
+    struct EqualizerPreset {
+        const char* key;
+        std::array<s8, TUNE_EQUALIZER_BAND_COUNT> gains;
+    };
+
+    constexpr std::array<EqualizerPreset, 5> kEqualizerPresets = {{
+        {"Flat",   { 0,  0,  0,  0,  0}},
+        {"Bass",   { 6,  3,  0, -1,  1}},
+        {"Vocal",  {-2,  0,  3,  4,  2}},
+        {"Rock",   { 4,  2, -1,  3,  4}},
+        {"Bright", {-1,  0,  1,  3,  6}},
+    }};
+
+    std::array<std::string, TUNE_EQUALIZER_BAND_COUNT> equalizerBandLabels() {
+        return {i18n::text("100 Hz"), i18n::text("300 Hz"), i18n::text("1 kHz"),
+                i18n::text("3 kHz"), i18n::text("10 kHz")};
+    }
+
+    const char* equalizerTargetLabel(u8 target) {
+        return target == TUNE_EQUALIZER_TARGET_SYSTEM
+            ? i18n::text("Game/System")
+            : i18n::t(i18n::Str::Music);
+    }
+
+    std::size_t detectEqualizerPreset(const TuneEqualizerSettings& settings) {
+        for (std::size_t preset = 0; preset < kEqualizerPresets.size(); ++preset) {
+            bool matches = true;
+            for (std::size_t band = 0; band < TUNE_EQUALIZER_BAND_COUNT; ++band) {
+                if (settings.gains_db[band] != kEqualizerPresets[preset].gains[band]) {
+                    matches = false;
+                    break;
+                }
+            }
+            if (matches)
+                return preset;
+        }
+        return kEqualizerPresets.size();
+    }
+
 }
 
 // ---------------------------------------------------------------------------
@@ -168,6 +214,7 @@ namespace {
 // ---------------------------------------------------------------------------
 static bool        s_settings_rebuild_pending = false;
 static std::string s_settings_rebuild_jump;
+static bool        s_equalizer_state_changed = false;
 
 void requestDeferredSettingsRebuild(std::string jumpTo) {
     s_settings_rebuild_pending = true;
@@ -378,12 +425,8 @@ tsl::elm::Element* LanguageGui::createUI() {
     m_frame = new SysTuneOverlayFrame(/*pageLeft=*/i18n::t(i18n::Str::Settings), /*pageRight=*/"");
     m_list = new tsl::elm::List();
 
-    // Header: explicitly describe the helper buttons instead of showing bare glyphs.
-    const std::string language_hint =
-        std::string(i18n::t(i18n::Str::CategoryLanguage)) + "  " +
-        "\uE0E0 " + i18n::t(i18n::Str::Select) + "  " +
-        "\uE0E1 " + i18n::t(i18n::Str::Back);
-    m_list->addItem(new tsl::elm::CategoryHeader(language_hint));
+    m_list->addItem(new tsl::elm::CompactCategoryHeader(
+        sectionTitle("Language", "Changes apply instantly")));
 
     const size_t selected = currentLanguageIndex();
     for (size_t i = 0; i < std::size(kLanguages); ++i) {
@@ -393,7 +436,8 @@ tsl::elm::Element* LanguageGui::createUI() {
         const std::string lang_label = std::string(is_selected ? "● " : "  ") + kLanguages[i].label;
         // Keep the status in the right column so the list reads as two columns:
         // language name on the left, selected state on the right.
-        auto *item = new tsl::elm::ListItem(lang_label, is_selected ? i18n::t(i18n::Str::Selected) : "");
+        auto *item = new tsl::elm::CompactListItem(
+            lang_label, is_selected ? i18n::t(i18n::Str::Selected) : "");
 
         item->setClickListener([i](u64 keys) -> bool {
             if (keys & HidNpadButton_A) {
@@ -424,16 +468,8 @@ tsl::elm::Element* LanguageGui::createUI() {
 bool LanguageGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
                               HidAnalogStickState joyStickPosLeft,
                               HidAnalogStickState joyStickPosRight) {
-    if (SysTuneGui::handleInput(keysDown, keysHeld, touchPos, joyStickPosLeft, joyStickPosRight))
-        return true;
-
-    if (keysDown & KEY_LEFT) {
-        tsl::goBack();
-        triggerNavigationFeedback();
-        return true;
-    }
-
-    return false;
+    return SysTuneGui::handleInput(keysDown, keysHeld, touchPos,
+                                   joyStickPosLeft, joyStickPosRight);
 }
 
 // =============================================================================
@@ -449,11 +485,12 @@ tsl::elm::Element* StartupSettingsGui::createUI() {
     m_frame = new SysTuneOverlayFrame(i18n::t(i18n::Str::Settings),
                                       i18n::t(i18n::Str::StartupSettings));
     m_list = new tsl::elm::List();
-    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::StartupSettings)));
+    m_list->addItem(new tsl::elm::CompactCategoryHeader(
+        sectionTitle("Startup", "System events")));
 
     const config::StartupPolicy initial = config::get_startup_policy();
 
-    auto *auto_play = new tsl::elm::ToggleListItem(
+    auto *auto_play = new tsl::elm::CompactToggleListItem(
         i18n::t(i18n::Str::AutoPlayStartup), initial.auto_play_startup,
         i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
     auto_play->setStateChangedListener([](bool value) {
@@ -463,7 +500,7 @@ tsl::elm::Element* StartupSettingsGui::createUI() {
     });
     m_list->addItem(auto_play);
 
-    auto *wait_home = new tsl::elm::ToggleListItem(
+    auto *wait_home = new tsl::elm::CompactToggleListItem(
         i18n::t(i18n::Str::WaitForHome), initial.wait_for_home,
         i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
     wait_home->setStateChangedListener([](bool value) {
@@ -473,7 +510,7 @@ tsl::elm::Element* StartupSettingsGui::createUI() {
     });
     m_list->addItem(wait_home);
 
-    auto *keyboard = new tsl::elm::ToggleListItem(
+    auto *keyboard = new tsl::elm::CompactToggleListItem(
         i18n::t(i18n::Str::PauseOnKeyboard), initial.pause_on_keyboard,
         i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
     keyboard->setStateChangedListener([](bool value) {
@@ -483,7 +520,7 @@ tsl::elm::Element* StartupSettingsGui::createUI() {
     });
     m_list->addItem(keyboard);
 
-    auto *controller_sync = new tsl::elm::ToggleListItem(
+    auto *controller_sync = new tsl::elm::CompactToggleListItem(
         i18n::t(i18n::Str::PauseOnControllerSync), initial.pause_on_controller_sync,
         i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
     controller_sync->setStateChangedListener([](bool value) {
@@ -493,7 +530,7 @@ tsl::elm::Element* StartupSettingsGui::createUI() {
     });
     m_list->addItem(controller_sync);
 
-    auto *lockscreen = new tsl::elm::ToggleListItem(
+    auto *lockscreen = new tsl::elm::CompactToggleListItem(
         i18n::t(i18n::Str::PauseOnLockscreen), initial.pause_on_lockscreen,
         i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
     lockscreen->setStateChangedListener([](bool value) {
@@ -503,7 +540,7 @@ tsl::elm::Element* StartupSettingsGui::createUI() {
     });
     m_list->addItem(lockscreen);
 
-    auto *remove_startup = new tsl::elm::ListItem(i18n::t(i18n::Str::RemoveStartup));
+    auto *remove_startup = new tsl::elm::CompactListItem(i18n::t(i18n::Str::RemoveStartup));
     remove_startup->setClickListener([](u64 keys) -> bool {
         if (!(keys & HidNpadButton_A))
             return false;
@@ -529,13 +566,195 @@ tsl::elm::Element* StartupSettingsGui::createUI() {
 bool StartupSettingsGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
                                      HidAnalogStickState joyStickPosLeft,
                                      HidAnalogStickState joyStickPosRight) {
+    return SysTuneGui::handleInput(keysDown, keysHeld, touchPos,
+                                   joyStickPosLeft, joyStickPosRight);
+}
+
+// =============================================================================
+// EqualizerGui
+// =============================================================================
+
+EqualizerGui::~EqualizerGui() {
+    blockShoulderJump.store(false, std::memory_order_release);
+    delete m_list;
+}
+
+bool EqualizerGui::applySettings() {
+    if (R_SUCCEEDED(tuneSetEqualizerSettings(&m_settings))) {
+        s_equalizer_state_changed = true;
+        return true;
+    } else if (tsl::notification) {
+        tsl::notification->showNow(i18n::t(i18n::Str::GenericError));
+    }
+    return false;
+}
+
+void EqualizerGui::refreshPresetLabel() {
+    if (!m_preset_item)
+        return;
+    const std::size_t preset = detectEqualizerPreset(m_settings);
+    if (preset < kEqualizerPresets.size()) {
+        m_preset_item->setValue(i18n::text(kEqualizerPresets[preset].key));
+    } else {
+        m_preset_item->setValue(i18n::text("Custom"));
+    }
+}
+
+void EqualizerGui::refreshTargetLabel() {
+    if (m_target_item)
+        m_target_item->setValue(equalizerTargetLabel(m_settings.target));
+}
+
+void EqualizerGui::applyPreset(std::size_t index, bool enable) {
+    if (index >= kEqualizerPresets.size())
+        index = 0;
+
+    const TuneEqualizerSettings previous = m_settings;
+    if (enable)
+        m_settings.enabled = 1;
+    m_settings.reserved = 0;
+    for (std::size_t band = 0; band < TUNE_EQUALIZER_BAND_COUNT; ++band)
+        m_settings.gains_db[band] = kEqualizerPresets[index].gains[band];
+    if (m_tuner)
+        m_tuner->setGains(kEqualizerPresets[index].gains);
+    if (enable && m_enable_toggle)
+        m_enable_toggle->setState(true);
+    if (!applySettings()) {
+        m_settings = previous;
+        if (m_tuner) {
+            std::array<s8, TUNE_EQUALIZER_BAND_COUNT> restored{};
+            std::copy(std::begin(m_settings.gains_db), std::end(m_settings.gains_db), restored.begin());
+            m_tuner->setGains(restored);
+        }
+        if (m_enable_toggle)
+            m_enable_toggle->setState(m_settings.enabled != 0);
+    }
+    refreshPresetLabel();
+}
+
+void EqualizerGui::setBandGain(std::size_t band, int gain) {
+    if (band >= TUNE_EQUALIZER_BAND_COUNT)
+        return;
+
+    const s8 clamped = static_cast<s8>(std::clamp(
+        gain, TUNE_EQUALIZER_MIN_GAIN_DB, TUNE_EQUALIZER_MAX_GAIN_DB));
+    if (m_settings.gains_db[band] == clamped)
+        return;
+
+    const TuneEqualizerSettings previous = m_settings;
+    // A fader is an active control: moving it enables the currently selected
+    // backend so the user hears the change immediately instead of wondering
+    // why the graph moved silently.
+    m_settings.enabled = 1;
+    m_settings.gains_db[band] = clamped;
+    if (m_enable_toggle)
+        m_enable_toggle->setState(true);
+    if (!applySettings()) {
+        m_settings = previous;
+        if (m_enable_toggle)
+            m_enable_toggle->setState(m_settings.enabled != 0);
+    }
+    if (m_tuner)
+        m_tuner->setGain(band, m_settings.gains_db[band]);
+    refreshPresetLabel();
+}
+
+tsl::elm::Element* EqualizerGui::createUI() {
+    blockShoulderJump.store(false, std::memory_order_release);
+    i18n::syncFromConfig();
+    m_frame = new SysTuneOverlayFrame(
+        i18n::text("5-band EQ"), "");
+    m_list = new tsl::elm::List();
+
+    if (R_FAILED(tuneGetEqualizerSettings(&m_settings)))
+        m_settings = config::get_equalizer_settings();
+
+    m_list->addItem(new tsl::elm::CompactCategoryHeader(
+        sectionTitle("Live tuner", "Changes apply instantly")));
+
+    std::array<s8, TUNE_EQUALIZER_BAND_COUNT> tunerGains{};
+    std::copy(std::begin(m_settings.gains_db), std::end(m_settings.gains_db), tunerGains.begin());
+    m_tuner = new EqualizerTuner(
+        tunerGains, equalizerBandLabels(),
+        [this](std::size_t band, s8 gain) { setBandGain(band, gain); });
+    m_list->addItem(m_tuner, 226);
+
+    m_list->addItem(new tsl::elm::CompactCategoryHeader(
+        sectionTitle("A edit/B done · L/R band · ↑/↓ gain", "Music DSP · Game/System output")));
+
+    m_enable_toggle = new tsl::elm::CompactToggleListItem(
+        i18n::text("Equalizer"), m_settings.enabled != 0,
+        i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
+    m_enable_toggle->setStateChangedListener([this](bool enabled) {
+        const u8 previous = m_settings.enabled;
+        m_settings.enabled = enabled ? 1 : 0;
+        if (!applySettings()) {
+            m_settings.enabled = previous;
+            m_enable_toggle->setState(previous != 0);
+        }
+    });
+    m_list->addItem(m_enable_toggle);
+
+    m_target_item = new tsl::elm::CompactListItem(
+        i18n::text("Target"), equalizerTargetLabel(m_settings.target));
+    m_target_item->setClickListener([this](u64 keys) -> bool {
+        if (!(keys & HidNpadButton_A))
+            return false;
+        const u8 previous = m_settings.target;
+        m_settings.target = previous == TUNE_EQUALIZER_TARGET_SYSTEM
+            ? TUNE_EQUALIZER_TARGET_MUSIC : TUNE_EQUALIZER_TARGET_SYSTEM;
+        refreshTargetLabel();
+        if (!applySettings()) {
+            m_settings.target = previous;
+            refreshTargetLabel();
+        }
+        return true;
+    });
+    m_list->addItem(m_target_item);
+
+    m_preset_item = new tsl::elm::CompactListItem(i18n::text("Preset"));
+    refreshPresetLabel();
+    m_preset_item->setClickListener([this](u64 keys) -> bool {
+        if (!(keys & HidNpadButton_A))
+            return false;
+        const std::size_t current = detectEqualizerPreset(m_settings);
+        const std::size_t next = current < kEqualizerPresets.size()
+                               ? (current + 1) % kEqualizerPresets.size() : 0;
+        applyPreset(next, true);
+        return true;
+    });
+    m_list->addItem(m_preset_item);
+
+    auto *reset = new tsl::elm::CompactListItem(
+        i18n::text("Reset all"), "0 dB");
+    reset->setClickListener([this](u64 keys) -> bool {
+        if (!(keys & HidNpadButton_A))
+            return false;
+        applyPreset(0, false);
+        return true;
+    });
+    m_list->addItem(reset);
+
+    m_frame->setContent(m_list);
+    return m_frame;
+}
+
+bool EqualizerGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
+                               HidAnalogStickState joyStickPosLeft,
+                               HidAnalogStickState joyStickPosRight) {
+    const bool tunerFocused = m_tuner && m_tuner->hasFocus();
+    blockShoulderJump.store(tunerFocused, std::memory_order_release);
+    if (tunerFocused && m_tuner->handleTuningInput(keysDown, keysHeld))
+        return true;
+
+    // LEFT/RIGHT do not tune a vertical fader. Keep them local so LEFT cannot
+    // become an accidental page-back action. B remains the predictable way
+    // to leave this page.
+    if (keysDown & (KEY_LEFT | KEY_RIGHT))
+        return true;
+
     if (SysTuneGui::handleInput(keysDown, keysHeld, touchPos, joyStickPosLeft, joyStickPosRight))
         return true;
-    if (keysDown & KEY_LEFT) {
-        tsl::goBack();
-        triggerNavigationFeedback();
-        return true;
-    }
     return false;
 }
 
@@ -576,7 +795,8 @@ tsl::elm::Element* SettingsGui::createUI() {
     m_list = new tsl::elm::List();
 
     // ---- Music Selection ----
-    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::MusicLibrary)));
+    m_list->addItem(new tsl::elm::CompactCategoryHeader(
+        sectionTitle("Music Library", "Choose source")));
 
     /* Snapshot play_ctx state once so both buttons get the right initial value
        on frame 0, before any update() tick fires. */
@@ -590,7 +810,7 @@ tsl::elm::Element* SettingsGui::createUI() {
         const std::string queueVal = (init_inPlaylist && init_hasTrack)
             ? ult::INPROGRESS_SYMBOL
             : i18n::trackCountLabel(count);
-        m_queue_button = new tsl::elm::ListItem(play_ctx::activePlaylistLabel(), queueVal);
+        m_queue_button = new tsl::elm::CompactListItem(play_ctx::activePlaylistLabel(), queueVal);
     }
 
     m_queue_button->setClickListener([this](u64 keys) -> bool {
@@ -607,7 +827,7 @@ tsl::elm::Element* SettingsGui::createUI() {
 
     const std::string browseVal = (init_inFolder && init_hasTrack)
         ? ult::INPROGRESS_SYMBOL : ult::DROPDOWN_SYMBOL;
-    auto browser_button = new tsl::elm::ListItem(i18n::t(i18n::Str::Browse), browseVal);
+    auto browser_button = new tsl::elm::CompactListItem(i18n::t(i18n::Str::Browse), browseVal);
     m_browser_button = browser_button;
     browser_button->setClickListener([this, browser_button](u64 keys) -> bool {
         if (keys & HidNpadButton_A) {
@@ -622,7 +842,7 @@ tsl::elm::Element* SettingsGui::createUI() {
     m_list->addItem(browser_button);
 
     // ---- Volume ----
-    m_list->addItem(new tsl::elm::CategoryHeader(
+    m_list->addItem(new tsl::elm::CompactCategoryHeader(
         std::string(i18n::t(i18n::Str::Volume)) + " " + ult::DIVIDER_SYMBOL + " \uE13C " + i18n::t(i18n::Str::ToggleMute)));
 
     float tune_volume = 1.f, title_volume = 1.f, default_title_volume = 1.f;
@@ -688,6 +908,30 @@ tsl::elm::Element* SettingsGui::createUI() {
             }));
         m_list->addItem(title_volume_slider);
     }
+
+    // ---- Sound shaping ----
+    m_list->addItem(new tsl::elm::CompactCategoryHeader(
+        sectionTitle("Sound", "Live processing")));
+    TuneEqualizerSettings equalizer_state{};
+    const bool equalizer_enabled =
+        R_SUCCEEDED(tuneGetEqualizerSettings(&equalizer_state)) && equalizer_state.enabled;
+    auto *equalizer_item = new tsl::elm::CompactListItem(
+        i18n::text("5-band EQ"),
+        equalizer_enabled ? equalizerTargetLabel(equalizer_state.target)
+                          : i18n::t(i18n::Str::Off));
+    equalizer_item->setValue(
+        equalizer_enabled ? equalizerTargetLabel(equalizer_state.target)
+                          : i18n::t(i18n::Str::Off),
+        !equalizer_enabled);
+    m_equalizer_button = equalizer_item;
+    equalizer_item->setClickListener([](u64 keys) -> bool {
+        if (keys & HidNpadButton_A) {
+            tsl::changeTo<EqualizerGui>();
+            return true;
+        }
+        return false;
+    });
+    m_list->addItem(equalizer_item);
     
 
     // ---- Auto Play ----
@@ -703,7 +947,8 @@ tsl::elm::Element* SettingsGui::createUI() {
     const bool at_home = (tid == kHomeScreenTid);
 
     if (!at_home) {
-        auto* defaultTitleCategoryHeader = new tsl::elm::CategoryHeader(i18n::t(i18n::Str::TitleId));
+        auto* defaultTitleCategoryHeader = new tsl::elm::CompactCategoryHeader(
+            sectionTitle("Current game", "Per-title controls"));
         defaultTitleCategoryHeader->setValue(tidLabel(tid), tsl::onTextColor);
         m_list->addItem(defaultTitleCategoryHeader);
 
@@ -761,7 +1006,7 @@ tsl::elm::Element* SettingsGui::createUI() {
         // the list is rebuilt immediately: the Custom Focus row appears
         // or disappears without any stale state.
         const bool init_default_focus = config::get_default_on_start(tid);
-        auto default_focus = new tsl::elm::ToggleListItem(
+        auto default_focus = new tsl::elm::CompactToggleListItem(
             i18n::t(i18n::Str::DefaultFocus), init_default_focus, i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         default_focus->setStateChangedListener([tid](bool v) {
             config::set_default_on_start(tid, v);
@@ -786,7 +1031,8 @@ tsl::elm::Element* SettingsGui::createUI() {
             else if (config::has_title_enabled(tid) && config::get_title_enabled(tid))
                 initial = FocusMode::Play;
 
-            auto *custom_focus = new tsl::elm::ListItem(i18n::t(i18n::Str::CustomFocus), focusLabel(initial));
+            auto *custom_focus = new tsl::elm::CompactListItem(
+                i18n::t(i18n::Str::CustomFocus), focusLabel(initial));
             // Render "Pass" faintly so it reads as "inactive", mirroring
             // how a ToggleListItem renders its OFF value.
             custom_focus->setValue(focusLabel(initial), initial == FocusMode::Pass);
@@ -820,7 +1066,8 @@ tsl::elm::Element* SettingsGui::createUI() {
     }
 
     // ---- Misc ----
-    m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::Miscellaneous)));
+    m_list->addItem(new tsl::elm::CompactCategoryHeader(
+        sectionTitle("Playback", "Rules and language")));
 
     {
         auto modeLabel = []() -> const char* {
@@ -831,7 +1078,8 @@ tsl::elm::Element* SettingsGui::createUI() {
                 default: return i18n::t(i18n::Str::ModeNormal);
             }
         };
-        auto *mode_item = new tsl::elm::ListItem(i18n::t(i18n::Str::PlaybackMode), modeLabel());
+        auto *mode_item = new tsl::elm::CompactListItem(
+            i18n::t(i18n::Str::PlaybackMode), modeLabel());
         mode_item->setClickListener([mode_item, modeLabel](u64 keys) -> bool {
             if (!(keys & HidNpadButton_A))
                 return false;
@@ -850,7 +1098,7 @@ tsl::elm::Element* SettingsGui::createUI() {
     }
 
     if (tid && !at_home) {
-        auto *whitelist_item = new tsl::elm::ToggleListItem(
+        auto *whitelist_item = new tsl::elm::CompactToggleListItem(
             i18n::t(i18n::Str::WhitelistToggle), config::is_tid_whitelisted(tid), i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         whitelist_item->setStateChangedListener([tid](bool v) {
             config::set_tid_whitelisted(tid, v);
@@ -861,7 +1109,7 @@ tsl::elm::Element* SettingsGui::createUI() {
         });
         m_list->addItem(whitelist_item);
 
-        auto *blacklist_item = new tsl::elm::ToggleListItem(
+        auto *blacklist_item = new tsl::elm::CompactToggleListItem(
             i18n::t(i18n::Str::BlacklistToggle), config::is_tid_blacklisted(tid), i18n::t(i18n::Str::On), i18n::t(i18n::Str::Off));
         blacklist_item->setStateChangedListener([tid](bool v) {
             config::set_tid_blacklisted(tid, v);
@@ -875,7 +1123,7 @@ tsl::elm::Element* SettingsGui::createUI() {
 
     {
         const size_t language_index = currentLanguageIndex();
-        auto *language_item = new tsl::elm::ListItem(
+        auto *language_item = new tsl::elm::CompactListItem(
             i18n::t(i18n::Str::Language), kLanguages[language_index].label);
         language_item->setClickListener(
             [](u64 keys) -> bool {
@@ -912,7 +1160,8 @@ tsl::elm::Element* SettingsGui::createUI() {
         else if (config::get_play_on_title())
             initial = FocusMode::Play;
 
-        auto *title_focus = new tsl::elm::ListItem(i18n::t(i18n::Str::TitleFocus), focusLabel(initial));
+        auto *title_focus = new tsl::elm::CompactListItem(
+            i18n::t(i18n::Str::TitleFocus), focusLabel(initial));
         title_focus->setValue(focusLabel(initial), initial == FocusMode::Pass);
         title_focus->setClickListener(
             [title_focus, state = initial](u64 keys) mutable -> bool {
@@ -960,7 +1209,8 @@ tsl::elm::Element* SettingsGui::createUI() {
         else if (config::has_title_enabled(kHomeScreenTid) && config::get_title_enabled(kHomeScreenTid))
             home_initial = FocusMode::Play;
 
-        auto *home_focus = new tsl::elm::ListItem(i18n::t(i18n::Str::HomeFocus), focusLabel(home_initial));
+        auto *home_focus = new tsl::elm::CompactListItem(
+            i18n::t(i18n::Str::HomeFocus), focusLabel(home_initial));
         home_focus->setValue(focusLabel(home_initial), home_initial == FocusMode::Pass);
         home_focus->setClickListener(
             [home_focus, state = home_initial](u64 keys) mutable -> bool {
@@ -992,7 +1242,7 @@ tsl::elm::Element* SettingsGui::createUI() {
     // Keep all boot and system-UI playback policies behind one deliberate
     // entry point. The child GUI applies each toggle to the running sysmodule
     // through IPC instead of only changing this overlay process's cache.
-    auto *startup_settings = new tsl::elm::ListItem(
+    auto *startup_settings = new tsl::elm::CompactListItem(
         i18n::t(i18n::Str::StartupSettings), ult::DROPDOWN_SYMBOL);
     startup_settings->setClickListener([](u64 keys) -> bool {
         if (keys & HidNpadButton_A) {
@@ -1003,7 +1253,7 @@ tsl::elm::Element* SettingsGui::createUI() {
     });
     m_list->addItem(startup_settings);
 
-    auto exit_button = new tsl::elm::SilentListItem(i18n::t(i18n::Str::StopRyazhTune));
+    auto exit_button = new tsl::elm::CompactSilentListItem(i18n::t(i18n::Str::StopRyazhTune));
     exit_button->setValue("\uE071", true);
     exit_button->setClickListener([exit_button](u64 keys) -> bool {
         if (keys & HidNpadButton_A) {
@@ -1107,6 +1357,17 @@ void SettingsGui::update() {
     if (m_language_button) {
         m_language_button->setValue(kLanguages[currentLanguageIndex()].label);
     }
+
+    if (m_equalizer_button && s_equalizer_state_changed) {
+        s_equalizer_state_changed = false;
+        TuneEqualizerSettings settings{};
+        if (R_SUCCEEDED(tuneGetEqualizerSettings(&settings))) {
+            m_equalizer_button->setValue(
+                settings.enabled ? equalizerTargetLabel(settings.target)
+                                 : i18n::t(i18n::Str::Off),
+                settings.enabled == 0);
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -1118,6 +1379,16 @@ bool SettingsGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &t
         setPlayerRightDest(PlayerRightDest::Settings);
         tsl::swapTo<MainGui>();
         triggerNavigationFeedback();
+        return true;
+    }
+
+    // Settings replaces the player at the same stack depth, so Tesla's
+    // default B action would close the overlay. Make B consistently return to
+    // the player instead. Horizontal input remains available to sliders.
+    if (keysDown & HidNpadButton_B) {
+        setPlayerRightDest(PlayerRightDest::Settings);
+        tsl::swapTo<MainGui>();
+        triggerExitFeedback();
         return true;
     }
 
@@ -1162,14 +1433,5 @@ bool SettingsGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &t
     if (SysTuneGui::handleInput(keysDown, keysHeld, touchPos, joyStickPosLeft, joyStickPosRight))
         return true;
 
-    if ((keysDown & KEY_LEFT)
-        && !(keysHeld & ~KEY_LEFT & ~KEY_R & ALL_KEYS_MASK)
-        && !(ult::onTrackBar.load(std::memory_order_acquire)
-             && (ult::unlockedSlide.load(std::memory_order_acquire) || ult::allowSlide.load(std::memory_order_acquire)))) {
-        setPlayerRightDest(PlayerRightDest::Settings);
-        tsl::swapTo<MainGui>();
-        triggerNavigationFeedback();
-        return true;
-    }
     return false;
 }

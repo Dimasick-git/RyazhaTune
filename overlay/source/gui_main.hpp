@@ -5,8 +5,10 @@
 #include "gui_base.hpp"
 
 #include <tesla.hpp>
+#include <array>
 
 class SysTuneOverlayFrame;
+class EqualizerTuner;
 #include "elm_volume.hpp"
 
 // ---------------------------------------------------------------------------
@@ -85,6 +87,34 @@ private:
 };
 
 // ---------------------------------------------------------------------------
+// Five-band equalizer for music or game/system output
+// ---------------------------------------------------------------------------
+class EqualizerGui final : public SysTuneGui {
+public:
+    ~EqualizerGui();
+
+    tsl::elm::Element *createUI() final;
+    bool handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
+                     HidAnalogStickState joyStickPosLeft,
+                     HidAnalogStickState joyStickPosRight) override;
+
+private:
+    bool applySettings();
+    void applyPreset(std::size_t index, bool enable);
+    void refreshPresetLabel();
+    void refreshTargetLabel();
+    void setBandGain(std::size_t band, int gain);
+
+    TuneEqualizerSettings m_settings{};
+    EqualizerTuner *m_tuner = nullptr;
+    tsl::elm::ToggleListItem *m_enable_toggle = nullptr;
+    tsl::elm::ListItem *m_target_item = nullptr;
+    tsl::elm::ListItem *m_preset_item = nullptr;
+    tsl::elm::List *m_list = nullptr;
+    SysTuneOverlayFrame *m_frame = nullptr;
+};
+
+// ---------------------------------------------------------------------------
 // Page 1 — Settings
 // ---------------------------------------------------------------------------
 class SettingsGui final : public SysTuneGui {
@@ -122,6 +152,7 @@ private:
     tsl::elm::ListItem  *m_queue_button   = nullptr;
     tsl::elm::ListItem  *m_browser_button = nullptr;
     tsl::elm::ListItem  *m_language_button = nullptr;
+    tsl::elm::ListItem  *m_equalizer_button = nullptr;
     u32                  m_last_count     = UINT32_MAX; /* sentinel — forces first refresh */
 
     /* Called directly by the PlaylistGui callback and by update() for the

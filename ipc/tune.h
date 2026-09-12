@@ -48,6 +48,20 @@ typedef struct {
     u8 reserved[3];
 } TuneStartupPolicy;
 
+#define TUNE_EQUALIZER_BAND_COUNT 5
+#define TUNE_EQUALIZER_MIN_GAIN_DB (-12)
+#define TUNE_EQUALIZER_MAX_GAIN_DB 12
+#define TUNE_EQUALIZER_TARGET_MUSIC 0
+#define TUNE_EQUALIZER_TARGET_SYSTEM 1
+
+/** Five-band EQ snapshot. Target selects RyazhTune music or system/game output. */
+typedef struct {
+    u8 enabled;
+    u8 target;
+    s8 gains_db[TUNE_EQUALIZER_BAND_COUNT];
+    u8 reserved;
+} TuneEqualizerSettings;
+
 Result tuneInitialize();
 
 void tuneExit();
@@ -160,6 +174,10 @@ Result tuneApplyTitleFilter();
 
 /** Apply all startup/system-context switches to the running sysmodule. */
 Result tuneSetStartupPolicy(const TuneStartupPolicy *policy);
+
+/** Read or atomically apply the live five-band equalizer. */
+Result tuneGetEqualizerSettings(TuneEqualizerSettings *settings);
+Result tuneSetEqualizerSettings(const TuneEqualizerSettings *settings);
 
 Result tuneQuit();
 

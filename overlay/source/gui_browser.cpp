@@ -105,6 +105,8 @@ namespace {
 
         const std::string &getFullPath() const { return m_full_path; }
 
+        void drawSeparators(tsl::gfx::Renderer*) override {}
+
         /* True only when Folder context is active for THIS folder and this
            file is the currently playing track. */
         bool isCurrent() const {
@@ -139,17 +141,17 @@ namespace {
                 m_maxWidth = static_cast<u16>(
                     static_cast<s32>(getWidth()) - kBFI_SymMargin - scaledW - kBFI_SymMargin - 55);
                 const u16 textW = static_cast<u16>(
-                    renderer->getTextDimensions(m_text_clean, false, 23).first);
+                    renderer->getTextDimensions(m_text_clean, false, 19).first);
                 m_flags.m_truncated = (textW > textMaxW);
                 if (m_flags.m_truncated) {
                     m_scrollText.clear();
                     m_scrollText.reserve(m_text_clean.size() * 2 + 8);
                     m_scrollText.append(m_text_clean).append("        ");
                     m_textWidth = static_cast<u16>(
-                        renderer->getTextDimensions(m_scrollText, false, 23).first);
+                        renderer->getTextDimensions(m_scrollText, false, 19).first);
                     m_scrollText.append(m_text_clean);
                     m_ellipsisText = renderer->limitStringLength(
-                        m_text_clean, false, 23, textMaxW);
+                        m_text_clean, false, 19, textMaxW);
                 } else {
                     m_textWidth = static_cast<u16>(textW);
                 }
@@ -220,6 +222,8 @@ namespace {
         BrowserFolderItem(const std::string &name, const std::string &sub_path)
             : ListItem(name, "", /*isMini=*/true)
             , m_sub_path(sub_path) {}
+
+        void drawSeparators(tsl::gfx::Renderer*) override {}
 
         /* True when Folder context is active and the playing file is inside
            this folder or any of its subdirectories. */
@@ -323,11 +327,10 @@ void BrowserGui::update() {
 bool BrowserGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &touchPos,
                              HidAnalogStickState joyStickPosLeft,
                              HidAnalogStickState joyStickPosRight) {
-    /* Left footer tap OR KEY_LEFT — store where we are, mark dest as Browse,
+    /* Left footer tap — store where we are, mark dest as Browse,
        then swap [SettingsGui, BrowserGui] with a fresh MainGui.
        Stack is always exactly depth 2, so SwapDepth{2} is always correct. */
-    const bool goLeft = ult::simulatedNextPage.exchange(false, std::memory_order_acq_rel)
-                     || ((keysDown & KEY_LEFT) && !(keysHeld & ~KEY_LEFT & ~KEY_R & ALL_KEYS_MASK));
+    const bool goLeft = ult::simulatedNextPage.exchange(false, std::memory_order_acq_rel);
     if (goLeft) {
         setBrowserReturnPath(m_cwd, m_root);
         setPlayerRightDest(PlayerRightDest::Browse);
@@ -336,13 +339,15 @@ bool BrowserGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &to
         return true;
     }
 
-    SysTuneGui::handleInput(keysDown, keysHeld, touchPos, joyStickPosLeft, joyStickPosRight);
-
     if (keysDown & HidNpadButton_B) {
-        /* At root: return false so the base class calls goBack(), popping
-           BrowserGui and returning to SettingsGui. */
-        if (m_cwd == m_root)
-            return false;
+        /* At root, pop exactly once to Settings. Inside a subdirectory, keep
+           the stack depth and replace the browser with its parent. Handling B
+           before the base GUI prevents the old double-back behaviour. */
+        if (m_cwd == m_root) {
+            tsl::goBack();
+            triggerExitFeedback();
+            return true;
+        }
         /* Inside a subdir: swap this BrowserGui with one at the parent directory.
            focus_name = current dir name so the cursor lands on the right item.
            Stack stays constant: [SettingsGui, BrowserGui]. */
@@ -351,7 +356,8 @@ bool BrowserGui::handleInput(u64 keysDown, u64 keysHeld, const HidTouchState &to
         return true;
     }
 
-    return false;
+    return SysTuneGui::handleInput(keysDown, keysHeld, touchPos,
+                                   joyStickPosLeft, joyStickPosRight);
 }
 
 // ---------------------------------------------------------------------------
@@ -366,7 +372,7 @@ void BrowserGui::buildList() {
     FsFileSystem fs;
     Result fs_rc = fsOpenSdCardFileSystem(&fs);
     if (R_FAILED(fs_rc)) {
-        m_list->addItem(new tsl::elm::ListItem(
+        m_list->addItem(new tsl::elm::CompactListItem(
             std::string(i18n::t(i18n::Str::CouldNotOpenPrefix)) + m_cwd));
         return;
     }
@@ -376,7 +382,7 @@ void BrowserGui::buildList() {
     Result dir_rc = fsFsOpenDirectory(&fs, m_cwd.c_str(),
         FsDirOpenMode_ReadDirs | FsDirOpenMode_ReadFiles | FsDirOpenMode_NoFileSize, &dir);
     if (R_FAILED(dir_rc)) {
-        m_list->addItem(new tsl::elm::ListItem(
+        m_list->addItem(new tsl::elm::CompactListItem(
             std::string(i18n::t(i18n::Str::CouldNotOpenPrefix)) + m_cwd));
         return;
     }
@@ -460,7 +466,7 @@ void BrowserGui::buildList() {
     }
 
     if (folders.empty() && file_entries.empty()) {
-        m_list->addItem(new tsl::elm::CategoryHeader(i18n::t(i18n::Str::EmptyFolder)));
+        m_list->addItem(new tsl::elm::CompactCategoryHeader(i18n::t(i18n::Str::EmptyFolder)));
         return;
     }
 
@@ -495,7 +501,7 @@ void BrowserGui::buildList() {
             " Y " + i18n::t(i18n::Str::AddToPlaylistShort) + " " + ult::DIVIDER_SYMBOL +
             " − " + i18n::t(i18n::Str::SetAsStartupShort) + " " + ult::DIVIDER_SYMBOL +
             " B " + i18n::t(i18n::Str::Back);
-        m_list->addItem(new tsl::elm::CategoryHeader(folder_hint, true));
+        m_list->addItem(new tsl::elm::CompactCategoryHeader(folder_hint, true));
 
         std::sort(folders.begin(), folders.end(), ListItemTextCompare);
         for (auto *el : folders) {
@@ -519,7 +525,7 @@ void BrowserGui::buildList() {
             "X " + i18n::t(i18n::Str::AddAll) + "  " +
             "− " + i18n::t(i18n::Str::SetAsStartupShort) + "  " +
             "B " + i18n::t(i18n::Str::Back);
-        m_list->addItem(new tsl::elm::CategoryHeader(file_hint, true));
+        m_list->addItem(new tsl::elm::CompactCategoryHeader(file_hint, true));
 
         std::sort(file_entries.begin(), file_entries.end(), FileEntryCompare);
 

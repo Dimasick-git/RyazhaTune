@@ -50,5 +50,7 @@ namespace tune::impl {
     void GetWaveform(s16* out_buffer, size_t count);
     void ApplyTitleFilter();
     void SetStartupPolicy(const TuneStartupPolicy& policy);
+    TuneEqualizerSettings GetEqualizerSettings();
+    Result SetEqualizerSettings(const TuneEqualizerSettings& settings);
 
 }

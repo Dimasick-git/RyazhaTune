@@ -40,8 +40,8 @@ include $(DEVKITPRO)/libnx/switch_rules
 APP_TITLE	:=	RyazhTune
 
 # Defaults for standalone `make -C overlay` (root Makefile exports these).
-VERSION		?=	5.0.0
-API_VERSION	?=	5
+VERSION		?=	5.6.0
+API_VERSION	?=	8
 
 TARGET		:=	RyazhTune-Overlay
 BUILD		:=	build

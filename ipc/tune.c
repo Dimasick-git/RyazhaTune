@@ -153,6 +153,22 @@ Result tuneSetStartupPolicy(const TuneStartupPolicy *policy) {
     return serviceDispatchIn(&g_tune, TuneIpcCmd_SetStartupPolicy, *policy);
 }
 
+Result tuneGetEqualizerSettings(TuneEqualizerSettings *settings) {
+    if (!settings)
+        return MAKERESULT(Module_Libnx, LibnxError_BadInput);
+    TuneEqualizerSettings out = {0};
+    Result rc = serviceDispatchOut(&g_tune, TuneIpcCmd_GetEqualizerSettings, out);
+    if (R_SUCCEEDED(rc))
+        *settings = out;
+    return rc;
+}
+
+Result tuneSetEqualizerSettings(const TuneEqualizerSettings *settings) {
+    if (!settings)
+        return MAKERESULT(Module_Libnx, LibnxError_BadInput);
+    return serviceDispatchIn(&g_tune, TuneIpcCmd_SetEqualizerSettings, *settings);
+}
+
 Result tuneRemove(u32 index) {
     return serviceDispatchIn(&g_tune, TuneIpcCmd_Remove, index);
 }

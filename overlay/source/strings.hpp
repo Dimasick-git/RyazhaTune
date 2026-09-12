@@ -93,6 +93,9 @@ enum class Str : std::uint8_t {
 
 const char *t(Str id);
 
+/** Translate a runtime English key from overlay/lang, falling back to English. */
+const char *text(const char *englishKey);
+
 /** Localized "1 track" / "N tracks" (or Russian plural forms). */
 const char *trackCountLabel(std::uint32_t count);
 
