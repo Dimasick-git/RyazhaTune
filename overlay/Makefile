@@ -59,6 +59,9 @@ ifeq ($(wildcard $(RYAZHAHAND_MK)),)
 $(error Missing $(RYAZHAHAND_MK). Run `make prepare-overlay-lib` from the repository root to clone libryazhahand and install ryazhahand.mk)
 endif
 
+# Glass under the UI (libryazhahand libglass): the GPU presents the frame over a live blurred game frame.
+USING_GLASS_DIRECTIVE := 1
+
 include $(RYAZHAHAND_MK)
 
 #ifeq ($(RELEASE),)
