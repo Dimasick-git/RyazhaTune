@@ -9,7 +9,7 @@ export WANT_WAV 	:= 1
 # Этот pin содержит Switch 2 style renderer (ult::useSwitch2Style), который
 # используется оверлеем как штатная библиотечная возможность. Изменять pin
 # можно только вместе с полной devkitA64-проверкой CI.
-LIBRYAZHAHAND_REPO ?= https://github.com/Dimasick-git/libryazhahand.git
+LIBRYAZHAHAND_REPO ?= https://github.com/Dimasick-git/libryazhahand-deko.git
 LIBRYAZHAHAND_PIN  ?= fd11fe0e31a3c73a293504710a8336a5c74d4254
 RYAZHAHAND_DIR     ?= overlay/lib/libryazhahand
 
