@@ -18,7 +18,7 @@ defaults:
 jobs:
   update-release:
     runs-on: ubuntu-latest
-    if: ${{ !github.event.release.draft }}
+    if: ${{ !github.event.release.draft && !endsWith(github.event.release.tag_name, '-deko3d') }}
     steps:
       - name: Установка jq
         run: sudo apt-get update && sudo apt-get install -y jq curl

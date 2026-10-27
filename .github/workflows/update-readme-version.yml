@@ -24,7 +24,7 @@ defaults:
 jobs:
   update-version:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' || !github.event.release.draft }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (!github.event.release.draft && !endsWith(github.event.release.tag_name, '-deko3d')) }}
     steps:
       - name: Checkout main
         uses: actions/checkout@v7

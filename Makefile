@@ -5,12 +5,12 @@ export WANT_FLAC 	:= 1
 export WANT_MP3 	:= 1
 export WANT_WAV 	:= 1
 
-# Используем закреплённую ревизию открытого libryazhahand владельца.
+# Используем закреплённую ревизию приватного libryazhahand-deko.
 # Этот pin содержит Switch 2 style renderer (ult::useSwitch2Style), который
 # используется оверлеем как штатная библиотечная возможность. Изменять pin
 # можно только вместе с полной devkitA64-проверкой CI.
 LIBRYAZHAHAND_REPO ?= https://github.com/Dimasick-git/libryazhahand-deko.git
-LIBRYAZHAHAND_PIN  ?= fd11fe0e31a3c73a293504710a8336a5c74d4254
+LIBRYAZHAHAND_PIN  ?= ebd7f01ee7f939502e936fef438b0e37add74d1d
 RYAZHAHAND_DIR     ?= overlay/lib/libryazhahand
 
 all: overlay nxExt module
