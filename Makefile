@@ -10,7 +10,7 @@ export WANT_WAV 	:= 1
 # используется оверлеем как штатная библиотечная возможность. Изменять pin
 # можно только вместе с полной devkitA64-проверкой CI.
 LIBRYAZHAHAND_REPO ?= https://github.com/Dimasick-git/libryazhahand-deko.git
-LIBRYAZHAHAND_PIN  ?= ebd7f01ee7f939502e936fef438b0e37add74d1d
+LIBRYAZHAHAND_PIN  ?= db11c2019f9485a4ff6b7d025796472053f3251b
 RYAZHAHAND_DIR     ?= overlay/lib/libryazhahand
 
 all: overlay nxExt module

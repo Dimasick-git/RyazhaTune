@@ -83,7 +83,6 @@ jobs:
 
   build:
     needs: check-version
-    if: needs.check-version.outputs.version_changed == 'true'
     runs-on: ubuntu-latest
     container:
       image: devkitpro/devkita64:latest
@@ -139,6 +138,9 @@ jobs:
       - name: Сборка проекта
         run: make clean && make -j$(nproc)
 
+      - name: Проверка общего состояния уведомлений
+        run: python3 scripts/verify-notification-state.py overlay/RyazhTune-Overlay.elf
+
 
 
 
@@ -176,6 +178,7 @@ jobs:
           cd release && zip -r ../RyazhTune.zip . && cd ..
 
       - name: Формирование текста релиза
+        if: needs.check-version.outputs.version_changed == 'true'
         id: changelog
         run: |
           git fetch --tags
@@ -229,6 +232,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Подготовка итогового описания релиза
+        if: needs.check-version.outputs.version_changed == 'true'
         run: |
           NOTES_FILE=".github/releases/v${{ needs.check-version.outputs.new_version }}.md"
           if [[ -f "$NOTES_FILE" ]]; then
@@ -243,6 +247,7 @@ jobs:
           fi
 
       - name: Создание тега и релиза
+        if: needs.check-version.outputs.version_changed == 'true'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ needs.check-version.outputs.new_version }}
