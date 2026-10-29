@@ -15,6 +15,7 @@ on:
       - 'overlay/**'
       - 'scripts/verify-localizations.mjs'
       - 'scripts/verify-issue-38.mjs'
+      - 'scripts/verify-notification-state.py'
       - '.github/workflows/build-and-release.yml'
 
 

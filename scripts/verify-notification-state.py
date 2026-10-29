@@ -5,11 +5,28 @@ requires Unicorn; the default symbol check has no extra Python dependencies.
 """
 import argparse
 import json
+import os
 from pathlib import Path
 import re
 import shutil
 import struct
 import subprocess
+
+
+def find_nm():
+    installed = shutil.which('aarch64-none-elf-nm')
+    if installed:
+        return installed
+    roots = [os.environ.get('DEVKITA64')]
+    if os.environ.get('DEVKITPRO'):
+        roots.append(str(Path(os.environ['DEVKITPRO']) / 'devkitA64'))
+    roots.extend(('/opt/devkitpro/devkitA64', 'C:/devkitPro/devkitA64'))
+    for root in filter(None, roots):
+        for name in ('aarch64-none-elf-nm', 'aarch64-none-elf-nm.exe'):
+            candidate = Path(root) / 'bin' / name
+            if candidate.is_file():
+                return str(candidate)
+    return None
 
 
 def read_symbols(elf, nm):
@@ -89,11 +106,12 @@ def execute_event(elf, symbols, initialized_event, signalled_event):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('elf', type=Path)
-    parser.add_argument('--nm', default=shutil.which('aarch64-none-elf-nm') or
-                        'C:/devkitPro/devkitA64/bin/aarch64-none-elf-nm.exe')
+    parser.add_argument('--nm', default=find_nm())
     parser.add_argument('--emulate', action='store_true')
     parser.add_argument('--baseline', type=Path)
     args = parser.parse_args()
+    if not args.nm:
+        parser.error('Cannot find devkitA64 nm; set DEVKITPRO/DEVKITA64 or pass --nm')
     symbols = read_symbols(args.elf, args.nm)
     report = {'shared_state': check_shared(symbols)}
     if args.emulate:
